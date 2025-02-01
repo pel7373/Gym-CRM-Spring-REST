@@ -1,6 +1,5 @@
 package org.gym.facade;
 
-import lombok.extern.slf4j.Slf4j;
 import org.gym.config.Config;
 import org.gym.facade.impl.UserNameAndPasswordChecker;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Slf4j
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @jakarta.transaction.Transactional

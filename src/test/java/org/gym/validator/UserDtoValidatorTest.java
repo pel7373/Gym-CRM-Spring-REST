@@ -32,7 +32,9 @@ class UserDtoValidatorTest {
     @FieldSource("validDto")
     void validateValidUserDtoSuccessfully(UserDto userDto) {
         boolean isValidUserDto = userDtoValidator.validate(userDto);
+        String errorMessages = userDtoValidator.getErrorMessage(userDto);
         assertTrue(isValidUserDto);
+        assertEquals("", errorMessages);
     }
 
     static List<UserDto> notValidDto = Arrays.asList(
@@ -40,13 +42,17 @@ class UserDtoValidatorTest {
             new UserDto("Ma", "Petrenko", "Maria.Petrenko", true),
             new UserDto("Maria", null, "Maria.Petrenko", false),
             new UserDto("Maria", "Pe", "Maria.Petrenko", true),
-            new UserDto("Maria", "Petrenko", "Maria.Petrenko", null)
+            new UserDto("Maria", "Petrenko", "Maria.Petrenko", null),
+            new UserDto("Maria22", "Petrenko", "Maria.Petrenko", true),
+            new UserDto("Maria", "Petrenko33", "Maria.Petrenko", true)
     );
 
     @ParameterizedTest
     @FieldSource("notValidDto")
-    void validateUserDtoFirstNameNull(UserDto userDto) {
+    void validateNotValidUserDtoFail(UserDto userDto) {
         boolean isValidUserDto = userDtoValidator.validate(userDto);
+        String errorMessages = userDtoValidator.getErrorMessage(userDto);
         assertFalse(isValidUserDto);
+        assertNotNull(errorMessages);
     }
 }

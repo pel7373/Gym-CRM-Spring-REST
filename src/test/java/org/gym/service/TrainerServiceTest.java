@@ -5,9 +5,7 @@ import org.gym.dto.TrainingTypeDto;
 import org.gym.dto.UserDto;
 import org.gym.entity.*;
 import org.gym.entity.Trainer;
-import org.gym.exception.EntityNotFoundException;
 import org.gym.mapper.TrainerMapper;
-import org.gym.repository.TraineeRepository;
 import org.gym.repository.TrainerRepository;
 import org.gym.repository.TrainingTypeRepository;
 import org.gym.service.impl.TrainerServiceImpl;
@@ -20,8 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,9 +31,6 @@ class TrainerServiceTest {
     
     @Mock
     private TrainerRepository trainerRepository;
-
-    @Mock
-    private TraineeRepository traineeRepository;
 
     @Mock
     private TrainingTypeRepository trainingTypeRepository;
@@ -245,96 +238,6 @@ class TrainerServiceTest {
         verify(trainerRepository, times(1)).findByUserName(any(String.class));
     }
 
-    @Test
-    void getUnassignedTrainersList() {
-        String traineeUserName = "Ivan.Ivanenko";
-
-        Trainee trainee1 = Trainee.builder()
-                .user(User.builder()
-                        .userName(traineeUserName)
-                        .firstName("Ivan")
-                        .lastName("Ivanenko")
-                        .password("password")
-                        .build())
-                .address("Vinnitsya, Soborna str.")
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .build();
-
-        Trainer trainer1 = Trainer.builder()
-                .trainees(List.of(trainee1))
-                .user(User.builder()
-                        .firstName("Petro")
-                        .lastName("Petrenko")
-                        .userName("Petro.Petrenko")
-                        .password("password")
-                        .build())
-                .specialization(TrainingType.builder()
-                        .trainingTypeName("Zumba")
-                        .build())
-                .build();
-
-        TrainerDto trainerDto1 = TrainerDto.builder()
-                .user(UserDto.builder()
-                        .userName("Petro")
-                        .firstName("Petrenko")
-                        .lastName("Petro.Petrenko")
-                        .build())
-                .specialization(TrainingTypeDto.builder()
-                        .trainingTypeName("Zumba")
-                        .build())
-                .build();
-
-        Trainer trainer2 = Trainer.builder()
-                .trainees(List.of())
-                .user(User.builder()
-                        .firstName("PetroPetro")
-                        .lastName("Petrenko")
-                        .userName("PetroPetro.Petrenko")
-                        .password("password")
-                        .build())
-                .specialization(TrainingType.builder()
-                        .trainingTypeName("yoga")
-                        .build())
-                .build();
-
-
-        TrainerDto trainerDto2 = TrainerDto.builder()
-                .user(UserDto.builder()
-                        .userName("PetroPetro.Petrenko")
-                        .firstName("PetroPetro")
-                        .lastName("Petrenko")
-                        .build())
-                .specialization(TrainingTypeDto.builder()
-                        .trainingTypeName("yoga")
-                        .build())
-                .build();
-
-        when(traineeRepository.findByUserName(traineeUserName)).thenReturn(Optional.of(trainee1));
-        when(trainerMapper.convertToDto(trainer1)).thenReturn(trainerDto1);
-        when(trainerMapper.convertToDto(trainer2)).thenReturn(trainerDto2);
-        when(trainerRepository.findAll()).thenReturn(List.of(trainer1, trainer2));
-
-        List<TrainerDto> unassignedTrainers = trainerService.getUnassignedTrainersList(traineeUserName);
-
-        assertNotNull(unassignedTrainers);
-        assertEquals(1, unassignedTrainers.size());
-
-        assertEquals("PetroPetro.Petrenko", unassignedTrainers.get(0).getUser().getUserName());
-
-        verify(traineeRepository, times(1)).findByUserName(traineeUserName);
-        verify(trainerRepository, times(1)).findAll();
-    }
-
-
-    @Test
-    void getUnassignedTrainersListNotFound() {
-        String traineeUserName = "NameNotFound";
-
-        when(trainingTypeRepository.findByName(traineeUserName)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class,
-                () -> trainerService.getUnassignedTrainersList(traineeUserName));
-    }
 
     @Test
     void isFirstOrLastNamesChangedDoesntChangeNames() {

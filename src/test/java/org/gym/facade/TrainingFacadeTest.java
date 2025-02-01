@@ -41,11 +41,10 @@ class TrainingFacadeTest {
     private TrainingFacadeImpl trainingFacade;
 
     private TrainingDto trainingDto;
-    private String trainingTypeName;
 
     @BeforeEach
     void setUp() {
-        trainingTypeName = "Zumba";
+        String trainingTypeName = "Zumba";
         TrainingTypeDto trainingTypeDto = TrainingTypeDto.builder()
                 .trainingTypeName(trainingTypeName)
                 .build();

@@ -1,11 +1,9 @@
 package org.gym.repository;
 
-import lombok.extern.slf4j.Slf4j;
 import org.gym.config.Config;
 import org.gym.entity.Trainer;
 import org.gym.entity.TrainingType;
 import org.gym.entity.User;
-import org.gym.exception.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,12 +17,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Slf4j
 @Transactional
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
-class TrainerRepositoryImplTest {
+class TrainerRepositoryTest {
 
     @Autowired
     private TrainerRepository trainerRepository;
@@ -34,17 +31,12 @@ class TrainerRepositoryImplTest {
 
     private Trainer trainer;
     private final String userNameDoesntExist = "userNameDoesntExist";
-    private TrainingType trainingType;
 
     @BeforeEach
     void setUp()
     {
         String trainingTypeName = "Zumba";
-        try {
-            trainingType = trainingTypeRepository.findByName(trainingTypeName).get();
-        } catch (EntityNotFoundException e) {
-            LOGGER.warn("TrainingService: can't get trainingType {}", trainingTypeName);
-        }
+        TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeName).get();
 
         trainer = Trainer.builder()
                 .user(User.builder()

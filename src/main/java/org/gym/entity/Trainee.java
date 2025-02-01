@@ -31,13 +31,12 @@ public class Trainee {
     private String address;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany (cascade = CascadeType.ALL)
-    @JoinColumn(name = "trainee_id")
+    @OneToMany (mappedBy = "trainee", cascade = CascadeType.ALL)
     private List<Training> trainings;
 
     @ToString.Exclude
@@ -46,8 +45,7 @@ public class Trainee {
             CascadeType.PERSIST,
             CascadeType.MERGE
     })
-    @JoinTable(
-            name = "trainee_trainer",
+    @JoinTable(name = "trainee_trainer",
             joinColumns = @JoinColumn(name = "trainee_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "trainer_id", referencedColumnName = "id")
     )

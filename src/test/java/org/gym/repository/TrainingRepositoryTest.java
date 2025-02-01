@@ -1,10 +1,8 @@
 package org.gym.repository;
 
-import lombok.extern.slf4j.Slf4j;
 import org.gym.config.Config;
 import org.gym.dto.*;
 import org.gym.entity.*;
-import org.gym.exception.EntityNotFoundException;
 import org.gym.mapper.TrainingMapper;
 import org.gym.service.PasswordGeneratorService;
 import org.gym.service.UserNameGeneratorService;
@@ -22,12 +20,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Slf4j
 @Transactional
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
-class TrainingRepositoryImplTest {
+class TrainingRepositoryTest {
 
     @Autowired
     private TraineeRepository traineeRepository;
@@ -54,17 +51,12 @@ class TrainingRepositoryImplTest {
     private Trainer trainer;
     private TrainingDto trainingDto;
     private Training training;
-    private TrainingType trainingType;
     String trainingTypeName = "Zumba";
 
     @BeforeEach
     void setUp()
     {
-        try {
-            trainingType = trainingTypeRepository.findByName(trainingTypeName).get();
-        } catch (EntityNotFoundException e) {
-            LOGGER.warn("TrainingService: can't get trainingType {}", trainingTypeName);
-        }
+        TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeName).get();
 
         User userForTrainee = User.builder()
                 .firstName("Maria")

@@ -18,8 +18,10 @@ public class TraineeDto {
     private UserDto user;
 
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private LocalDate dateOfBirth;
 
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private String address;
 }

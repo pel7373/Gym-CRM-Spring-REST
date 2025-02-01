@@ -38,7 +38,8 @@ class TrainingDtoValidatorTest {
             TrainingDto.builder().trainingName("Zumba next workout").date(LocalDate.now().plusDays(3)).duration(null).build(),
             TrainingDto.builder().trainingName("Zumba next workout").date(LocalDate.now().plusDays(3)).duration(5).build(),
             TrainingDto.builder().trainingName("").date(LocalDate.now().plusDays(3)).duration(5).build(),
-            TrainingDto.builder().trainingName("Zumba next workout").date(LocalDate.now()).duration(10).build()
+            TrainingDto.builder().trainingName("Zumba next workout").date(LocalDate.now()).duration(10).build(),
+            TrainingDto.builder().trainingName("Zumba next workout%^&").date(LocalDate.now()).duration(10).build()
     );
 
     @ParameterizedTest

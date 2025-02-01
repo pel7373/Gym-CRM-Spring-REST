@@ -1,6 +1,7 @@
 package org.gym.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,17 +21,20 @@ public class Training {
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "trainee_id")
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trainee_id", referencedColumnName = "id")
     private Trainee trainee;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "trainer_id")
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trainer_id", referencedColumnName = "id")
     private Trainer trainer;
 
     @Column(name = "training_name", nullable = false)
     private String trainingName;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "training_type_id")
     private TrainingType trainingType;

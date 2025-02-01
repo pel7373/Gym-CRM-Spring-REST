@@ -1,6 +1,9 @@
 package org.gym.facade;
 
 import org.gym.dto.TraineeDto;
+import org.gym.dto.TrainerDto;
+
+import java.util.List;
 
 public interface TraineeFacade {
     TraineeDto create(TraineeDto traineeDto);
@@ -10,4 +13,6 @@ public interface TraineeFacade {
     boolean authenticate(String userName, String password);
     TraineeDto changePassword(String userName, String password, String newPassword);
     void delete(String userName, String password);
+    List<TrainerDto> getUnassignedTrainers(String userName, String password);
+    List<TrainerDto> updateTrainersList(String userName, String password, List<String> trainersUserNames);
 }

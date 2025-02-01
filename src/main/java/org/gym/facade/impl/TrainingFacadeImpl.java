@@ -28,7 +28,7 @@ public class TrainingFacadeImpl implements TrainingFacade {
     @Override
     public TrainingDto create(TrainingDto trainingDto) {
         if(trainingDto == null) {
-            LOGGER.warn(ENTITY_CANT_BE_NULL);
+            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
             return null;
         }
 

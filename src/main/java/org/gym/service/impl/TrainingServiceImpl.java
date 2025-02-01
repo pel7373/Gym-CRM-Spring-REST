@@ -79,6 +79,7 @@ public class TrainingServiceImpl implements TrainingService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, trainerTrainingsDto.getTrainerUserName()))
         );
+
         return trainingRepository.getByTrainerCriteria(trainerTrainingsDto)
                 .stream()
                 .map(trainingMapper::convertToDto)

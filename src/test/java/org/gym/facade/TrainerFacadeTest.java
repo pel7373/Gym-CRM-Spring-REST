@@ -50,8 +50,6 @@ class TrainerFacadeTest {
             .trainingTypeName("Zumba")
             .build();
 
-
-
     @BeforeEach
     void setUp() {
         UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
@@ -143,6 +141,38 @@ class TrainerFacadeTest {
         verify(userDtoValidator, times(1)).validate(trainerDto.getUser());
         verify(trainerService, times(1)).authenticate(userNameForTrainerDto, passwordForUser);
         verify(trainerService, times(1)).update(userNameForTrainerDto, trainerDto);
+    }
+
+    @Test
+    void updateTrainerNullFail() {
+        TrainerDto createdTrainerDto = trainerFacade.update("aaa", "aaa", null);
+        assertNull(createdTrainerDto);
+        verify(userDtoValidator, never()).validate(trainerDto.getUser());
+        verify(trainerService, never()).create(any(TrainerDto.class));
+    }
+
+    @Test
+    void updateTrainerNotValidFail() {
+        when(userDtoValidator.validate(trainerDtoNotValid.getUser())).thenReturn(false);
+        TrainerDto createdTrainerDto = trainerFacade.update("aaa", "aaa", trainerDtoNotValid);
+
+        assertNull(createdTrainerDto);
+        verify(userDtoValidator, times(1)).validate(trainerDtoNotValid.getUser());
+        verify(trainerService, never()).update(any(), any(TrainerDto.class));
+    }
+
+    @Test
+    void updateTrainerNotFound() {
+        when(userNameAndPasswordChecker.isNullOrBlank(userNameNotFound, passwordForUser)).thenReturn(false);
+        when(userDtoValidator.validate(trainerDtoNotValid.getUser())).thenReturn(true);
+        when(trainerService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
+        when(trainerService.update(userNameNotFound, trainerDtoNotValid)).thenReturn(trainerDto);
+
+        trainerFacade.update(userNameNotFound, passwordForUser, trainerDtoNotValid);
+
+        verify(userDtoValidator, times(1)).validate(trainerDtoNotValid.getUser());
+        verify(trainerService, times(1)).authenticate(any(String.class), any(String.class));
+        verify(trainerService, never()).update(userNameNotFound, trainerDtoNotValid);
     }
 
     @Test

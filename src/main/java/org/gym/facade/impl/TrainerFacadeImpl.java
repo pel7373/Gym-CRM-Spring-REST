@@ -10,9 +10,6 @@ import org.gym.service.TrainerService;
 import org.gym.validator.UserDtoValidator;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.gym.config.Config.*;
 
 @Slf4j
@@ -27,7 +24,7 @@ public class TrainerFacadeImpl implements TrainerFacade {
     @Override
     public TrainerDto create(TrainerDto trainerDto) {
         if(trainerDto == null) {
-            LOGGER.warn(ENTITY_CANT_BE_NULL);
+            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
             return null;
         }
 
@@ -36,17 +33,12 @@ public class TrainerFacadeImpl implements TrainerFacade {
             return null;
         }
 
-        TrainerDto trainerDtoResult = null;
         try {
-            trainerDtoResult = trainerService.create(trainerDto);
-            LOGGER.trace("{}: {} was created",
-                    Thread.currentThread().getStackTrace()[2].getMethodName(),
-                    trainerDtoResult);
-            return trainerDtoResult;
+            return trainerService.create(trainerDto);
         } catch (EntityNotFoundException e) {
             LOGGER.warn(ENTITY_NOT_FOUND, trainerDto.getUser().getFirstName());
+            return null;
         }
-        return trainerDtoResult;
     }
 
     @Override
@@ -66,7 +58,7 @@ public class TrainerFacadeImpl implements TrainerFacade {
     @Override
     public TrainerDto update(String userName, String password, TrainerDto trainerDto) {
         if(trainerDto == null) {
-            LOGGER.warn(ENTITY_CANT_BE_NULL);
+            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
             return null;
         }
 
@@ -91,7 +83,7 @@ public class TrainerFacadeImpl implements TrainerFacade {
     @Override
     public TrainerDto changeStatus(String userName, String password, Boolean isActive) {
         if(isActive == null) {
-            LOGGER.warn(ENTITY_CANT_BE_NULL);
+            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
             return null;
         }
 
@@ -121,7 +113,7 @@ public class TrainerFacadeImpl implements TrainerFacade {
     @Override
     public TrainerDto changeSpecialization(String userName, String password, TrainingType trainingType) {
         if(trainingType == null) {
-            LOGGER.warn(ENTITY_CANT_BE_NULL);
+            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
             return null;
         }
 
@@ -141,7 +133,7 @@ public class TrainerFacadeImpl implements TrainerFacade {
     @Override
     public TrainerDto changePassword(String userName, String password, String newPassword) {
         if(userNameAndPasswordChecker.isNullOrBlank(newPassword)) {
-            LOGGER.warn(ENTITY_CANT_BE_NULL);
+            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
             return null;
         }
 
@@ -155,26 +147,6 @@ public class TrainerFacadeImpl implements TrainerFacade {
         } else {
             LOGGER.warn(ACCESS_DENIED, userName);
             return null;
-        }
-    }
-
-    @Override
-    public List<TrainerDto> getUnassignedTrainers(String trainerUserName) {
-        try {
-            return trainerService.getUnassignedTrainersList(trainerUserName);
-        } catch (EntityNotFoundException e) {
-            LOGGER.warn(ENTITY_NOT_FOUND, trainerUserName);
-            return new ArrayList<>();
-        }
-    }
-
-    @Override
-    public List<TrainerDto> updateTrainersList(String trainerUserName, List<String> trainersUserNames) {
-        try {
-            return trainerService.updateTrainersList(trainerUserName, trainersUserNames);
-        } catch (EntityNotFoundException e) {
-            LOGGER.warn(ENTITY_NOT_FOUND, trainerUserName);
-            return new ArrayList<>();
         }
     }
 }

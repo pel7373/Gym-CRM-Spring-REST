@@ -1,12 +1,17 @@
 package org.gym.service;
 
+import org.gym.DataStorage;
 import org.gym.config.Config;
 import org.gym.dto.TraineeDto;
+import org.gym.dto.TrainerDto;
 import org.gym.dto.UserDto;
 import org.gym.entity.Trainee;
+import org.gym.entity.Trainer;
+import org.gym.entity.TrainingType;
 import org.gym.repository.TraineeRepository;
+import org.gym.repository.TrainerRepository;
+import org.gym.repository.TrainingTypeRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +19,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
+@Transactional
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @jakarta.transaction.Transactional
@@ -34,6 +42,13 @@ class TraineeServiceWithTestContainerIT {
     @Autowired
     private TraineeRepository traineeRepository;
 
+    @Autowired
+    private TrainerRepository trainerRepository;
+
+    @Autowired
+    private TrainingTypeRepository trainingTypeRepository;
+
+    private final DataStorage ds = new DataStorage();
     private final TraineeDto traineeDto;
     private final TraineeDto traineeDto2;
     private String userNameForTrainee;
@@ -43,14 +58,14 @@ class TraineeServiceWithTestContainerIT {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("datasource.url", postgres::getJdbcUrl);
-        registry.add("datasource.username", postgres::getUsername);
-        registry.add("datasource.password", postgres::getPassword);
-    }
-
-    @Test
-    void isPostgresRunningTest() {
-        Assertions.assertTrue(postgres.isRunning());
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("hibernate.dialect", () -> "org.hibernate.dialect.PostgreSQL10Dialect");
+        registry.add("hibernate.hbm2ddl.auto", () -> "create");
+        registry.add("hibernate.show_sql", () -> true);
+        registry.add("hibernate.format_sql", () -> true);
+        registry.add("hibernate.jdbc.lob.non_contextual_creation", () -> true);
     }
 
     {
@@ -254,5 +269,44 @@ class TraineeServiceWithTestContainerIT {
         assertNotNull(changedTraineeDto);
         assertNotNull(changedTraineeDto.getUser());
         assertEquals(newPassword, changedPassword);
+    }
+
+    @Test
+    void getUnassignedTrainersListSuccessfully() {
+        String trainingTypeNameTrainer = "Zumba";
+        TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeNameTrainer).get();
+        ds.trainer1.setSpecialization(trainingType);
+        ds.trainer2.setSpecialization(trainingType);
+        Trainee createdTrainee1 = traineeRepository.save(ds.trainee1);
+        Trainer createdTrainer1 = trainerRepository.save(ds.trainer1);
+        Trainer createdTrainer2 = trainerRepository.save(ds.trainer2);
+        createdTrainee1.setTrainers(List.of(createdTrainer1));
+
+        List<TrainerDto> unassignedTrainers = traineeService.getUnassignedTrainersList(ds.traineeUserName);
+
+        assertAll(
+                "Grouped assertions of getUnassigned trainersDto's list",
+                () -> assertNotNull(unassignedTrainers),
+                () -> assertEquals(1, unassignedTrainers.size()),
+                () -> assertEquals(createdTrainer2.getUser().getUserName(), unassignedTrainers.get(0).getUser().getUserName())
+        );
+    }
+
+    @Test
+    void getUnassignedTrainersListEmpty() {
+        String trainingTypeNameTrainer = "Zumba";
+        TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeNameTrainer).get();
+        ds.trainer1.setSpecialization(trainingType);
+        Trainee createdTrainee1 = traineeRepository.save(ds.trainee1);
+        Trainer createdTrainer1 = trainerRepository.save(ds.trainer1);
+        createdTrainee1.setTrainers(List.of(createdTrainer1));
+
+        List<TrainerDto> unassignedTrainers = traineeService.getUnassignedTrainersList(ds.traineeUserName);
+
+        assertAll(
+                "Grouped assertions of getUnassigned trainersDto's list",
+                () -> assertNotNull(unassignedTrainers),
+                () -> assertEquals(0, unassignedTrainers.size())
+        );
     }
 }

@@ -1,6 +1,5 @@
 package org.gym.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.gym.config.Config;
 import org.gym.dto.*;
 import org.gym.entity.*;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Slf4j
+@Transactional
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @jakarta.transaction.Transactional
@@ -61,11 +61,7 @@ class TrainingServiceIT {
     @BeforeEach
     void setUp()
     {
-        try {
-            trainingType = trainingTypeRepository.findByName(trainingTypeName).get();
-        } catch (EntityNotFoundException e) {
-            LOGGER.warn("TrainingService: can't get trainingType {}", trainingTypeName);
-        }
+        trainingType = trainingTypeRepository.findByName(trainingTypeName).get();
 
         User userForTrainee = User.builder()
                 .firstName("Maria")

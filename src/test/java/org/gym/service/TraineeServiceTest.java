@@ -1,13 +1,17 @@
 package org.gym.service;
 
 import jakarta.transaction.Transactional;
+import org.gym.DataStorage;
+import org.gym.dto.TrainerDto;
 import org.gym.dto.UserDto;
 import org.gym.entity.Trainee;
 import org.gym.dto.TraineeDto;
 import org.gym.entity.User;
 import org.gym.exception.EntityNotFoundException;
 import org.gym.mapper.TraineeMapper;
+import org.gym.mapper.TrainerMapper;
 import org.gym.repository.TraineeRepository;
+import org.gym.repository.TrainerRepository;
 import org.gym.service.impl.TraineeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
@@ -36,6 +41,9 @@ class TraineeServiceTest {
     private TraineeRepository traineeRepository;
 
     @Mock
+    private TrainerRepository trainerRepository;
+
+    @Mock
     private UserNameGeneratorService userNameGeneratorService;
 
     @Mock
@@ -44,9 +52,13 @@ class TraineeServiceTest {
     @Mock
     private TraineeMapper traineeMapper;
 
+    @Mock
+    private TrainerMapper trainerMapper;
+
     @InjectMocks
     private TraineeServiceImpl traineeService;
 
+    private final DataStorage ds = new DataStorage();
     private Trainee trainee;
     private TraineeDto traineeDto;
     private TraineeDto traineeDtoUpdated;
@@ -181,6 +193,13 @@ class TraineeServiceTest {
     }
 
     @Test
+    void updateNullThenException() {
+        String exceptionMessage = String.format(ENTITY_NOT_FOUND_EXCEPTION, (Object) null);
+        assertThrows(EntityNotFoundException.class, () -> traineeService.update(null, traineeDto), exceptionMessage);
+        verify(traineeRepository, times(1)).findByUserName(null);
+    }
+
+    @Test
     void deleteTraineeSuccessfully() {
         when(traineeRepository.findByUserName(userNameForTrainee)).thenReturn(Optional.ofNullable(trainee));
 
@@ -216,6 +235,13 @@ class TraineeServiceTest {
     }
 
     @Test
+    void changeStatusNullThenException() {
+        String exceptionMessage = String.format(ENTITY_NOT_FOUND_EXCEPTION, (Object) null);
+        assertThrows(EntityNotFoundException.class, () -> traineeService.changeStatus(null, true), exceptionMessage);
+        verify(traineeRepository, times(1)).findByUserName(null);
+    }
+
+    @Test
     void changePasswordSuccessfully() {
         when(traineeRepository.findByUserName(userNameForTrainee)).thenReturn(Optional.ofNullable(trainee));
 
@@ -225,6 +251,14 @@ class TraineeServiceTest {
         verify(traineeRepository, times(1)).findByUserName(userNameForTrainee);
         verify(traineeRepository, times(1)).save(any(Trainee.class));
     }
+
+    @Test
+    void changePasswordNullThenException() {
+        String exceptionMessage = String.format(ENTITY_NOT_FOUND_EXCEPTION, (Object) null);
+        assertThrows(EntityNotFoundException.class, () -> traineeService.changePassword(null, "bbbb"), exceptionMessage);
+        verify(traineeRepository, times(1)).findByUserName(null);
+    }
+
 
     @Test
     void authenticateSuccessfully() {
@@ -244,6 +278,82 @@ class TraineeServiceTest {
 
         assertFalse(isAuthenticate);
         verify(traineeRepository, times(1)).findByUserName(any(String.class));
+    }
+
+    @Test
+    void authenticateStatusNullThenException() {
+        boolean result = traineeService.authenticate(null, passwordForUser);
+        assertFalse(result);
+        verify(traineeRepository, times(1)).findByUserName(null);
+    }
+
+    @Test
+    void getUnassignedTrainersListSuccessfully() {
+        when(traineeRepository.findByUserName(ds.traineeUserName)).thenReturn(Optional.of(ds.trainee1));
+        when(trainerMapper.convertToDto(ds.trainer1)).thenReturn(ds.trainerDto1);
+        when(trainerMapper.convertToDto(ds.trainer2)).thenReturn(ds.trainerDto2);
+        when(trainerRepository.findAll()).thenReturn(List.of(ds.trainer1, ds.trainer2));
+
+        List<TrainerDto> unassignedTrainers = traineeService.getUnassignedTrainersList(ds.traineeUserName);
+
+        assertNotNull(unassignedTrainers);
+        assertEquals(1, unassignedTrainers.size());
+
+        assertEquals("PetroPetro.Petrenko", unassignedTrainers.get(0).getUser().getUserName());
+
+        verify(traineeRepository, times(1)).findByUserName(ds.traineeUserName);
+        verify(trainerRepository, times(1)).findAll();
+    }
+
+    @Test
+    void getUnassignedTrainersListNotFound() {
+        String traineeUserName = "NameNotFound";
+
+        when(traineeRepository.findByUserName(traineeUserName)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> traineeService.getUnassignedTrainersList(traineeUserName));
+        verify(traineeRepository, times(1)).findByUserName(traineeUserName);
+    }
+
+    @Test
+    void updateTrainersListSuccessfully() {
+        when(traineeRepository.findByUserName(ds.traineeUserName))
+                .thenReturn(Optional.of(ds.trainee1));
+
+        when(trainerRepository.findByUserName(ds.trainer1.getUser().getUserName()))
+                .thenReturn(Optional.of(ds.trainer1));
+        when(trainerRepository.findByUserName(ds.trainer2.getUser().getUserName()))
+                .thenReturn(Optional.of(ds.trainer2));
+        when(trainerMapper.convertToDto(ds.trainer1)).thenReturn(ds.trainerDto1);
+        when(trainerMapper.convertToDto(ds.trainer2)).thenReturn(ds.trainerDto2);
+        List<String> listTrainersUserNames = List.of(
+                ds.trainer1.getUser().getUserName(),
+                ds.trainer2.getUser().getUserName());
+
+        List<TrainerDto> updatedTrainersListList =
+                traineeService.updateTrainersList(ds.traineeUserName, listTrainersUserNames);
+
+        assertAll(
+                () -> assertNotNull(updatedTrainersListList),
+                () -> assertEquals(2, updatedTrainersListList.size())
+        );
+
+        verify(traineeRepository, times(1)).findByUserName(ds.traineeUserName);
+        verify(trainerRepository, times(2)).findByUserName(any());
+        verify(trainerMapper, times(2)).convertToDto(any());
+    }
+
+    @Test
+    void updateTrainersListTraineeNotFound() {
+        String traineeUserName = "NameNotFound";
+
+        when(traineeRepository.findByUserName(traineeUserName)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class,
+                () -> traineeService.updateTrainersList(traineeUserName, List.of()));
+        verify(traineeRepository, times(1)).findByUserName(traineeUserName);
+        verify(trainerRepository, never()).findByUserName(any());
     }
 
     @Test

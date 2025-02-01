@@ -1,5 +1,7 @@
 package org.gym.service.impl;
 
+import org.gym.dto.TrainerDto;
+import org.gym.entity.Trainer;
 import org.gym.exception.EntityNotFoundException;
 
 import lombok.AllArgsConstructor;
@@ -7,12 +9,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.gym.entity.Trainee;
 import org.gym.dto.TraineeDto;
 import org.gym.mapper.TraineeMapper;
+import org.gym.mapper.TrainerMapper;
 import org.gym.repository.TraineeRepository;
+import org.gym.repository.TrainerRepository;
 import org.gym.service.PasswordGeneratorService;
 import org.gym.service.TraineeService;
 import org.gym.service.UserNameGeneratorService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.gym.config.Config.ENTITY_NOT_FOUND_EXCEPTION;
 
@@ -23,7 +30,9 @@ import static org.gym.config.Config.ENTITY_NOT_FOUND_EXCEPTION;
 public class TraineeServiceImpl implements TraineeService {
 
     private final TraineeRepository traineeRepository;
+    private final TrainerRepository trainerRepository;
     private final TraineeMapper traineeMapper;
+    private final TrainerMapper trainerMapper;
     private final UserNameGeneratorService userNameGeneratorService;
     private final PasswordGeneratorService passwordGeneratorService;
 
@@ -110,6 +119,40 @@ public class TraineeServiceImpl implements TraineeService {
         );
         trainee.getUser().setPassword(newPassword);
         return traineeMapper.convertToDto(traineeRepository.save(trainee));
+    }
+
+    @Override
+    public List<TrainerDto> getUnassignedTrainersList(String userName) throws EntityNotFoundException {
+        Trainee trainee = traineeRepository.findByUserName(userName)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
+                );
+        List<Trainer> trainers = trainerRepository.findAll();
+
+        return trainers.stream()
+                .filter(trainer -> !trainer.getTrainees().contains(trainee))
+                .map(trainerMapper::convertToDto)
+                .toList();
+    }
+
+    @Override
+    public List<TrainerDto> updateTrainersList(String userName, List<String> listTrainersUserNames) throws EntityNotFoundException {
+        Trainee trainee = traineeRepository.findByUserName(userName)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
+                );
+
+        List<Trainer> trainers = listTrainersUserNames.stream()
+                .map(trainerRepository::findByUserName)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+
+        trainee.setTrainers(trainers);
+
+        return trainers.stream()
+                .map(trainerMapper::convertToDto)
+                .toList();
     }
 
     public boolean isFirstOrLastNamesChanged(TraineeDto traineeDto, Trainee oldTrainee) {
