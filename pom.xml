@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.gym</groupId>
-  <artifactId>Gym-CRM-Spring-Hibernate</artifactId>
+  <artifactId>Gym-CRM-Spring-REST</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
@@ -22,8 +22,6 @@
     <junit.jupiter.version>5.11.3</junit.jupiter.version>
     <jackson.version>2.17.2</jackson.version>
     <jackson-datatype-jsr310.version>2.13.3</jackson-datatype-jsr310.version>
-    <jakarta.annotation>3.0.0</jakarta.annotation>
-    <mapstruct.version>1.6.3</mapstruct.version>
     <projectlombok.version>1.18.36</projectlombok.version>
     <mockito.version>5.5.0</mockito.version>
     <org.mockito-inline.version>5.2.0</org.mockito-inline.version>
@@ -32,17 +30,22 @@
     <org.jacoco.version>0.8.12</org.jacoco.version>
     <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
     <org.testcontainers.version>1.20.4</org.testcontainers.version>
-    <jakarta.persistence.version>3.0.0</jakarta.persistence.version>
     <org.hibernate.version>5.6.15.Final</org.hibernate.version>
-    <com.zaxxer.version>6.2.0</com.zaxxer.version>
     <org.hibernate.validator.version>6.0.13.Final</org.hibernate.validator.version>
+    <hibernate-core-jakarta.version>5.6.14.Final</hibernate-core-jakarta.version>
+    <com.zaxxer.version>6.2.0</com.zaxxer.version>
+    <mapstruct.version>1.6.3</mapstruct.version>
+    <jakarta.annotation>3.0.0</jakarta.annotation>
+    <jakarta.persistence.version>3.0.0</jakarta.persistence.version>
     <jakarta.validation.version>3.1.0</jakarta.validation.version>
     <jakarta.el.version>6.0.0</jakarta.el.version>
-    <hibernate-core-jakarta.version>5.6.14.Final</hibernate-core-jakarta.version>
     <p6spy.version>3.9.1</p6spy.version>
     <postgresql.version>42.7.3</postgresql.version>
     <com.h2database.version>2.3.232</com.h2database.version>
     <h2.version>2.3.232</h2.version>
+    <tomcat.embed.version>11.0.2</tomcat.embed.version>
+    <rest-assured.version>5.3.2</rest-assured.version>
+    <spring-webmvc.version>6.2.1</spring-webmvc.version>
   </properties>
 
   <dependencies>
@@ -251,6 +254,24 @@
       <version>${org.testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>${tomcat.embed.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>${rest-assured.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>${spring-webmvc.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
