@@ -10,5 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ComponentScan(basePackages = {"org.gym"})
 public class WebConfig implements WebMvcConfigurer
 {
-
+    public WebConfig() {
+        super();
+    }
 }
