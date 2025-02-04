@@ -14,11 +14,13 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/books", consumes = {"application/JSON"},
-        produces = {"application/JSON", "application/XML"})
+@RequestMapping("/api")
+        //value = "/books", consumes = {"application/JSON"},
+        //produces = {"application/JSON", "application/XML"})
 public class TraineeController {
 
     private final TraineeFacade traineeFacade;
+    private final TransactionIdGenerator transactionIdGenerator;
 
 //    @Autowired
 //    private Convertor<TraineeDto, Trainee> convertor;
