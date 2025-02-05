@@ -3,18 +3,23 @@ package org.gym.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gym.dto.TraineeDto;
+import org.gym.dto.UserDto;
 import org.gym.facade.TraineeFacade;
 
 import org.gym.service.TraineeService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/trainees",
-        consumes = {"application/JSON"}, produces = {"application/JSON", "application/XML"})
+        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
 //@Tag(name = "Trainees", description = "Operations related to managing trainees")
 public class TraineeController {
@@ -23,17 +28,37 @@ public class TraineeController {
     private final TraineeService traineeService;
     private final TransactionIdGenerator transactionIdGenerator;
 
-    @GetMapping("/data")
-    public String getSimpleData(){
-        return "Hi!";
+    @GetMapping(value ="/data", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TraineeDto> getSimpleData(){
+        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
+        TraineeDto traineeDto = TraineeDto.builder()
+                .user(userDto)
+                .dateOfBirth(LocalDate.of(1995, 1, 23))
+                .address("Vinnitsya, Soborna str. 35, ap. 26")
+                .build();
+
+        return new ResponseEntity<>(traineeDto, HttpStatus.OK);
     }
 
-//    @GetMapping("login/{username}/{password}")
-//    public ResponseEntity<Void> login(@PathVariable("username") String userName,
-//                                      @PathVariable("password") String password) {
-//        traineeFacade.authenticate(userName, password);
-//        return ResponseEntity.ok().build();
-//    }
+    @PostMapping(value ="/data2", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TraineeDto> getSimpleData2(){
+        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
+        TraineeDto traineeDto = TraineeDto.builder()
+                .user(userDto)
+                .dateOfBirth(LocalDate.of(1995, 1, 23))
+                .address("Vinnitsya, Soborna str. 35, ap. 26")
+                .build();
+
+        return new ResponseEntity<>(traineeDto, HttpStatus.OK);
+    }
+
+    @GetMapping("login/{username}/{password}")
+    public ResponseEntity<Void> login(@PathVariable("username") String userName,
+                                      @PathVariable("password") String password) {
+        //traineeFacade.authenticate(userName, password);
+        System.out.println(userName + " : " + password);
+        return ResponseEntity.ok().build();
+    }
 //
 //    @GetMapping("/{username}/{password}")
 //    public ResponseEntity<TraineeDto> getTrainee(@PathVariable("username") String userName,

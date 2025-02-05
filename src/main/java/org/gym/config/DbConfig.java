@@ -46,6 +46,7 @@ public class DbConfig {
                                 @Value("${spring.datasource.username}") String dataSourceUsername,
                                 @Value("${spring.datasource.password}") String dataSourcePassword) {
         HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setDriverClassName(org.postgresql.Driver.class.getName());
         dataSource.setJdbcUrl(dataSourceUrl);
         dataSource.setUsername(dataSourceUsername);
         dataSource.setPassword(dataSourcePassword);

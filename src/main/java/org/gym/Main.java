@@ -16,15 +16,15 @@ import java.util.Map;
 public class Main {
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Config.class);
-        Tomcat tomcat = new Tomcat();
-
-        final Connector connector = new Connector();
-        connector.setPort(8080);
-        connector.setScheme("http");
-        connector.setProperty("protocol", "HTTP/1.1");
-        connector.setSecure(false);
-        tomcat.getService().addConnector(connector);
-        tomcat.setConnector(connector);
+//        Tomcat tomcat = new Tomcat();
+//
+//        final Connector connector = new Connector();
+//        connector.setPort(8080);
+//        connector.setScheme("http");
+//        connector.setProperty("protocol", "HTTP/1.1");
+//        connector.setSecure(false);
+//        tomcat.getService().addConnector(connector);
+//        tomcat.setConnector(connector);
 
         //        RestTemplate restTemplate = new RestTemplate();
 //        String url = "https://reqres.in/api/users/2";

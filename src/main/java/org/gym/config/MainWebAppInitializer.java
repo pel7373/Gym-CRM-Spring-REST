@@ -28,7 +28,7 @@ public class MainWebAppInitializer implements WebApplicationInitializer {
         //create the root Spring application context
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
         rootContext.register(WebConfig.class);
-        rootContext.setConfigLocation("org.gym.config");
+        rootContext.setConfigLocation("org.gym");
 
         //add ContextLoaderListener to the ServletContext which will be responsible to load the application context
         servletContext.addListener(new ContextLoaderListener(rootContext));
