@@ -18,7 +18,9 @@
     <org.apache.maven.plugins.version>3.10.1</org.apache.maven.plugins.version>
     <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
     <spring.version>6.2.1</spring.version>
+    <springdoc.version>2.7.0</springdoc.version>
     <org.springframework.data.version>3.4.0</org.springframework.data.version>
+    <io.springfox.version>3.0.0</io.springfox.version>
     <junit.jupiter.version>5.11.3</junit.jupiter.version>
     <jackson.version>2.17.2</jackson.version>
     <jackson-datatype-jsr310.version>2.13.3</jackson-datatype-jsr310.version>
@@ -85,11 +87,20 @@
       <artifactId>spring-orm</artifactId>
       <version>${spring.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-jpa</artifactId>
       <version>${org.springframework.data.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>${springdoc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger2</artifactId>
+      <version>${io.springfox.version}</version>
     </dependency>
     <dependency>
       <groupId>jakarta.annotation</groupId>
@@ -132,7 +143,19 @@
       <version>${jakarta.servlet-api.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+      <scope>provided</scope>
+    </dependency>
 
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.5</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
@@ -285,11 +308,16 @@
       <version>${rest-assured.version}</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <build>
+    <finalName>root</finalName>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.3.2</version>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

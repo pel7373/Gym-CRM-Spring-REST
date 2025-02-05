@@ -14,7 +14,7 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"org.gym.controller"})
+@ComponentScan(basePackages = {"org.gym"})
 public class WebConfig implements WebMvcConfigurer
 {
     @Bean

@@ -9,6 +9,7 @@ import org.gym.exception.EntityNotFoundException;
 import org.gym.facade.TraineeFacade;
 import org.gym.service.TraineeService;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
 import static org.gym.config.Config.*;
 
 @Slf4j
-@Component
+@Service
 @RequiredArgsConstructor
 public class TraineeFacadeImpl implements TraineeFacade {
 
