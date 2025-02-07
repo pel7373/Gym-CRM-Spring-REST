@@ -34,8 +34,8 @@ class TrainerServiceIT {
     private String userNameForTrainer;
 
     {
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
-        UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", true);
+        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
+        UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", "",true);
 
         trainerDto = TrainerDto.builder()
                 .user(userDto)

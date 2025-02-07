@@ -60,7 +60,7 @@ class TrainerServiceTest {
 
     @BeforeEach
     void setUp() {
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
+        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
         User user = new User(null, "Maria", "Petrenko", "Maria.Petrenko", passwordForUser, true);
 
         trainerDto = TrainerDto.builder()
@@ -111,7 +111,7 @@ class TrainerServiceTest {
 
     @Test
     void updateExistingTrainerSuccessfully() {
-        UserDto userDto = new UserDto("John", "Doe", "John.Doe", true);
+        UserDto userDto = new UserDto("John", "Doe", "John.Doe", "",true);
         trainerDto = TrainerDto.builder()
                 .user(userDto)
                 .specialization(trainerTrainingTypeDto)
@@ -131,7 +131,7 @@ class TrainerServiceTest {
                 .specialization(trainerTrainingType)
                 .build();
 
-        UserDto userDtoUpdated = new UserDto("John", "Doe", "John.Doe", true);
+        UserDto userDtoUpdated = new UserDto("John", "Doe", "John.Doe", "",true);
         TrainerDto trainerDtoUpdated = TrainerDto.builder()
                 .user(userDtoUpdated)
                 .specialization(trainerTrainingTypeDto)
@@ -241,7 +241,7 @@ class TrainerServiceTest {
 
     @Test
     void isFirstOrLastNamesChangedDoesntChangeNames() {
-        UserDto userDto2 = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
+        UserDto userDto2 = new UserDto("Maria", "Petrenko", "Maria.Petrenko","", true);
         TrainerDto trainerDto2 = TrainerDto.builder()
                 .user(userDto2)
                 .build();
@@ -256,7 +256,7 @@ class TrainerServiceTest {
 
     @Test
     void isFirstOrLastNamesChangedFirstNames() {
-        UserDto userDto2 = new UserDto("Iryna", "Petrenko", "Maria.Petrenko", true);
+        UserDto userDto2 = new UserDto("Iryna", "Petrenko", "Maria.Petrenko", "",true);
         TrainerDto trainerDto2 = TrainerDto.builder()
                 .user(userDto2)
                 .build();
@@ -271,7 +271,7 @@ class TrainerServiceTest {
 
     @Test
     void isFirstOrLastNamesChangedBothNames() {
-        UserDto userDto2 = new UserDto("Iryna", "Sergienko", "Maria.Petrenko", true);
+        UserDto userDto2 = new UserDto("Iryna", "Sergienko", "Maria.Petrenko", "",true);
         TrainerDto trainerDto2 = TrainerDto.builder()
                 .user(userDto2)
                 .build();

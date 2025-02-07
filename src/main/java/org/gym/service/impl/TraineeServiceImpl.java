@@ -1,5 +1,6 @@
 package org.gym.service.impl;
 
+import org.gym.dto.TraineeCreateResponse;
 import org.gym.dto.TrainerDto;
 import org.gym.entity.Trainer;
 import org.gym.exception.EntityNotFoundException;

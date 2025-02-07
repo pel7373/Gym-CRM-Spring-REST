@@ -69,8 +69,8 @@ class TraineeServiceWithTestContainerIT {
     }
 
     {
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
-        UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", true);
+        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
+        UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", "",true);
 
         traineeDto = TraineeDto.builder()
                 .user(userDto)

@@ -52,8 +52,8 @@ class TrainerFacadeTest {
 
     @BeforeEach
     void setUp() {
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
-        UserDto userDtoNotValid = new UserDto("Pa", "Pa", "Maria.Petrenko2", false);
+        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
+        UserDto userDtoNotValid = new UserDto("Pa", "Pa", "Maria.Petrenko2", "",false);
 
         trainerDto = TrainerDto.builder()
                 .user(userDto)

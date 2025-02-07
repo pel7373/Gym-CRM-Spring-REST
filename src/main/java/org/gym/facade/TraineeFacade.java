@@ -1,12 +1,13 @@
 package org.gym.facade;
 
+import org.gym.dto.TraineeCreateResponse;
 import org.gym.dto.TraineeDto;
 import org.gym.dto.TrainerDto;
 
 import java.util.List;
 
 public interface TraineeFacade {
-    TraineeDto create(TraineeDto traineeDto);
+    TraineeCreateResponse create(TraineeDto traineeDto);
     TraineeDto select(String userName, String password);
     TraineeDto update(String userName, String password, TraineeDto traineeDto);
     TraineeDto changeStatus(String userName, String password, Boolean isActive);

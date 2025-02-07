@@ -24,8 +24,8 @@ class UserDtoValidatorTest {
     private UserDtoValidator userDtoValidator;
 
     static List<UserDto> validDto = Arrays.asList(
-            new UserDto("Maria", "Petrenko", "Maria.Petrenko", true),
-            new UserDto("Petro", "Ivanenko", "Maria.Petrenko", false)
+            new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true),
+            new UserDto("Petro", "Ivanenko", "Maria.Petrenko", "",false)
     );
 
     @ParameterizedTest
@@ -38,13 +38,13 @@ class UserDtoValidatorTest {
     }
 
     static List<UserDto> notValidDto = Arrays.asList(
-            new UserDto(null, "Petrenko", "Maria.Petrenko", true),
-            new UserDto("Ma", "Petrenko", "Maria.Petrenko", true),
-            new UserDto("Maria", null, "Maria.Petrenko", false),
-            new UserDto("Maria", "Pe", "Maria.Petrenko", true),
-            new UserDto("Maria", "Petrenko", "Maria.Petrenko", null),
-            new UserDto("Maria22", "Petrenko", "Maria.Petrenko", true),
-            new UserDto("Maria", "Petrenko33", "Maria.Petrenko", true)
+            new UserDto(null, "Petrenko", "Maria.Petrenko", "",true),
+            new UserDto("Ma", "Petrenko", "Maria.Petrenko", "",true),
+            new UserDto("Maria", null, "Maria.Petrenko", "",false),
+            new UserDto("Maria", "Pe", "Maria.Petrenko", "",true),
+            new UserDto("Maria", "Petrenko", "Maria.Petrenko","", null),
+            new UserDto("Maria22", "Petrenko", "Maria.Petrenko", "",true),
+            new UserDto("Maria", "Petrenko33", "Maria.Petrenko", "",true)
     );
 
     @ParameterizedTest

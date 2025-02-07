@@ -1,12 +1,17 @@
 package org.gym.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.gym.dto.TraineeCreateRequest;
+import org.gym.dto.TraineeCreateResponse;
 import org.gym.dto.TraineeDto;
 import org.gym.dto.UserDto;
 import org.gym.facade.TraineeFacade;
 
+import org.gym.mapper.TraineeMapper;
 import org.gym.service.TraineeService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,46 +23,57 @@ import java.time.LocalDate;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/trainees",
-        consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v1/trainees")
 @Validated
 //@Tag(name = "Trainees", description = "Operations related to managing trainees")
 public class TraineeController {
 
     private final TraineeFacade traineeFacade;
     private final TraineeService traineeService;
+    private final TraineeMapper traineeMapper;
     private final TransactionIdGenerator transactionIdGenerator;
 
-    @GetMapping(value ="/data", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/data")
     public ResponseEntity<TraineeDto> getSimpleData(){
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
+        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "", true);
         TraineeDto traineeDto = TraineeDto.builder()
-                .user(userDto)
-                .dateOfBirth(LocalDate.of(1995, 1, 23))
+                .user(userDto).dateOfBirth(LocalDate.of(1995, 1, 23))
                 .address("Vinnitsya, Soborna str. 35, ap. 26")
                 .build();
 
+//        final HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(traineeDto, HttpStatus.OK);
     }
 
-    @PostMapping(value ="/data2", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TraineeDto> getSimpleData2(){
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
-        TraineeDto traineeDto = TraineeDto.builder()
-                .user(userDto)
-                .dateOfBirth(LocalDate.of(1995, 1, 23))
-                .address("Vinnitsya, Soborna str. 35, ap. 26")
-                .build();
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    public TraineeCreateResponse create(@RequestBody @Valid TraineeCreateRequest request){
+//        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
+//        TraineeDto traineeDto = TraineeDto.builder()
+//                .user(userDto)
+//                .dateOfBirth(LocalDate.of(1995, 1, 23))
+//                .address("Vinnitsya, Soborna str. 35, ap. 26")
+//                .build();
 
-        return new ResponseEntity<>(traineeDto, HttpStatus.OK);
+        LOGGER.info("create: request {}", request);
+        TraineeDto traineeDto = traineeMapper.convertCreateRequestToDto(request);
+        LOGGER.info("create: traineeDto {}", traineeDto);
+        TraineeCreateResponse response = traineeFacade.create(traineeDto);
+        LOGGER.info("create: response {}", response);
+        System.out.println(response);
+        return response;
     }
 
     @GetMapping("login/{username}/{password}")
     public ResponseEntity<Void> login(@PathVariable("username") String userName,
                                       @PathVariable("password") String password) {
-        //traineeFacade.authenticate(userName, password);
-        System.out.println(userName + " : " + password);
-        return ResponseEntity.ok().build();
+        boolean response = traineeFacade.authenticate(userName, password);
+        if(response) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 //
 //    @GetMapping("/{username}/{password}")

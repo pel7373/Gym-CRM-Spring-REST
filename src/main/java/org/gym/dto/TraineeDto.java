@@ -13,15 +13,15 @@ import java.time.LocalDate;
 @Builder
 public class TraineeDto {
 
-    @NotNull(message = "UserDto is required")
-    @NotBlank
+    //@NotNull(message = "UserDto is required")
+    //@NotBlank
     private UserDto user;
 
-    @ToString.Exclude
+    //@ToString.Exclude
     @EqualsAndHashCode.Exclude
     private LocalDate dateOfBirth;
 
-    @ToString.Exclude
+    //@ToString.Exclude
     @EqualsAndHashCode.Exclude
     private String address;
 }

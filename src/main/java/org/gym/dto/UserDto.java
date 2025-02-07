@@ -13,17 +13,19 @@ public class UserDto {
 
     @NotEmpty(message = "First name is required")
     @NotBlank
-    @ToString.Exclude
+    //@ToString.Exclude
     @EqualsAndHashCode.Exclude
     private String firstName;
 
     @NotNull(message = "Last name is required")
     @NotBlank
-    @ToString.Exclude
+    //@ToString.Exclude
     @EqualsAndHashCode.Exclude
     private String lastName;
 
     private String userName;
+
+    private String password;
 
     @NotNull(message = "isActive is required")
     @NotBlank

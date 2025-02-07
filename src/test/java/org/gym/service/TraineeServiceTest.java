@@ -72,7 +72,7 @@ class TraineeServiceTest {
 
     @BeforeEach
     void setUp() {
-        userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
+        userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
         user = new User(null, "Maria", "Petrenko", "Maria.Petrenko", passwordForUser, true);
 
         traineeDto = TraineeDto.builder()
@@ -136,7 +136,7 @@ class TraineeServiceTest {
 
     @Test
     void updateExistingTraineeSuccessfully() {
-        userDto = new UserDto("John", "Doe", "John.Doe", true);
+        userDto = new UserDto("John", "Doe", "John.Doe", "", true);
         traineeDto = TraineeDto.builder()
                 .user(userDto)
                 .dateOfBirth(LocalDate.of(1995, 1, 23))
@@ -159,7 +159,7 @@ class TraineeServiceTest {
                 .address("Vinnitsya, Soborna str. 35, ap. 26")
                 .build();
 
-        UserDto userDtoUpdated = new UserDto("John", "Doe", "John.Doe", true);
+        UserDto userDtoUpdated = new UserDto("John", "Doe", "John.Doe", "", true);
         traineeDtoUpdated = TraineeDto.builder()
                 .user(userDtoUpdated)
                 .dateOfBirth(LocalDate.of(1995, 1, 23))
@@ -358,7 +358,7 @@ class TraineeServiceTest {
 
     @Test
     void isFirstOrLastNamesChangedDoesntChangeNames() {
-        UserDto userDto2 = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
+        UserDto userDto2 = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
         TraineeDto traineeDto2 = TraineeDto.builder()
                 .user(userDto2)
                 .build();
@@ -373,7 +373,7 @@ class TraineeServiceTest {
 
     @Test
     void isFirstOrLastNamesChangedFirstNames() {
-        UserDto userDto2 = new UserDto("Iryna", "Petrenko", "Maria.Petrenko", true);
+        UserDto userDto2 = new UserDto("Iryna", "Petrenko", "Maria.Petrenko", "",true);
         TraineeDto traineeDto2 = TraineeDto.builder()
                 .user(userDto2)
                 .build();
@@ -388,7 +388,7 @@ class TraineeServiceTest {
 
     @Test
     void isFirstOrLastNamesChangedBothNames() {
-        UserDto userDto2 = new UserDto("Iryna", "Sergienko", "Maria.Petrenko", true);
+        UserDto userDto2 = new UserDto("Iryna", "Sergienko", "Maria.Petrenko", "",true);
         TraineeDto traineeDto2 = TraineeDto.builder()
                 .user(userDto2)
                 .build();

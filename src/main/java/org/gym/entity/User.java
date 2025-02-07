@@ -37,7 +37,7 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @NotNull
+    //@NotNull
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 }

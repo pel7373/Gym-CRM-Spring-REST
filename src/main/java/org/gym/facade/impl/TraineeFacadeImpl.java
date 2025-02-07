@@ -2,6 +2,7 @@ package org.gym.facade.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.gym.dto.TraineeCreateResponse;
 import org.gym.dto.TraineeDto;
 import org.gym.dto.TrainerDto;
 import org.gym.validator.UserDtoValidator;
@@ -26,10 +27,14 @@ public class TraineeFacadeImpl implements TraineeFacade {
     private final UserNameAndPasswordChecker userNameAndPasswordChecker;
 
     @Override
-    public TraineeDto create(TraineeDto traineeDto) {
+    public TraineeCreateResponse create(TraineeDto traineeDto) {
         if(traineeDto == null) {
             LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
             return null;
+        }
+
+        if(traineeDto.getUser().getIsActive() == null) {
+            traineeDto.getUser().setIsActive(true);
         }
 
         if(!userDtoValidator.validate(traineeDto.getUser())) {
@@ -37,14 +42,17 @@ public class TraineeFacadeImpl implements TraineeFacade {
             return null;
         }
 
-        TraineeDto traineeDtoResult = null;
         try {
-            traineeDtoResult = traineeService.create(traineeDto);
-            return traineeDtoResult;
+            TraineeDto createdTraineeDto = traineeService.create(traineeDto);
+            return TraineeCreateResponse
+                    .builder()
+                    .userName(createdTraineeDto.getUser().getUserName())
+                    .password(createdTraineeDto.getUser().getPassword())
+                    .build();
         } catch (EntityNotFoundException e) {
             LOGGER.warn(ENTITY_NOT_FOUND, traineeDto);
         }
-        return traineeDtoResult;
+        return null;
     }
 
     @Override

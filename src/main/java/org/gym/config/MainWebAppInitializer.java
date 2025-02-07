@@ -1,7 +1,5 @@
 package org.gym.config;
 
-import java.util.Set;
-
 import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;

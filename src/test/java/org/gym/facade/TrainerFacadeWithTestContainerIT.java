@@ -56,9 +56,9 @@ class TrainerFacadeWithTestContainerIT {
     }
 
     {
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
-        UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", true);
-        UserDto userDtoNotValid = new UserDto("Pa", "Pa", "Maria.Petrenko2", false);
+        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
+        UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", "",true);
+        UserDto userDtoNotValid = new UserDto("Pa", "Pa", "Maria.Petrenko2", "",false);
 
         trainerDto = TrainerDto.builder()
                 .user(userDto)

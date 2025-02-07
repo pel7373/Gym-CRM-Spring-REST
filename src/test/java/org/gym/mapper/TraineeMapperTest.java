@@ -58,7 +58,7 @@ class TraineeMapperTest {
 
     @Test
     void convertToEntity() {
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
+        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
 
         TraineeDto traineeDto = TraineeDto.builder()
                 .user(userDto)

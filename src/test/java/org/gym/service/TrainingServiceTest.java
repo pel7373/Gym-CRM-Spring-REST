@@ -61,13 +61,13 @@ class TrainingServiceTest {
                 .build();
 
         TraineeDto traineeDto = TraineeDto.builder()
-                .user(new UserDto("Maria", "Petrenko", "Maria.Petrenko", true))
+                .user(new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true))
                 .dateOfBirth(LocalDate.of(1995, 1, 23))
                 .address("Vinnitsya, Soborna str. 35, ap. 26")
                 .build();
 
         TrainerDto trainerDto = TrainerDto.builder()
-                .user(new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", true))
+                .user(new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", "",true))
                 .specialization(TrainingTypeDto.builder()
                         .trainingTypeName("Zumba")
                         .build())
