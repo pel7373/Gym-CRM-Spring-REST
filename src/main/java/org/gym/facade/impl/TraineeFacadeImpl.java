@@ -11,6 +11,7 @@ import org.gym.facade.TraineeFacade;
 import org.gym.service.TraineeService;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,63 +29,64 @@ public class TraineeFacadeImpl implements TraineeFacade {
 
     @Override
     public TraineeCreateResponse create(TraineeDto traineeDto) {
-        if(traineeDto == null) {
-            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
-            return null;
-        }
+//        if(traineeDto == null) {
+//            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
+//            //return null;
+//            throw new MethodArgumentNotValidException(traineeDto, ENTITY_CANT_BE_NULL_OR_BLANK);
+//        }
 
         if(traineeDto.getUser().getIsActive() == null) {
             traineeDto.getUser().setIsActive(true);
         }
 
-        if(!userDtoValidator.validate(traineeDto.getUser())) {
-            LOGGER.warn(userDtoValidator.getErrorMessage(traineeDto.getUser()));
-            return null;
-        }
+//        if(!userDtoValidator.validate(traineeDto.getUser())) {
+//            LOGGER.warn(userDtoValidator.getErrorMessage(traineeDto.getUser()));
+//            return null;
+//        }
 
-        try {
+        //try {
             TraineeDto createdTraineeDto = traineeService.create(traineeDto);
             return TraineeCreateResponse
                     .builder()
                     .userName(createdTraineeDto.getUser().getUserName())
                     .password(createdTraineeDto.getUser().getPassword())
                     .build();
-        } catch (EntityNotFoundException e) {
-            LOGGER.warn(ENTITY_NOT_FOUND, traineeDto);
-        }
-        return null;
+//        } catch (EntityNotFoundException e) {
+//            LOGGER.warn(ENTITY_NOT_FOUND, traineeDto);
+//        }
+//        return null;
     }
 
     @Override
-    public TraineeDto select(String userName, String password) {
-        if(authenticate(userName, password)) {
+    public TraineeDto select(String userName) {
+        //if(authenticate(userName, password)) {
             try {
                 return traineeService.select(userName);
             } catch (EntityNotFoundException e) {
                 LOGGER.warn(ENTITY_NOT_FOUND, userName);
             }
-        } else {
-            LOGGER.warn(ACCESS_DENIED, userName);
-        }
+//        } else {
+//            LOGGER.warn(ACCESS_DENIED, userName);
+//        }
         return null;
     }
 
     @Override
-    public TraineeDto update(String userName, String password, TraineeDto traineeDto) {
-        if(traineeDto == null) {
-            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
-            return null;
-        }
+    public TraineeDto update(String userName,TraineeDto traineeDto) {
+//        if(traineeDto == null) {
+//            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
+//            return null;
+//        }
 
-        if(!userDtoValidator.validate(traineeDto.getUser())) {
-            LOGGER.warn(userDtoValidator.getErrorMessage(traineeDto.getUser()));
-            return null;
-        }
+//        if(!userDtoValidator.validate(traineeDto.getUser())) {
+//            LOGGER.warn(userDtoValidator.getErrorMessage(traineeDto.getUser()));
+//            return null;
+//        }
 
-        if(!authenticate(userName, password)) {
-            LOGGER.warn(ACCESS_DENIED, userName);
-            return null;
-        }
+//        if(!authenticate(userName, password)) {
+//            LOGGER.warn(ACCESS_DENIED, userName);
+//            return null;
+//        }
 
         try {
             return traineeService.update(userName, traineeDto);
@@ -95,32 +97,32 @@ public class TraineeFacadeImpl implements TraineeFacade {
     }
 
     @Override
-    public void delete(String userName, String password) {
-        if(authenticate(userName, password)) {
+    public void delete(String userName) {
+        //if(authenticate(userName, password)) {
             traineeService.delete(userName);
-        } else {
-            LOGGER.warn(ACCESS_DENIED, userName);
-        }
+//        } else {
+//            LOGGER.warn(ACCESS_DENIED, userName);
+//        }
     }
 
     @Override
-    public TraineeDto changeStatus(String userName, String password, Boolean isActive) {
+    public TraineeDto changeStatus(String userName, Boolean isActive) {
         if(isActive == null) {
             LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
             return null;
         }
 
-        if(authenticate(userName, password)) {
+        //if(authenticate(userName, password)) {
             try {
                 return traineeService.changeStatus(userName, isActive);
             } catch (EntityNotFoundException e) {
             LOGGER.warn(ENTITY_NOT_FOUND, userName);
             return null;
             }
-        } else {
-            LOGGER.warn(ACCESS_DENIED, userName);
-            return null;
-        }
+//        } else {
+//            LOGGER.warn(ACCESS_DENIED, userName);
+//            return null;
+//        }
     }
 
     @Override
@@ -139,51 +141,51 @@ public class TraineeFacadeImpl implements TraineeFacade {
             return null;
         }
 
-        if(authenticate(userName, password)) {
+        //if(authenticate(userName, password)) {
             try {
                 return traineeService.changePassword(userName, newPassword);
             } catch (EntityNotFoundException e) {
                 LOGGER.warn(ENTITY_NOT_FOUND, userName);
                 return null;
             }
-        } else {
-                LOGGER.warn(ACCESS_DENIED, userName);
-                return null;
-            }
+//        } else {
+//                LOGGER.warn(ACCESS_DENIED, userName);
+//                return null;
+//            }
     }
 
     @Override
-    public List<TrainerDto> getUnassignedTrainers(String userName, String password) {
-        if(authenticate(userName, password)) {
+    public List<TrainerDto> getUnassignedTrainers(String userName) {
+        //if(authenticate(userName, password)) {
             try {
                 return traineeService.getUnassignedTrainersList(userName);
             } catch (EntityNotFoundException e) {
                 LOGGER.warn(ENTITY_NOT_FOUND, userName);
                 return new ArrayList<>();
             }
-        } else {
-        LOGGER.warn(ACCESS_DENIED, userName);
-        return new ArrayList<>();
-        }
+//        } else {
+//        LOGGER.warn(ACCESS_DENIED, userName);
+//        return new ArrayList<>();
+//        }
     }
 
     @Override
-    public List<TrainerDto> updateTrainersList(String userName, String password, List<String> trainersUserNames) {
+    public List<TrainerDto> updateTrainersList(String userName, List<String> trainersUserNames) {
         if(trainersUserNames == null || trainersUserNames.isEmpty()) {
             LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
             return new ArrayList<>();
         }
 
-        if(authenticate(userName, password)) {
+        //if(authenticate(userName, password)) {
             try {
                 return traineeService.updateTrainersList(userName, trainersUserNames);
             } catch (EntityNotFoundException e) {
                 LOGGER.warn(ENTITY_NOT_FOUND, userName);
                 return new ArrayList<>();
             }
-        } else {
-            LOGGER.warn(ACCESS_DENIED, userName);
-            return new ArrayList<>();
-        }
+//        } else {
+//            LOGGER.warn(ACCESS_DENIED, userName);
+//            return new ArrayList<>();
+//        }
     }
 }

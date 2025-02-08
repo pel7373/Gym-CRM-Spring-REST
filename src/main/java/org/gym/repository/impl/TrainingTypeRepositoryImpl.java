@@ -5,12 +5,16 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import org.gym.dto.TraineeTrainingsDto;
+import org.gym.entity.Training;
 import org.gym.entity.TrainingType;
 import org.gym.repository.TrainingTypeRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -34,5 +38,14 @@ public class TrainingTypeRepositoryImpl implements TrainingTypeRepository {
         } catch (NoSuchElementException | NoResultException e) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<TrainingType> findAll() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<TrainingType> criteriaQuery = criteriaBuilder.createQuery(TrainingType.class);
+        Root<TrainingType> root = criteriaQuery.from(TrainingType.class);
+        criteriaQuery.select(root);
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 }

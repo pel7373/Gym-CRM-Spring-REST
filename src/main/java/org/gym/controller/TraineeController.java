@@ -18,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -33,42 +31,36 @@ public class TraineeController {
     private final TraineeMapper traineeMapper;
     private final TransactionIdGenerator transactionIdGenerator;
 
-    @GetMapping(value = "/data")
-    public ResponseEntity<TraineeDto> getSimpleData(){
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "", true);
-        TraineeDto traineeDto = TraineeDto.builder()
-                .user(userDto).dateOfBirth(LocalDate.of(1995, 1, 23))
-                .address("Vinnitsya, Soborna str. 35, ap. 26")
-                .build();
-
-//        final HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(traineeDto, HttpStatus.OK);
-    }
-
+    //    @SwaggerCreationInfo(
+//            summary = "Create a trainee",
+//            description = "Adds a new trainee",
+//            schema = TraineeCreateResponse.class
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public TraineeCreateResponse create(@RequestBody @Valid TraineeCreateRequest request){
-//        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
-//        TraineeDto traineeDto = TraineeDto.builder()
-//                .user(userDto)
-//                .dateOfBirth(LocalDate.of(1995, 1, 23))
-//                .address("Vinnitsya, Soborna str. 35, ap. 26")
-//                .build();
-
-        LOGGER.info("create: request {}", request);
+        String id = transactionIdGenerator.generate();
         TraineeDto traineeDto = traineeMapper.convertCreateRequestToDto(request);
-        LOGGER.info("create: traineeDto {}", traineeDto);
         TraineeCreateResponse response = traineeFacade.create(traineeDto);
-        LOGGER.info("create: response {}", response);
-        System.out.println(response);
+        LOGGER.info("create: id {}, request {}, response {}", id,  request, response);
         return response;
     }
 
+    @DeleteMapping(value = "/{username}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Void> delete(@PathVariable("username") String userName){
+        String id = transactionIdGenerator.generate();
+        LOGGER.info("delete: id {}, userName {}", id, userName);
+        traineeFacade.delete(userName);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("login/{username}/{password}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Void> login(@PathVariable("username") String userName,
                                       @PathVariable("password") String password) {
+        String id = transactionIdGenerator.generate();
         boolean response = traineeFacade.authenticate(userName, password);
+        LOGGER.info("login: id {}, userName {}, response {}", id, userName, response);
         if(response) {
             return ResponseEntity.ok().build();
         } else {
@@ -83,10 +75,6 @@ public class TraineeController {
 //                .orElse(ResponseEntity.notFound().build());
 //    }
 
-//    @SwaggerCreationInfo(
-//            summary = "Create a trainee",
-//            description = "Adds a new trainee",
-//            schema = TraineeCreateResponse.class
 //    )
 //    @PostMapping
 //    public ResponseEntity<UserRegisteredResponse> registerTrainee(

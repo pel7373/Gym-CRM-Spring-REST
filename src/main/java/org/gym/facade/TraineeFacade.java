@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface TraineeFacade {
     TraineeCreateResponse create(TraineeDto traineeDto);
-    TraineeDto select(String userName, String password);
-    TraineeDto update(String userName, String password, TraineeDto traineeDto);
-    TraineeDto changeStatus(String userName, String password, Boolean isActive);
+    TraineeDto select(String userName);
+    TraineeDto update(String userName, TraineeDto traineeDto);
+    TraineeDto changeStatus(String userName, Boolean isActive);
     boolean authenticate(String userName, String password);
     TraineeDto changePassword(String userName, String password, String newPassword);
-    void delete(String userName, String password);
-    List<TrainerDto> getUnassignedTrainers(String userName, String password);
-    List<TrainerDto> updateTrainersList(String userName, String password, List<String> trainersUserNames);
+    void delete(String userName);
+    List<TrainerDto> getUnassignedTrainers(String userName);
+    List<TrainerDto> updateTrainersList(String userName, List<String> trainersUserNames);
 }

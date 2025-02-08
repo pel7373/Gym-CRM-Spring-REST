@@ -414,7 +414,7 @@ class TraineeFacadeIT {
 
     @Test
     void changeStatusNotSuccessfulNullUserName() {
-        TraineeDto result = traineeFacade.changeStatus(null, "AAAAAA", true);
+        TraineeDto result = traineeFacade.changeStatus(null, true);
         assertNull(result, "changeStatus with null username not successful");
     }
 
@@ -489,7 +489,7 @@ class TraineeFacadeIT {
         String password = traineeRepository.findByUserName(ds.traineeUserName).get().getUser().getPassword();
         createdTrainee1.setTrainers(List.of(createdTrainer1));
 
-        List<TrainerDto> unassignedTrainers = traineeFacade.getUnassignedTrainers(ds.traineeUserName, password);
+        List<TrainerDto> unassignedTrainers = traineeFacade.getUnassignedTrainers(ds.traineeUserName);
 
         assertAll(
                 "Grouped assertions of getUnassigned trainersDto's list",
@@ -510,7 +510,7 @@ class TraineeFacadeIT {
         createdTrainee1.setTrainers(List.of(createdTrainer1));
         String password = traineeRepository.findByUserName(ds.traineeUserName).get().getUser().getPassword();
 
-        List<TrainerDto> unassignedTrainers = traineeFacade.getUnassignedTrainers(ds.traineeUserName, password);
+        List<TrainerDto> unassignedTrainers = traineeFacade.getUnassignedTrainers(ds.traineeUserName);
 
         assertAll(
                 "Grouped assertions of getUnassigned trainersDto's list",
@@ -536,7 +536,7 @@ class TraineeFacadeIT {
                 ds.trainer2.getUser().getUserName());
 
         List<TrainerDto> updatedTrainersLists
-                = traineeFacade.updateTrainersList(ds.traineeUserName, password, trainersList);
+                = traineeFacade.updateTrainersList(ds.traineeUserName, trainersList);
 
         Trainee checkTrainee = traineeRepository.findByUserName(ds.traineeUserName).get();
 

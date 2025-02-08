@@ -1,5 +1,6 @@
 package org.gym.controller.exception;
 
+import org.gym.exception.NullEntityException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.gym.exception.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -12,8 +13,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-//@RestControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(NullEntityException.class)
+    public ResponseEntity<String> handleNullEntityException(NullEntityException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {

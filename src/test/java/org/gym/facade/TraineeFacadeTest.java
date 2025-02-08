@@ -99,7 +99,7 @@ class TraineeFacadeTest {
         when(traineeService.authenticate(gotUserNameForTraineeDto, passwordForUser)).thenReturn(true);
         when(traineeService.select(gotUserNameForTraineeDto)).thenReturn(traineeDto);
 
-        traineeFacade.select(gotUserNameForTraineeDto, passwordForUser);
+        traineeFacade.select(gotUserNameForTraineeDto);
 
         verify(traineeService, times(1)).authenticate(any(String.class), any(String.class));
         verify(traineeService, times(1)).authenticate(any(String.class), any(String.class));
@@ -112,7 +112,7 @@ class TraineeFacadeTest {
         when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
         when(traineeService.select(userNameNotFound)).thenReturn(traineeDto);
 
-        traineeFacade.select(userNameNotFound, passwordForUser);
+        traineeFacade.select(userNameNotFound);
 
         assertDoesNotThrow(() -> traineeService.select(userNameNotFound));
         verify(traineeService, times(1)).authenticate(any(String.class), any(String.class));
@@ -126,7 +126,7 @@ class TraineeFacadeTest {
         when(traineeService.authenticate(userNameForTraineeDto, passwordForUser)).thenReturn(true);
         when(traineeService.update(userNameForTraineeDto, traineeDto)).thenReturn(traineeDto);
 
-        traineeFacade.update(userNameForTraineeDto, passwordForUser, traineeDto);
+        traineeFacade.update(userNameForTraineeDto, traineeDto);
 
         verify(userNameAndPasswordChecker, times(1)).isNullOrBlank(any(String.class), any(String.class));
         verify(userDtoValidator, times(1)).validate(traineeDto.getUser());
@@ -136,7 +136,7 @@ class TraineeFacadeTest {
 
     @Test
     void updateTraineeNullFail() {
-        TraineeDto createdTraineeDto = traineeFacade.update("aaa", "aaa", null);
+        TraineeDto createdTraineeDto = traineeFacade.update("aaa", null);
 
         assertNull(createdTraineeDto);
         verify(userDtoValidator, never()).validate(traineeDto.getUser());
@@ -148,7 +148,7 @@ class TraineeFacadeTest {
     void updateTraineeNotValidFail() {
         when(userDtoValidator.validate(traineeDtoNotValid.getUser())).thenReturn(false);
         when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser)).thenReturn(false);
-        TraineeDto createdTraineeDto = traineeFacade.update("aaa", "aaa", traineeDtoNotValid);
+        TraineeDto createdTraineeDto = traineeFacade.update("aaa", traineeDtoNotValid);
 
         assertNull(createdTraineeDto);
         verify(userDtoValidator, times(1)).validate(traineeDtoNotValid.getUser());
@@ -163,7 +163,7 @@ class TraineeFacadeTest {
         when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
         when(traineeService.update(userNameNotFound, traineeDtoNotValid)).thenReturn(traineeDto);
 
-        traineeFacade.update(userNameNotFound, passwordForUser, traineeDtoNotValid);
+        traineeFacade.update(userNameNotFound, traineeDtoNotValid);
 
         verify(userDtoValidator, times(1)).validate(traineeDtoNotValid.getUser());
         verify(traineeService, times(1)).authenticate(any(String.class), any(String.class));
@@ -176,7 +176,7 @@ class TraineeFacadeTest {
         when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser)).thenReturn(false);
         when(traineeService.authenticate(userNameForTraineeDto, passwordForUser)).thenReturn(true);
 
-        traineeFacade.delete(userNameForTraineeDto, passwordForUser);
+        traineeFacade.delete(userNameForTraineeDto);
 
         verify(userNameAndPasswordChecker, times(1))
                 .isNullOrBlank(any(String.class), any(String.class));
@@ -189,7 +189,7 @@ class TraineeFacadeTest {
         when(userNameAndPasswordChecker.isNullOrBlank(userNameNotFound, passwordForUser)).thenReturn(false);
         when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
 
-        traineeFacade.delete(userNameNotFound, passwordForUser);
+        traineeFacade.delete(userNameNotFound);
 
         verify(userNameAndPasswordChecker, times(1))
                 .isNullOrBlank(userNameNotFound, passwordForUser);
@@ -198,7 +198,7 @@ class TraineeFacadeTest {
 
     @Test
     void deleteTraineeNullFail() {
-        traineeFacade.delete(null, passwordForUser);
+        traineeFacade.delete(null);
 
         verify(traineeService, never()).delete(null);
         verify(traineeService, times(1)).authenticate(null, passwordForUser);
@@ -207,7 +207,7 @@ class TraineeFacadeTest {
     @Test
     void changeStatusStatusNullFail() {
         when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser)).thenReturn(false);
-        TraineeDto createdTraineeDto = traineeFacade.changeStatus("aaa", "aaa", null);
+        TraineeDto createdTraineeDto = traineeFacade.changeStatus("aaa", null);
 
         assertNull(createdTraineeDto);
         verify(userNameAndPasswordChecker, never()).isNullOrBlank(userNameForTraineeDto, passwordForUser);
@@ -220,7 +220,7 @@ class TraineeFacadeTest {
         when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
 
         TraineeDto createdTraineeDto = traineeFacade.changeStatus(
-                userNameNotFound, passwordForUser, true);
+                userNameNotFound, true);
 
         assertNull(createdTraineeDto);
         verify(userNameAndPasswordChecker, times(1))
@@ -236,7 +236,7 @@ class TraineeFacadeTest {
                 .thenReturn(false);
         when(traineeService.authenticate(userNameForTraineeDto, passwordForUser)).thenReturn(true);
 
-        traineeFacade.changeStatus(userNameForTraineeDto, passwordForUser, true);
+        traineeFacade.changeStatus(userNameForTraineeDto, true);
 
         verify(userNameAndPasswordChecker, times(1))
                 .isNullOrBlank(userNameForTraineeDto, passwordForUser);
@@ -331,7 +331,7 @@ class TraineeFacadeTest {
     @Test
     void getUnassignedTrainersUserNameNullFail() {
         when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser)).thenReturn(false);
-        List<TrainerDto> listTrainersDto = traineeFacade.getUnassignedTrainers("aaa", "aaa");
+        List<TrainerDto> listTrainersDto = traineeFacade.getUnassignedTrainers("aaa");
 
         assertNotNull(listTrainersDto);
         assertEquals(0, listTrainersDto.size());
@@ -348,7 +348,7 @@ class TraineeFacadeTest {
                 .thenReturn(listTrainersDto);
 
         List<TrainerDto> createdListTrainersDto = traineeFacade.getUnassignedTrainers(
-                userNameNotFound, passwordForUser);
+                userNameNotFound);
 
         assertNotNull(createdListTrainersDto);
         assertEquals(1, createdListTrainersDto.size());
@@ -365,7 +365,7 @@ class TraineeFacadeTest {
         when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
 
         List<TrainerDto> listTrainersDto = traineeFacade.getUnassignedTrainers(
-                userNameNotFound, passwordForUser);
+                userNameNotFound);
 
         assertNotNull(listTrainersDto);
         assertEquals(0, listTrainersDto.size());
@@ -381,7 +381,7 @@ class TraineeFacadeTest {
         when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser))
                 .thenReturn(false);
         List<TrainerDto> listTrainersDto =
-                traineeFacade.updateTrainersList("aaa", "aaa", List.of("aa"));
+                traineeFacade.updateTrainersList("aaa", List.of("aa"));
 
         assertNotNull(listTrainersDto);
         assertEquals(0, listTrainersDto.size());
@@ -401,7 +401,7 @@ class TraineeFacadeTest {
             .thenReturn(listTrainersDto);
 
         List<TrainerDto> createdListTrainersDto = traineeFacade.updateTrainersList(
-                userNameForTraineeDto, passwordForUser, List.of("aaa"));
+                userNameForTraineeDto, List.of("aaa"));
 
         assertNotNull(createdListTrainersDto);
         assertEquals(1, createdListTrainersDto.size());
@@ -419,7 +419,7 @@ class TraineeFacadeTest {
         when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
 
         List<TrainerDto> listTrainersDto = traineeFacade.updateTrainersList(
-                userNameNotFound, passwordForUser, List.of("aaa"));
+                userNameNotFound, List.of("aaa"));
 
         assertNotNull(listTrainersDto);
         assertEquals(0, listTrainersDto.size());
@@ -433,7 +433,7 @@ class TraineeFacadeTest {
     @Test
     void updateTrainersListListOfTrainersNullFail() {
         List<TrainerDto> listTrainersDto = traineeFacade.updateTrainersList(
-                userNameNotFound, passwordForUser, null);
+                userNameNotFound, null);
 
         assertNotNull(listTrainersDto);
         assertEquals(0, listTrainersDto.size());

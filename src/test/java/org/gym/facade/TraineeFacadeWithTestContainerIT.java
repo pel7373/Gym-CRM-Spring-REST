@@ -355,7 +355,7 @@ class TraineeFacadeWithTestContainerIT {
 
     @Test
     void selectNotSuccessfulNullUserName() {
-        TraineeDto result = traineeFacade.select(null, "AAAAAA");
+        TraineeDto result = traineeFacade.select(null);
         assertNull(result, "select with null username not successful");
     }
 
