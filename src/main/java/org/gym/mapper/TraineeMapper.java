@@ -3,6 +3,7 @@ package org.gym.mapper;
 import org.gym.dto.TraineeCreateRequest;
 import org.gym.dto.TraineeCreateResponse;
 import org.gym.dto.TraineeDto;
+import org.gym.dto.TraineeProfileResponse;
 import org.gym.entity.Trainee;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
@@ -14,4 +15,5 @@ public interface TraineeMapper {
     Trainee convertToEntity(TraineeDto traineeDto);
     TraineeCreateResponse convertToTraineeCreateResponse(Trainee trainee);
     TraineeDto convertCreateRequestToDto(TraineeCreateRequest trainee);
+    TraineeProfileResponse convertToTraineeProfileResponse(TraineeDto traineeDto);
 }

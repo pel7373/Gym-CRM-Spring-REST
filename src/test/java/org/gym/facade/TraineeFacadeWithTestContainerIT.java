@@ -84,7 +84,7 @@ class TraineeFacadeWithTestContainerIT {
 
         traineeDtoNotValid
                 = new TraineeDto(userDtoNotValid, LocalDate.of(1995, 1, 23),
-                "Kyiv, Soborna str. 35, ap. 26");
+                "Kyiv, Soborna str. 35, ap. 26", null);
     }
 
 //    @Test

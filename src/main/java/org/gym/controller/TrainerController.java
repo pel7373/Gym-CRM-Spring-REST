@@ -44,22 +44,27 @@ public class TrainerController {
 
     @PostMapping(value = "1", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public TrainerDto create2(@RequestBody @Valid TrainerDto trainerDto){
+    public TrainerResponse create2(@RequestBody @Valid TrainerDto trainerDto){
         String id = transactionIdGenerator.generate();
         //TrainerDto trainerDto = trainerMapper.convertCreateRequestToDto(request);
-        LOGGER.info("id {}, request {}", id,  trainerDto);
-        TrainerCreateResponse response = trainerFacade.create(trainerDto);
+        Trainer trainer = trainerMapper.convertToEntity(trainerDto);
+        TrainerResponse trainerResponse = trainerMapper.convertToTrainerResponse(trainer);
+        LOGGER.info("request {}, id {}", trainerDto, id);
+        LOGGER.info("trainer {}, id {}", trainer, id);
+        LOGGER.info("trainerResponse {}, id {}", trainerResponse, id);
+        //TrainerCreateResponse response = trainerFacade.create(trainerDto);
 
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
-
-        TrainerDto trainerDto2 = TrainerDto.builder()
-                .user(userDto)
-                .specialization(TrainingTypeDto.builder()
-                        .trainingTypeName("Zumba")
-                        .build())
-                .build();
-        LOGGER.info("id {}, request {}, response {}", id,  trainerDto, response);
-        return trainerDto2;
+//        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
+//
+//        TrainerDto trainerDto2 = TrainerDto.builder()
+//                .user(userDto)
+//                .specialization(TrainingTypeDto.builder()
+//                        .trainingTypeName("Zumba")
+//                        .build())
+//                .build();
+//        LOGGER.info("id {}, request {}, response {}", id,  trainerDto, response);
+//
+        return trainerResponse;
     }
 
     @GetMapping("login/{username}/{password}")

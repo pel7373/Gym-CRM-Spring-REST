@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.gym.dto.TraineeCreateRequest;
 import org.gym.dto.TraineeCreateResponse;
 import org.gym.dto.TraineeDto;
+import org.gym.dto.TraineeProfileResponse;
 import org.gym.facade.TraineeFacade;
 
 import org.gym.mapper.TraineeMapper;
@@ -39,7 +40,7 @@ public class TraineeController {
         String id = transactionIdGenerator.generate();
         //TraineeDto traineeDto = traineeMapper.convertCreateRequestToDto(request);
         TraineeCreateResponse response = traineeFacade.create(traineeDto);
-        LOGGER.info("create: id {}, request {}, response {}", id,  traineeDto, response);
+        LOGGER.info("request {}, response {}, id {}", traineeDto, response, id);
         return response;
     }
 
@@ -57,12 +58,29 @@ public class TraineeController {
                                       @PathVariable("password") String password) {
         String id = transactionIdGenerator.generate();
         boolean response = traineeFacade.authenticate(userName, password);
-        LOGGER.info("login: id {}, userName {}, response {}", id, userName, response);
+        LOGGER.info("userName {}, response {}, id {}", userName, response, id);
         if(response) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/{username}")
+    @ResponseStatus(HttpStatus.OK)
+    public TraineeProfileResponse getTraineeProfile(@PathVariable("username") String userName) {
+        String id = transactionIdGenerator.generate();
+        LOGGER.info("userName {}", userName);
+        TraineeDto selectedTrainee = traineeFacade.select(userName);
+        TraineeProfileResponse response = traineeMapper.convertToTraineeProfileResponse(selectedTrainee);
+        LOGGER.info("selectedTrainee {}, id {}", selectedTrainee, id);
+        LOGGER.info("userName {}, response {}, id {}", userName, response, id);
+//        if(response) {
+//            return ResponseEntity.ok().build();
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+    return response;
     }
 
     @DeleteMapping(value = "/{username}")
