@@ -6,12 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.gym.dto.TraineeCreateRequest;
 import org.gym.dto.TraineeCreateResponse;
 import org.gym.dto.TraineeDto;
-import org.gym.dto.UserDto;
 import org.gym.facade.TraineeFacade;
 
 import org.gym.mapper.TraineeMapper;
 import org.gym.service.TraineeService;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,22 +35,21 @@ public class TraineeController {
 //            schema = TraineeCreateResponse.class
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public TraineeCreateResponse create(@RequestBody @Valid TraineeCreateRequest request){
+    public TraineeCreateResponse create(@RequestBody @Valid TraineeDto traineeDto){
         String id = transactionIdGenerator.generate();
-        TraineeDto traineeDto = traineeMapper.convertCreateRequestToDto(request);
+        //TraineeDto traineeDto = traineeMapper.convertCreateRequestToDto(request);
         TraineeCreateResponse response = traineeFacade.create(traineeDto);
-        LOGGER.info("create: id {}, request {}, response {}", id,  request, response);
+        LOGGER.info("create: id {}, request {}, response {}", id,  traineeDto, response);
         return response;
     }
 
-    @DeleteMapping(value = "/{username}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Void> delete(@PathVariable("username") String userName){
-        String id = transactionIdGenerator.generate();
-        LOGGER.info("delete: id {}, userName {}", id, userName);
-        traineeFacade.delete(userName);
-        return ResponseEntity.ok().build();
-    }
+//    public TraineeCreateResponse create(@RequestBody @Valid TraineeCreateRequest request){
+//        String id = transactionIdGenerator.generate();
+//        TraineeDto traineeDto = traineeMapper.convertCreateRequestToDto(request);
+//        TraineeCreateResponse response = traineeFacade.create(traineeDto);
+//        LOGGER.info("create: id {}, request {}, response {}", id,  request, response);
+//        return response;
+//    }
 
     @GetMapping("login/{username}/{password}")
     @ResponseStatus(HttpStatus.OK)
@@ -66,6 +63,15 @@ public class TraineeController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @DeleteMapping(value = "/{username}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Void> delete(@PathVariable("username") String userName){
+        String id = transactionIdGenerator.generate();
+        LOGGER.info("delete: id {}, userName {}", id, userName);
+        traineeFacade.delete(userName);
+        return ResponseEntity.ok().build();
     }
 //
 //    @GetMapping("/{username}/{password}")

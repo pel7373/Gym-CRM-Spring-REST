@@ -1,10 +1,12 @@
 package org.gym.facade;
 
+import org.gym.dto.TraineeCreateResponse;
+import org.gym.dto.TrainerCreateResponse;
 import org.gym.dto.TrainerDto;
 import org.gym.entity.TrainingType;
 
 public interface TrainerFacade {
-    TrainerDto create(TrainerDto trainerDto);
+    TrainerCreateResponse create(TrainerDto trainerDto);
     TrainerDto select(String userName, String password);
     TrainerDto update(String userName, String password, TrainerDto trainerDto);
     TrainerDto changeStatus(String userName, String password, Boolean isActive);

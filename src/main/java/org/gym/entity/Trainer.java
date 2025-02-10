@@ -24,7 +24,7 @@ public class Trainer {
     private User user;
 
     @OneToOne
-    @JoinColumn(name = "specialization", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "specialization", referencedColumnName = "id")
     private TrainingType specialization;
 
     @ToString.Exclude

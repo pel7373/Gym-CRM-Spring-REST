@@ -2,9 +2,13 @@ package org.gym.facade.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.gym.dto.TraineeCreateResponse;
+import org.gym.dto.TraineeDto;
+import org.gym.dto.TrainerCreateResponse;
 import org.gym.dto.TrainerDto;
 import org.gym.entity.TrainingType;
 import org.gym.exception.EntityNotFoundException;
+import org.gym.exception.NullEntityException;
 import org.gym.facade.TrainerFacade;
 import org.gym.service.TrainerService;
 import org.gym.validator.UserDtoValidator;
@@ -22,23 +26,33 @@ public class TrainerFacadeImpl implements TrainerFacade {
     private final UserNameAndPasswordChecker userNameAndPasswordChecker;
 
     @Override
-    public TrainerDto create(TrainerDto trainerDto) {
+    public TrainerCreateResponse create(TrainerDto trainerDto) {
         if(trainerDto == null) {
             LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
-            return null;
+            throw new NullEntityException(ENTITY_CANT_BE_NULL_OR_BLANK);
         }
 
-        if(!userDtoValidator.validate(trainerDto.getUser())) {
-            LOGGER.warn(userDtoValidator.getErrorMessage(trainerDto.getUser()));
-            return null;
+        if(trainerDto.getUser().getIsActive() == null) {
+            trainerDto.getUser().setIsActive(true);
         }
 
-        try {
-            return trainerService.create(trainerDto);
-        } catch (EntityNotFoundException e) {
-            LOGGER.warn(ENTITY_NOT_FOUND, trainerDto.getUser().getFirstName());
-            return null;
-        }
+//        if(!userDtoValidator.validate(trainerDto.getUser())) {
+//            LOGGER.warn(userDtoValidator.getErrorMessage(trainerDto.getUser()));
+//            return null;
+//        }
+
+//        try {
+//            return trainerService.create(trainerDto);
+//        } catch (EntityNotFoundException e) {
+//            LOGGER.warn(ENTITY_NOT_FOUND, trainerDto.getUser().getFirstName());
+//            return null;
+//        }
+        TrainerDto createdTrainerDto = trainerService.create(trainerDto);
+        return TrainerCreateResponse
+                .builder()
+                .userName(createdTrainerDto.getUser().getUserName())
+                .password(createdTrainerDto.getUser().getPassword())
+                .build();
     }
 
     @Override

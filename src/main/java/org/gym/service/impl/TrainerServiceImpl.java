@@ -39,6 +39,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public TrainerDto create(TrainerDto trainerDto) {
+        LOGGER.info("begin: {}", trainerDto);
         trainerDto.getUser().setUserName(
                 userNameGeneratorService.generate(
                         trainerDto.getUser().getFirstName(),
@@ -47,11 +48,17 @@ public class TrainerServiceImpl implements TrainerService {
 
         String trainingTypeName = trainerDto.getSpecialization().getTrainingTypeName();
         TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeName)
-                .orElse(null);
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format(ENTITY_NOT_FOUND_EXCEPTION, trainingTypeName)));
+        LOGGER.info("2: {}", trainingType);
         Trainer trainer = trainerMapper.convertToEntity(trainerDto);
+        LOGGER.info("3: {}", trainer);
         trainer.setSpecialization(trainingType);
         trainer.getUser().setPassword(passwordGeneratorService.generate());
-        return trainerMapper.convertToDto(trainerRepository.save(trainer));
+        LOGGER.info("4: {}", trainer);
+        Trainer savedTrainer = trainerRepository.save(trainer);
+        LOGGER.info("5: {}", trainer);
+        return trainerMapper.convertToDto(savedTrainer);
     }
 
     @Override

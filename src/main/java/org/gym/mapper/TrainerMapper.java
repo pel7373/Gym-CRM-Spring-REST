@@ -1,5 +1,6 @@
 package org.gym.mapper;
 
+import org.gym.dto.TrainerCreateResponse;
 import org.gym.dto.TrainerDto;
 import org.gym.entity.Trainer;
 import org.mapstruct.Mapper;
@@ -7,5 +8,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring", uses = {UserMapper.class, TrainingTypeMapper.class})
 public interface TrainerMapper {
     TrainerDto convertToDto(Trainer trainer);
-    Trainer convertToEntity(TrainerDto trainerDto) ;
+    Trainer convertToEntity(TrainerDto trainerDto);
+    //TrainerCreateResponse convertToTrainerCreateResponse(Trainer trainer);
 }

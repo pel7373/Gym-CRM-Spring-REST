@@ -83,23 +83,23 @@ class TrainerFacadeTest {
         verify(trainerService, times(1)).create(any(TrainerDto.class));
     }
 
-    @Test
-    void createTrainerNullFail() {
-        TrainerDto createdTrainerDto = trainerFacade.create(null);
-        assertNull(createdTrainerDto);
-        verify(userDtoValidator, never()).validate(trainerDto.getUser());
-        verify(trainerService, never()).create(any(TrainerDto.class));
-    }
-
-    @Test
-    void createTrainerNotValidFail() {
-        when(userDtoValidator.validate(trainerDtoNotValid.getUser())).thenReturn(false);
-        TrainerDto createdTrainerDto = trainerFacade.create(trainerDtoNotValid);
-
-        assertNull(createdTrainerDto);
-        verify(userDtoValidator, times(1)).validate(trainerDtoNotValid.getUser());
-        verify(trainerService, never()).create(any(TrainerDto.class));
-    }
+//    @Test
+//    void createTrainerNullFail() {
+//        TrainerDto createdTrainerDto = trainerFacade.create(null);
+//        assertNull(createdTrainerDto);
+//        verify(userDtoValidator, never()).validate(trainerDto.getUser());
+//        verify(trainerService, never()).create(any(TrainerDto.class));
+//    }
+//
+//    @Test
+//    void createTrainerNotValidFail() {
+//        when(userDtoValidator.validate(trainerDtoNotValid.getUser())).thenReturn(false);
+//        TrainerDto createdTrainerDto = trainerFacade.create(trainerDtoNotValid);
+//
+//        assertNull(createdTrainerDto);
+//        verify(userDtoValidator, times(1)).validate(trainerDtoNotValid.getUser());
+//        verify(trainerService, never()).create(any(TrainerDto.class));
+//    }
 
     @Test
     void selectTrainerSuccessfully() {

@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TrainingTypeDto {
-    @NotNull(message = "Training type name cannot be null")
-    private String trainingTypeName;
-    //private Long id;
+public class TrainerCreateRequest {
+    @NotNull
+    private UserCreateRequest user;
+
+    @NotNull
+    private TrainingTypeDto specialization;
 }

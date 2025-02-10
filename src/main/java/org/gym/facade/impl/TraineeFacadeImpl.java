@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.gym.dto.TraineeCreateResponse;
 import org.gym.dto.TraineeDto;
 import org.gym.dto.TrainerDto;
+import org.gym.exception.NullEntityException;
 import org.gym.validator.UserDtoValidator;
 import org.gym.exception.EntityNotFoundException;
 import org.gym.facade.TraineeFacade;
@@ -29,11 +30,10 @@ public class TraineeFacadeImpl implements TraineeFacade {
 
     @Override
     public TraineeCreateResponse create(TraineeDto traineeDto) {
-//        if(traineeDto == null) {
-//            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
-//            //return null;
-//            throw new MethodArgumentNotValidException(traineeDto, ENTITY_CANT_BE_NULL_OR_BLANK);
-//        }
+        if(traineeDto == null) {
+            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
+            throw new NullEntityException(ENTITY_CANT_BE_NULL_OR_BLANK);
+        }
 
         if(traineeDto.getUser().getIsActive() == null) {
             traineeDto.getUser().setIsActive(true);
