@@ -10,5 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class TraineeForListResponse {
-    private UserForListResponse user;
+    private String userName;
+    private String firstName;
+    private String lastName;
+    //private UserForListResponse user;
 }

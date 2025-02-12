@@ -15,9 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class TraineeDto {
-
-    //@NotNull(message = "UserDto is required")
-    //@NotBlank
+    @NotNull(message = "UserDto is required")
     private UserDto user;
 
     //@ToString.Exclude
@@ -27,8 +25,4 @@ public class TraineeDto {
     //@ToString.Exclude
     @EqualsAndHashCode.Exclude
     private String address;
-
-    @Valid
-    @JsonIgnore
-    private List<TrainerDto> trainers;
 }

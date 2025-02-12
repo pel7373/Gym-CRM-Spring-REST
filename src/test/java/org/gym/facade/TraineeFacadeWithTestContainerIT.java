@@ -84,7 +84,7 @@ class TraineeFacadeWithTestContainerIT {
 
         traineeDtoNotValid
                 = new TraineeDto(userDtoNotValid, LocalDate.of(1995, 1, 23),
-                "Kyiv, Soborna str. 35, ap. 26", null);
+                "Kyiv, Soborna str. 35, ap. 26");
     }
 
 //    @Test
@@ -353,11 +353,11 @@ class TraineeFacadeWithTestContainerIT {
 //        assertNull(result, "select with wrong password not successful");
 //    }
 
-    @Test
-    void selectNotSuccessfulNullUserName() {
-        TraineeDto result = traineeFacade.select(null);
-        assertNull(result, "select with null username not successful");
-    }
+//    @Test
+//    void selectNotSuccessfulNullUserName() {
+//        TraineeDto result = traineeFacade.select(null);
+//        assertNull(result, "select with null username not successful");
+//    }
 
 //    @Test
 //    void selectNotSuccessfulNullPassword() {

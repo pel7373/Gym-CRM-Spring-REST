@@ -3,10 +3,7 @@ package org.gym.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.gym.dto.TraineeCreateRequest;
-import org.gym.dto.TraineeCreateResponse;
-import org.gym.dto.TraineeDto;
-import org.gym.dto.TraineeProfileResponse;
+import org.gym.dto.*;
 import org.gym.facade.TraineeFacade;
 
 import org.gym.mapper.TraineeMapper;
@@ -38,19 +35,10 @@ public class TraineeController {
     @ResponseStatus(HttpStatus.CREATED)
     public TraineeCreateResponse create(@RequestBody @Valid TraineeDto traineeDto){
         String id = transactionIdGenerator.generate();
-        //TraineeDto traineeDto = traineeMapper.convertCreateRequestToDto(request);
         TraineeCreateResponse response = traineeFacade.create(traineeDto);
         LOGGER.info("request {}, response {}, id {}", traineeDto, response, id);
         return response;
     }
-
-//    public TraineeCreateResponse create(@RequestBody @Valid TraineeCreateRequest request){
-//        String id = transactionIdGenerator.generate();
-//        TraineeDto traineeDto = traineeMapper.convertCreateRequestToDto(request);
-//        TraineeCreateResponse response = traineeFacade.create(traineeDto);
-//        LOGGER.info("create: id {}, request {}, response {}", id,  request, response);
-//        return response;
-//    }
 
     @GetMapping("login/{username}/{password}")
     @ResponseStatus(HttpStatus.OK)
@@ -70,18 +58,24 @@ public class TraineeController {
     @ResponseStatus(HttpStatus.OK)
     public TraineeProfileResponse getTraineeProfile(@PathVariable("username") String userName) {
         String id = transactionIdGenerator.generate();
-        LOGGER.info("userName {}", userName);
-        TraineeDto selectedTrainee = traineeFacade.select(userName);
-        TraineeProfileResponse response = traineeMapper.convertToTraineeProfileResponse(selectedTrainee);
-        LOGGER.info("selectedTrainee {}, id {}", selectedTrainee, id);
-        LOGGER.info("userName {}, response {}, id {}", userName, response, id);
-//        if(response) {
-//            return ResponseEntity.ok().build();
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-    return response;
+        TraineeProfileResponse response = traineeFacade.select(userName);
+        LOGGER.debug("userName {}, response {}, id {}", userName, response, id);
+        return response;
     }
+
+//    @GetMapping(value = "/1/{username}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public TraineeForListResponse getTraineeProfile2(@PathVariable("username") String userName) {
+//        String id = transactionIdGenerator.generate();
+//        LOGGER.info("userName {}", userName);
+//        TraineeDto selectedTrainee = traineeFacade.select(userName);
+//        LOGGER.info("selectedTrainee {}, id {}", selectedTrainee, id);
+//        TraineeForListResponse traineeForListResponse = traineeMapper.convertToTraineeForListResponse(selectedTrainee);
+//        LOGGER.info("selectedTrainee {}, id {}", selectedTrainee, id);
+//        LOGGER.info("userName {}, response {}, id {}", userName, traineeForListResponse, id);
+//        //TraineeProfileResponse response = traineeMapper.convertToTraineeProfileResponse(selectedTrainee);
+//        return traineeForListResponse;
+//    }
 
     @DeleteMapping(value = "/{username}")
     @ResponseStatus(HttpStatus.OK)

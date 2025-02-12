@@ -11,9 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TrainerProfileResponse {
-    private UserProfileResponse user;
+public class TrainerGetProfileResponse {
+    private UserGetProfileResponse user;
     private TrainingTypeDto specialization;
     private List<TraineeForListResponse> trainees;
-
 }

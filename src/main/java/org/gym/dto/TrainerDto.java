@@ -15,7 +15,6 @@ import java.util.List;
 public class TrainerDto {
 
     @NotNull(message = "User cannot be null")
-    @NotBlank
     private UserDto user;
 
     private TrainingTypeDto specialization;

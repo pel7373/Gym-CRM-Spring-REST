@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserProfileResponse {
+public class UserGetProfileResponse {
     private String firstName;
     private String lastName;
     private Boolean isActive;

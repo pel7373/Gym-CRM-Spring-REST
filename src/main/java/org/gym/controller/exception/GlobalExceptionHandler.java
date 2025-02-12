@@ -1,8 +1,9 @@
 package org.gym.controller.exception;
 
+import org.gym.exception.EntityNotValidException;
 import org.gym.exception.NullEntityException;
-import org.hibernate.exception.ConstraintViolationException;
 import org.gym.exception.EntityNotFoundException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NullEntityException.class)
     public ResponseEntity<String> handleNullEntityException(NullEntityException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityNotValidException.class)
+    public ResponseEntity<String> handleEntityNotValidException(EntityNotValidException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

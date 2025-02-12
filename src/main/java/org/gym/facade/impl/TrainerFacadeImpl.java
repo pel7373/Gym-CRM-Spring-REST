@@ -32,9 +32,9 @@ public class TrainerFacadeImpl implements TrainerFacade {
             throw new NullEntityException(ENTITY_CANT_BE_NULL_OR_BLANK);
         }
 
-        if(trainerDto.getUser().getIsActive() == null) {
-            trainerDto.getUser().setIsActive(true);
-        }
+//        if(trainerDto.getUser().getIsActive() == null) {
+//            trainerDto.getUser().setIsActive(true);
+//        }
 
 //        if(!userDtoValidator.validate(trainerDto.getUser())) {
 //            LOGGER.warn(userDtoValidator.getErrorMessage(trainerDto.getUser()));

@@ -5,11 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gym.dto.*;
 import org.gym.entity.Trainer;
-import org.gym.facade.TraineeFacade;
 import org.gym.facade.TrainerFacade;
-import org.gym.mapper.TraineeMapper;
 import org.gym.mapper.TrainerMapper;
-import org.gym.service.TraineeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,26 +29,27 @@ public class TrainerController {
 //            summary = "Create a trainee",
 //            description = "Adds a new trainee",
 //            schema = TraineeCreateResponse.class
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping//(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public TrainerCreateResponse create(@RequestBody @Valid TrainerDto trainerDto){
         String id = transactionIdGenerator.generate();
-        //TrainerDto trainerDto = trainerMapper.convertCreateRequestToDto(request);
         TrainerCreateResponse response = trainerFacade.create(trainerDto);
-        LOGGER.info("id {}, request {}, response {}", id,  trainerDto, response);
+        LOGGER.info("request {}, response {}, id {}", trainerDto, response, id);
         return response;
     }
 
     @PostMapping(value = "1", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public TrainerResponse create2(@RequestBody @Valid TrainerDto trainerDto){
+    public TrainerGetProfileResponse create2(@RequestBody @Valid TrainerDto trainerDto){
         String id = transactionIdGenerator.generate();
         //TrainerDto trainerDto = trainerMapper.convertCreateRequestToDto(request);
-        Trainer trainer = trainerMapper.convertToEntity(trainerDto);
-        TrainerResponse trainerResponse = trainerMapper.convertToTrainerResponse(trainer);
         LOGGER.info("request {}, id {}", trainerDto, id);
+        Trainer trainer = trainerMapper.convertToEntity(trainerDto);
         LOGGER.info("trainer {}, id {}", trainer, id);
-        LOGGER.info("trainerResponse {}, id {}", trainerResponse, id);
+
+        TrainerGetProfileResponse trainerGetProfileResponse = trainerMapper.convertToTrainerGetProfileResponse(trainerDto);
+        LOGGER.info("trainerProfileResponse {}, id {}", trainerGetProfileResponse, id);
+        return trainerGetProfileResponse;
         //TrainerCreateResponse response = trainerFacade.create(trainerDto);
 
 //        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
@@ -64,7 +62,7 @@ public class TrainerController {
 //                .build();
 //        LOGGER.info("id {}, request {}, response {}", id,  trainerDto, response);
 //
-        return trainerResponse;
+        //return trainerProfileResponse;
     }
 
     @GetMapping("login/{username}/{password}")

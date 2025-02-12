@@ -13,8 +13,7 @@ import org.hibernate.annotations.Immutable;
 @Immutable
 public class TrainingType {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "training_type_name", nullable = false, unique = true)

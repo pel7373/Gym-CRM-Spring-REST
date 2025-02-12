@@ -24,10 +24,8 @@ public class TrainingDto {
     private TrainingTypeDto trainingType;
 
     @NotNull(message = "Date is required")
-    @NotBlank
     private LocalDate date;
 
     @NotNull(message = "Duration is required")
-    @NotBlank
     private Integer duration;
 }
