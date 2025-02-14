@@ -1,11 +1,10 @@
 package org.gym.mapper;
 
 import org.gym.dto.TrainingTypeDto;
-import org.gym.dto.TrainingTypeResponse;
+import org.gym.dto.response.training.TrainingTypeResponse;
 import org.gym.entity.TrainingType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring")
 public interface TrainingTypeMapper {

@@ -1,16 +1,16 @@
 package org.gym.facade;
 
-import org.gym.dto.TraineeCreateResponse;
-import org.gym.dto.TrainerCreateResponse;
+import org.gym.dto.request.ChangeLoginRequest;
+import org.gym.dto.response.CreateResponse;
 import org.gym.dto.TrainerDto;
 import org.gym.entity.TrainingType;
 
 public interface TrainerFacade {
-    TrainerCreateResponse create(TrainerDto trainerDto);
+    CreateResponse create(TrainerDto trainerDto);
     TrainerDto select(String userName, String password);
     TrainerDto update(String userName, String password, TrainerDto trainerDto);
     TrainerDto changeStatus(String userName, String password, Boolean isActive);
     boolean authenticate(String userName, String password);
-    TrainerDto changePassword(String userName, String password, String newPassword);
+    void changePassword(ChangeLoginRequest changeLoginRequest);
     TrainerDto changeSpecialization(String userName, String password, TrainingType trainingType);
 }

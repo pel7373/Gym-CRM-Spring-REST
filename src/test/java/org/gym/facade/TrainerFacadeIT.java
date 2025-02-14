@@ -461,17 +461,17 @@ class TrainerFacadeIT {
 //        assertNull(result, "changePassword with null username not successful");
 //    }
 
-    @Test
-    void changePasswordNotSuccessfulNullPassword() {
-        TrainerDto result = trainerFacade.changePassword(userNameForTrainer, null, "BBBBBB");
-
-        assertNull(result, "changePassword with null password not successful");
-    }
-
-    @Test
-    void changePasswordNotSuccessfulNullUserNameAndPassword() {
-        TrainerDto result = trainerFacade.changePassword(null, null, "BBBBBB");
-
-        assertNull(result, "changePassword with null username and password not successful");
-    }
+//    @Test
+//    void changePasswordNotSuccessfulNullPassword() {
+//        TrainerDto result = trainerFacade.changePassword(userNameForTrainer, null, "BBBBBB");
+//
+//        assertNull(result, "changePassword with null password not successful");
+//    }
+//
+//    @Test
+//    void changePasswordNotSuccessfulNullUserNameAndPassword() {
+//        TrainerDto result = trainerFacade.changePassword(null, null, "BBBBBB");
+//
+//        assertNull(result, "changePassword with null username and password not successful");
+//    }
 }

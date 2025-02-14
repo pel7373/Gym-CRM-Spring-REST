@@ -1,15 +1,16 @@
-package org.gym.dto;
+package org.gym.dto.response.trainer;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.gym.dto.TrainingTypeDto;
+import org.gym.dto.response.user.UserForListResponse;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class TrainerForListResponse {
+
     private UserForListResponse user;
+
     private TrainingTypeDto specialization;
 }

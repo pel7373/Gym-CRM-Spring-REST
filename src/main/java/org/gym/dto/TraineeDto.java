@@ -8,6 +8,7 @@ import lombok.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -25,4 +26,7 @@ public class TraineeDto {
     //@ToString.Exclude
     @EqualsAndHashCode.Exclude
     private String address;
+
+    @Valid
+    private List<TrainerDto> trainers = new ArrayList<>();
 }

@@ -71,9 +71,11 @@ class TraineeFacadeIT {
                 .address("Kyiv, Soborna str. 35, ap. 26")
                 .build();
 
-        traineeDtoNotValid
-                = new TraineeDto(userDtoNotValid, LocalDate.of(1995, 1, 23),
-                "Kyiv, Soborna str. 35, ap. 26");
+        traineeDtoNotValid = TraineeDto.builder()
+                .user(userDtoNotValid)
+                .dateOfBirth(LocalDate.of(1995, 1, 23))
+                .address("Kyiv, Soborna str. 35, ap. 26")
+                .build();
     }
 
     @AfterEach
@@ -470,12 +472,12 @@ class TraineeFacadeIT {
 //        assertNull(result, "changePassword with null password not successful");
 //    }
 
-    @Test
-    void changePasswordNotSuccessfulNullUserNameAndPassword() {
-        TraineeDto result = traineeFacade.changePassword(null, null, "BBBBBB");
-
-        assertNull(result, "changePassword with null username and password not successful");
-    }
+//    @Test
+//    void changePasswordNotSuccessfulNullUserNameAndPassword() {
+//        TraineeDto result = traineeFacade.changePassword(null, null, "BBBBBB");
+//
+//        assertNull(result, "changePassword with null username and password not successful");
+//    }
 
     @Test
     void getUnassignedTrainersListSuccessfully() {

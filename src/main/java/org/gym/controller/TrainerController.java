@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gym.dto.*;
+import org.gym.dto.response.CreateResponse;
+import org.gym.dto.response.trainer.TrainerSelectResponse;
 import org.gym.entity.Trainer;
 import org.gym.facade.TrainerFacade;
 import org.gym.mapper.TrainerMapper;
@@ -31,25 +33,39 @@ public class TrainerController {
 //            schema = TraineeCreateResponse.class
     @PostMapping//(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public TrainerCreateResponse create(@RequestBody @Valid TrainerDto trainerDto){
+    public CreateResponse create(@RequestBody @Valid TrainerDto trainerDto){
         String id = transactionIdGenerator.generate();
-        TrainerCreateResponse response = trainerFacade.create(trainerDto);
+        CreateResponse response = trainerFacade.create(trainerDto);
         LOGGER.info("request {}, response {}, id {}", trainerDto, response, id);
         return response;
     }
 
+    @GetMapping("login/{username}/{password}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Void> login(@PathVariable("username") String userName,
+                                      @PathVariable("password") String password) {
+        String id = transactionIdGenerator.generate();
+        boolean response = trainerFacade.authenticate(userName, password);
+        LOGGER.info("userName {}, response {}, id {}", userName, response, id);
+        if(response) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping(value = "1", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public TrainerGetProfileResponse create2(@RequestBody @Valid TrainerDto trainerDto){
+    public TrainerSelectResponse create2(@RequestBody @Valid TrainerDto trainerDto){
         String id = transactionIdGenerator.generate();
         //TrainerDto trainerDto = trainerMapper.convertCreateRequestToDto(request);
         LOGGER.info("request {}, id {}", trainerDto, id);
         Trainer trainer = trainerMapper.convertToEntity(trainerDto);
         LOGGER.info("trainer {}, id {}", trainer, id);
 
-        TrainerGetProfileResponse trainerGetProfileResponse = trainerMapper.convertToTrainerGetProfileResponse(trainerDto);
-        LOGGER.info("trainerProfileResponse {}, id {}", trainerGetProfileResponse, id);
-        return trainerGetProfileResponse;
+        TrainerSelectResponse trainerSelectResponse = trainerMapper.convertToTrainerGetProfileResponse(trainerDto);
+        LOGGER.info("trainerProfileResponse {}, id {}", trainerSelectResponse, id);
+        return trainerSelectResponse;
         //TrainerCreateResponse response = trainerFacade.create(trainerDto);
 
 //        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
@@ -63,19 +79,5 @@ public class TrainerController {
 //        LOGGER.info("id {}, request {}, response {}", id,  trainerDto, response);
 //
         //return trainerProfileResponse;
-    }
-
-    @GetMapping("login/{username}/{password}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Void> login(@PathVariable("username") String userName,
-                                      @PathVariable("password") String password) {
-        String id = transactionIdGenerator.generate();
-        boolean response = trainerFacade.authenticate(userName, password);
-        LOGGER.info("login: id {}, userName {}, response {}", id, userName, response);
-        if(response) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
     }
 }

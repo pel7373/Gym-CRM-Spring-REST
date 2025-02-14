@@ -29,7 +29,7 @@ public class Trainer {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "trainer", orphanRemoval = true)
     private List<Training> trainings;
 
     @ToString.Exclude

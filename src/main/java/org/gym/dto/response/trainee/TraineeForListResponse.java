@@ -1,4 +1,4 @@
-package org.gym.dto;
+package org.gym.dto.response.trainee;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TrainerCreateResponse {
+public class TraineeForListResponse {
     private String userName;
-    private String password;
+    private String firstName;
+    private String lastName;
+    //private UserForListResponse user;
 }

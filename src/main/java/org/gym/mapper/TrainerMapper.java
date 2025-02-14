@@ -1,10 +1,12 @@
 package org.gym.mapper;
 
-import org.gym.dto.TrainerDto;
-import org.gym.dto.TrainerGetProfileResponse;
-import org.gym.dto.TrainerResponse;
+import org.gym.dto.*;
+import org.gym.dto.response.CreateResponse;
+import org.gym.dto.response.trainer.TrainerForListResponse;
+import org.gym.dto.response.trainer.TrainerSelectResponse;
 import org.gym.entity.Trainer;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -12,7 +14,12 @@ import java.util.List;
 public interface TrainerMapper {
     TrainerDto convertToDto(Trainer trainer);
     Trainer convertToEntity(TrainerDto trainerDto);
-    TrainerGetProfileResponse convertToTrainerGetProfileResponse(TrainerDto trainerDto);
-    List<TrainerResponse> convertToTrainerResponseList(List<Trainer> trainerList);
+
+    @Mapping(target="userName", expression="java(trainerDto.getUser().getUserName())")
+    @Mapping(target="password", expression="java(trainerDto.getUser().getPassword())")
+    CreateResponse convertToCreateResponse(TrainerDto trainerDto);
+
+    TrainerSelectResponse convertToTrainerGetProfileResponse(TrainerDto trainerDto);
+    List<TrainerForListResponse> convertToTrainerResponseList(List<Trainer> trainerList);
     //TrainerCreateResponse convertToTrainerCreateResponse(Trainer trainer);
 }

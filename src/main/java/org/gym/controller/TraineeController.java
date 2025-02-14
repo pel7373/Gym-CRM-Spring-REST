@@ -4,6 +4,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gym.dto.*;
+import org.gym.dto.request.ChangeLoginRequest;
+import org.gym.dto.request.trainee.TraineeUpdateRequest;
+import org.gym.dto.response.CreateResponse;
+import org.gym.dto.response.trainee.TraineeSelectResponse;
+import org.gym.dto.response.trainee.TraineeUpdateResponse;
 import org.gym.facade.TraineeFacade;
 
 import org.gym.mapper.TraineeMapper;
@@ -13,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -33,9 +40,9 @@ public class TraineeController {
 //            schema = TraineeCreateResponse.class
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public TraineeCreateResponse create(@RequestBody @Valid TraineeDto traineeDto){
+    public CreateResponse create(@RequestBody @Valid TraineeDto traineeDto){
         String id = transactionIdGenerator.generate();
-        TraineeCreateResponse response = traineeFacade.create(traineeDto);
+        CreateResponse response = traineeFacade.create(traineeDto);
         LOGGER.info("request {}, response {}, id {}", traineeDto, response, id);
         return response;
     }
@@ -50,18 +57,56 @@ public class TraineeController {
         if(response) {
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().build();
         }
+    }
+
+    @PutMapping("/changelogin")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Void> changeLogin(@RequestBody @Valid ChangeLoginRequest changeLoginRequest) {
+        String id = transactionIdGenerator.generate();
+        traineeFacade.changePassword(changeLoginRequest);
+        LOGGER.info("userName {}, id {}", changeLoginRequest.getUserName(), id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{username}")
     @ResponseStatus(HttpStatus.OK)
-    public TraineeProfileResponse getTraineeProfile(@PathVariable("username") String userName) {
+    public TraineeSelectResponse getTraineeProfile(@PathVariable("username") String userName) {
         String id = transactionIdGenerator.generate();
-        TraineeProfileResponse response = traineeFacade.select(userName);
+        TraineeSelectResponse response = traineeFacade.select(userName);
         LOGGER.debug("userName {}, response {}, id {}", userName, response, id);
         return response;
     }
+
+    @PutMapping("/{username}")
+    @ResponseStatus(HttpStatus.OK)
+    public TraineeUpdateResponse update(@PathVariable("username") String userName,
+            @RequestBody @Valid TraineeUpdateRequest traineeUpdateRequest) {
+        String id = transactionIdGenerator.generate();
+        TraineeUpdateResponse traineeUpdateResponse = traineeFacade.update(userName, traineeUpdateRequest);
+        LOGGER.info("userName {}, id {}", userName, id);
+        return traineeUpdateResponse;
+    }
+
+    @PutMapping("/updatetrainerslist/{username}")
+    @ResponseStatus(HttpStatus.OK)
+    //public List<TrainerDto> updateTrainersList(
+    public List<TrainerDto> updateTrainersList(
+            @PathVariable("username") String userName,
+            @RequestBody List<String> trainersUserNamesList
+    ) {
+        String id = transactionIdGenerator.generate();
+        LOGGER.info("userName: {}, trainersUsernames {}:  with transaction id: {}",
+                userName, trainersUserNamesList, id);
+
+        List<TrainerDto> response = traineeFacade.updateTrainersList(userName, trainersUserNamesList);
+
+        LOGGER.info("Response: {}, HTTP Status: {}", response, HttpStatus.OK);
+        return response;
+    }
+
+    //ChangeLoginRequest
 
 //    @GetMapping(value = "/1/{username}")
 //    @ResponseStatus(HttpStatus.OK)

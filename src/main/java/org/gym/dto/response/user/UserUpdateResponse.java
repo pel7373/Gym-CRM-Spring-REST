@@ -1,4 +1,4 @@
-package org.gym.dto;
+package org.gym.dto.response.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserGetProfileResponse {
+public class UserUpdateResponse {
+
+    private String userName;
     private String firstName;
     private String lastName;
     private Boolean isActive;
+
 }

@@ -1,6 +1,5 @@
 package org.gym.service.impl;
 
-import org.gym.dto.TraineeCreateResponse;
 import org.gym.dto.TrainerDto;
 import org.gym.entity.Trainer;
 import org.gym.exception.EntityNotFoundException;
@@ -65,19 +64,16 @@ public class TraineeServiceImpl implements TraineeService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
         );
-        if(isFirstOrLastNamesChanged(traineeDto, oldTrainee)) {
-            oldTrainee.getUser().setUserName(
-                    userNameGeneratorService
-                            .generate(traineeDto.getUser().getFirstName(),
-                                    traineeDto.getUser().getLastName()
-                            )
-            );
-            oldTrainee.getUser().setFirstName(traineeDto.getUser().getFirstName());
-            oldTrainee.getUser().setLastName(traineeDto.getUser().getLastName());
-        }
+        oldTrainee.getUser().setFirstName(traineeDto.getUser().getFirstName());
+        oldTrainee.getUser().setLastName(traineeDto.getUser().getLastName());
         oldTrainee.getUser().setIsActive(traineeDto.getUser().getIsActive());
-        oldTrainee.setDateOfBirth(traineeDto.getDateOfBirth());
-        oldTrainee.setAddress(traineeDto.getAddress());
+        if(traineeDto.getDateOfBirth() != null) {
+            oldTrainee.setDateOfBirth(traineeDto.getDateOfBirth());
+        }
+        if(traineeDto.getAddress() != null) {
+            oldTrainee.setAddress(traineeDto.getAddress());
+        }
+
         Trainee trainee = traineeRepository.save(oldTrainee);
         return traineeMapper.convertToDto(trainee);
     }

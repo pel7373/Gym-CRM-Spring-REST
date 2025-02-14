@@ -36,7 +36,7 @@ public class Trainee {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany (mappedBy = "trainee", cascade = CascadeType.ALL)
+    @OneToMany (mappedBy = "trainee", orphanRemoval = true)
     private List<Training> trainings;
 
     @ToString.Exclude

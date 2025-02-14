@@ -2,13 +2,10 @@ package org.gym.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.gym.dto.TrainingTypeResponse;
+import org.gym.dto.response.training.TrainingTypeResponse;
 import org.gym.entity.TrainingType;
-import org.gym.facade.TraineeFacade;
 import org.gym.facade.TrainingTypeFacade;
-import org.gym.mapper.TraineeMapper;
 import org.gym.mapper.TrainingTypeMapper;
-import org.gym.service.TraineeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

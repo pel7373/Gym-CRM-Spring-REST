@@ -39,7 +39,6 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public TrainerDto create(TrainerDto trainerDto) {
-        LOGGER.info("begin: {}", trainerDto);
         trainerDto.getUser().setUserName(
                 userNameGeneratorService.generate(
                         trainerDto.getUser().getFirstName(),
@@ -50,14 +49,10 @@ public class TrainerServiceImpl implements TrainerService {
         TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeName)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, trainingTypeName)));
-        LOGGER.info("2: {}", trainingType);
         Trainer trainer = trainerMapper.convertToEntity(trainerDto);
-        LOGGER.info("3: {}", trainer);
         trainer.setSpecialization(trainingType);
         trainer.getUser().setPassword(passwordGeneratorService.generate());
-        LOGGER.info("4: {}", trainer);
         Trainer savedTrainer = trainerRepository.save(trainer);
-        LOGGER.info("5: {}", trainer);
         return trainerMapper.convertToDto(savedTrainer);
     }
 
@@ -67,13 +62,9 @@ public class TrainerServiceImpl implements TrainerService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
         );
-        if (isFirstOrLastNamesChanged(trainerDto, oldTrainer)) {
-            oldTrainer.getUser().setUserName(
-                    userNameGeneratorService.generate(trainerDto.getUser().getFirstName(),
-                            trainerDto.getUser().getLastName()));
-            oldTrainer.getUser().setFirstName(trainerDto.getUser().getFirstName());
-            oldTrainer.getUser().setLastName(trainerDto.getUser().getLastName());
-        }
+
+        oldTrainer.getUser().setFirstName(trainerDto.getUser().getFirstName());
+        oldTrainer.getUser().setLastName(trainerDto.getUser().getLastName());
         oldTrainer.getUser().setIsActive(trainerDto.getUser().getIsActive());
         String trainingTypeName = trainerDto.getSpecialization().getTrainingTypeName();
         TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeName)

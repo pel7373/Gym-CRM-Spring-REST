@@ -42,7 +42,6 @@ class TraineeFacadeWithTestContainerIT {
 
     private final TraineeDto traineeDto;
     private final TraineeDto traineeDto2;
-    private final TraineeDto traineeDtoNotValid;
     private String userNameForTrainee;
 
     @Container
@@ -68,7 +67,6 @@ class TraineeFacadeWithTestContainerIT {
     {
         UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "", true);
         UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", "", true);
-        UserDto userDtoNotValid = new UserDto("Pa", "Pa", "Maria.Petrenko2", "",false);
 
         traineeDto = TraineeDto.builder()
                 .user(userDto)
@@ -81,10 +79,6 @@ class TraineeFacadeWithTestContainerIT {
                 .dateOfBirth(LocalDate.of(1985, 1, 23))
                 .address("Kyiv, Soborna str. 35, ap. 26")
                 .build();
-
-        traineeDtoNotValid
-                = new TraineeDto(userDtoNotValid, LocalDate.of(1995, 1, 23),
-                "Kyiv, Soborna str. 35, ap. 26");
     }
 
 //    @Test

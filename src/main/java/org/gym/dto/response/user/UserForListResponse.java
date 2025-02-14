@@ -1,4 +1,4 @@
-package org.gym.dto;
+package org.gym.dto.response.user;
 
 import lombok.*;
 

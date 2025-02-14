@@ -2,14 +2,14 @@ package org.gym.facade.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.gym.dto.TraineeCreateResponse;
-import org.gym.dto.TraineeDto;
-import org.gym.dto.TrainerCreateResponse;
+import org.gym.dto.request.ChangeLoginRequest;
+import org.gym.dto.response.CreateResponse;
 import org.gym.dto.TrainerDto;
 import org.gym.entity.TrainingType;
 import org.gym.exception.EntityNotFoundException;
 import org.gym.exception.NullEntityException;
 import org.gym.facade.TrainerFacade;
+import org.gym.mapper.TrainerMapper;
 import org.gym.service.TrainerService;
 import org.gym.validator.UserDtoValidator;
 import org.springframework.stereotype.Component;
@@ -23,10 +23,11 @@ public class TrainerFacadeImpl implements TrainerFacade {
 
     private final TrainerService trainerService;
     private final UserDtoValidator userDtoValidator;
+    private final TrainerMapper trainerMapper;
     private final UserNameAndPasswordChecker userNameAndPasswordChecker;
 
     @Override
-    public TrainerCreateResponse create(TrainerDto trainerDto) {
+    public CreateResponse create(TrainerDto trainerDto) {
         if(trainerDto == null) {
             LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
             throw new NullEntityException(ENTITY_CANT_BE_NULL_OR_BLANK);
@@ -48,11 +49,7 @@ public class TrainerFacadeImpl implements TrainerFacade {
 //            return null;
 //        }
         TrainerDto createdTrainerDto = trainerService.create(trainerDto);
-        return TrainerCreateResponse
-                .builder()
-                .userName(createdTrainerDto.getUser().getUserName())
-                .password(createdTrainerDto.getUser().getPassword())
-                .build();
+        return trainerMapper.convertToCreateResponse(createdTrainerDto);
     }
 
     @Override
@@ -145,22 +142,17 @@ public class TrainerFacadeImpl implements TrainerFacade {
     }
     
     @Override
-    public TrainerDto changePassword(String userName, String password, String newPassword) {
-        if(userNameAndPasswordChecker.isNullOrBlank(newPassword)) {
+    public void changePassword(ChangeLoginRequest changeLoginRequest) {
+        if(changeLoginRequest != null || userNameAndPasswordChecker.isNullOrBlank(changeLoginRequest.getNewPassword())) {
             LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
-            return null;
+            throw new NullEntityException(ENTITY_CANT_BE_NULL_OR_BLANK);
         }
 
-        if(authenticate(userName, password)) {
             try {
-                return trainerService.changePassword(userName, newPassword);
+                trainerService.changePassword(changeLoginRequest.getUserName(), changeLoginRequest.getNewPassword());
             } catch (EntityNotFoundException e) {
-                LOGGER.warn(ENTITY_NOT_FOUND, userName);
-                return null;
+                LOGGER.warn(ENTITY_NOT_FOUND, changeLoginRequest.getUserName());
+                throw new EntityNotFoundException(ENTITY_NOT_FOUND_EXCEPTION);
             }
-        } else {
-            LOGGER.warn(ACCESS_DENIED, userName);
-            return null;
-        }
     }
 }

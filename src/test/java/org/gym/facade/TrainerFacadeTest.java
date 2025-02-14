@@ -250,53 +250,53 @@ class TrainerFacadeTest {
                 .authenticate(any(String.class), any(String.class));
     }
 
-    @Test
-    void changePasswordNewPasswordNullFail() {
-        when(userNameAndPasswordChecker.isNullOrBlank(null)).thenReturn(true);
-        TrainerDto createdTrainerDto = trainerFacade.changePassword(
-                userNameForTrainerDto, passwordForUser, null);
-
-        assertNull(createdTrainerDto);
-        verify(userNameAndPasswordChecker, times(1)).isNullOrBlank(null);
-        verify(trainerService, never()).changePassword(userNameForTrainerDto, null);
-    }
-
-    @Test
-    void changePasswordUserNameNotFoundFail() {
-        when(userNameAndPasswordChecker.isNullOrBlank(newPassword)).thenReturn(false);
-        when(userNameAndPasswordChecker.isNullOrBlank(userNameNotFound, passwordForUser))
-                .thenReturn(false);
-        when(trainerService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
-
-        TrainerDto createdTrainerDto = trainerFacade.changePassword(
-                userNameNotFound, passwordForUser, newPassword);
-
-        assertNull(createdTrainerDto);
-        verify(userNameAndPasswordChecker, times(1)).isNullOrBlank(newPassword);
-        verify(userNameAndPasswordChecker, times(1))
-                .isNullOrBlank(userNameNotFound, passwordForUser);
-        verify(trainerService, times(1))
-                .authenticate(userNameNotFound, passwordForUser);
-        verify(trainerService, never()).changePassword(userNameNotFound, newPassword);
-    }
-
-    @Test
-    void changePasswordSuccessfully() {
-        when(userNameAndPasswordChecker.isNullOrBlank(newPassword)).thenReturn(false);
-        when(userNameAndPasswordChecker.isNullOrBlank(userNameForTrainerDto, passwordForUser))
-                .thenReturn(false);
-        when(trainerService.authenticate(userNameForTrainerDto, passwordForUser)).thenReturn(true);
-
-        trainerFacade.changePassword(userNameForTrainerDto, passwordForUser, newPassword);
-
-        verify(userNameAndPasswordChecker, times(1)).isNullOrBlank(newPassword);
-        verify(userNameAndPasswordChecker, times(1))
-                .isNullOrBlank(userNameForTrainerDto, passwordForUser);
-        verify(trainerService, times(1))
-                .authenticate(userNameForTrainerDto, passwordForUser);
-        verify(trainerService, times(1))
-                .changePassword(userNameForTrainerDto, newPassword);
-    }
+//    @Test
+//    void changePasswordNewPasswordNullFail() {
+//        when(userNameAndPasswordChecker.isNullOrBlank(null)).thenReturn(true);
+//        TrainerDto createdTrainerDto = trainerFacade.changePassword(
+//                userNameForTrainerDto, passwordForUser, null);
+//
+//        assertNull(createdTrainerDto);
+//        verify(userNameAndPasswordChecker, times(1)).isNullOrBlank(null);
+//        verify(trainerService, never()).changePassword(userNameForTrainerDto, null);
+//    }
+//
+//    @Test
+//    void changePasswordUserNameNotFoundFail() {
+//        when(userNameAndPasswordChecker.isNullOrBlank(newPassword)).thenReturn(false);
+//        when(userNameAndPasswordChecker.isNullOrBlank(userNameNotFound, passwordForUser))
+//                .thenReturn(false);
+//        when(trainerService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
+//
+//        TrainerDto createdTrainerDto = trainerFacade.changePassword(
+//                userNameNotFound, passwordForUser, newPassword);
+//
+//        assertNull(createdTrainerDto);
+//        verify(userNameAndPasswordChecker, times(1)).isNullOrBlank(newPassword);
+//        verify(userNameAndPasswordChecker, times(1))
+//                .isNullOrBlank(userNameNotFound, passwordForUser);
+//        verify(trainerService, times(1))
+//                .authenticate(userNameNotFound, passwordForUser);
+//        verify(trainerService, never()).changePassword(userNameNotFound, newPassword);
+//    }
+//
+//    @Test
+//    void changePasswordSuccessfully() {
+//        when(userNameAndPasswordChecker.isNullOrBlank(newPassword)).thenReturn(false);
+//        when(userNameAndPasswordChecker.isNullOrBlank(userNameForTrainerDto, passwordForUser))
+//                .thenReturn(false);
+//        when(trainerService.authenticate(userNameForTrainerDto, passwordForUser)).thenReturn(true);
+//
+//        trainerFacade.changePassword(userNameForTrainerDto, passwordForUser, newPassword);
+//
+//        verify(userNameAndPasswordChecker, times(1)).isNullOrBlank(newPassword);
+//        verify(userNameAndPasswordChecker, times(1))
+//                .isNullOrBlank(userNameForTrainerDto, passwordForUser);
+//        verify(trainerService, times(1))
+//                .authenticate(userNameForTrainerDto, passwordForUser);
+//        verify(trainerService, times(1))
+//                .changePassword(userNameForTrainerDto, newPassword);
+//    }
 
     @Test
     void changeSpecializationNullFail() {

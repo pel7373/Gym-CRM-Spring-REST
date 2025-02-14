@@ -1,4 +1,4 @@
-package org.gym.dto;
+package org.gym.dto.response;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TraineeCreateResponse implements Serializable {
+public class CreateResponse implements Serializable {
     private String userName;
     private String password;
 }

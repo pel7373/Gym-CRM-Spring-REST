@@ -21,6 +21,7 @@ public class DataStorage {
     public final Trainer trainer2;
     public final TraineeDto traineeDto1;
     public final TrainerDto trainerDto2;
+    public final TraineeDto traineeDtoNotValid;
 
     public final TraineeDto traineeDto;
     public final TraineeDto traineeDto2;
@@ -50,6 +51,14 @@ public class DataStorage {
         traineeDto2 = TraineeDto.builder()
                 .user(userDto2)
                 .dateOfBirth(LocalDate.of(1985, 1, 23))
+                .address("Kyiv, Soborna str. 35, ap. 26")
+                .build();
+
+        UserDto userDtoNotValid = new UserDto("Pa", "Pa", "Maria.Petrenko2", "",false);
+
+        traineeDtoNotValid = TraineeDto.builder()
+                .user(userDtoNotValid)
+                .dateOfBirth(LocalDate.of(1995, 1, 23))
                 .address("Kyiv, Soborna str. 35, ap. 26")
                 .build();
 

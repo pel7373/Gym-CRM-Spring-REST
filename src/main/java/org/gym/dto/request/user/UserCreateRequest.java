@@ -1,5 +1,6 @@
-package org.gym.dto;
+package org.gym.dto.request.user;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -8,12 +9,12 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class UserCreateRequest {
-    @NotNull
+    @NotBlank
     //@ToString.Exclude
     @EqualsAndHashCode.Exclude
     private String firstName;
 
-    @NotNull
+    @NotBlank
     //@ToString.Exclude
     @EqualsAndHashCode.Exclude
     private String lastName;
