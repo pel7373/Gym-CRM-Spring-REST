@@ -27,8 +27,8 @@ public interface TraineeMapper {
     TraineeUpdateResponse convertDtoToUpdateResponse(TraineeDto trainee);
 
     @Mapping(target="userName", expression="java(traineeDto.getUser().getUserName())")
-//    @Mapping(target="firstName", expression="java(traineeDto.getUser().getFirstName())")
-//    @Mapping(target="lastName", expression="java(traineeDto.getUser().getLastName())")
+    @Mapping(target="firstName", expression="java(traineeDto.getUser().getFirstName())")
+    @Mapping(target="lastName", expression="java(traineeDto.getUser().getLastName())")
     TraineeForListResponse convertToTraineeForListResponse(TraineeDto traineeDto);
 
     //CreateResponse convertToTraineeCreateResponse(Trainee trainee);
