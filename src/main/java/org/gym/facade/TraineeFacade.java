@@ -6,17 +6,21 @@ import org.gym.dto.request.trainee.TraineeUpdateRequest;
 import org.gym.dto.response.CreateResponse;
 import org.gym.dto.response.trainee.TraineeSelectResponse;
 import org.gym.dto.response.trainee.TraineeUpdateResponse;
+import org.gym.dto.response.trainer.TrainerForListResponse;
+import org.gym.exception.EntityNotFoundException;
+import org.gym.exception.EntityNotValidException;
+import org.gym.exception.NullEntityException;
 
 import java.util.List;
 
 public interface TraineeFacade {
-    CreateResponse create(TraineeDto traineeDto);
-    TraineeSelectResponse select(String userName);
-    TraineeUpdateResponse update(String userName, TraineeUpdateRequest traineeUpdateRequest);
-    TraineeDto changeStatus(String userName, Boolean isActive);
+    CreateResponse create(TraineeDto traineeDto) throws NullEntityException, EntityNotValidException;
+    TraineeSelectResponse select(String userName) throws EntityNotFoundException, NullEntityException;
+    TraineeUpdateResponse update(String userName, TraineeUpdateRequest traineeUpdateRequest) throws EntityNotFoundException, NullEntityException, EntityNotValidException;
+    void changeStatus(String userName, Boolean isActive) throws EntityNotFoundException, NullEntityException;
     boolean authenticate(String userName, String password);
-    void changePassword(ChangeLoginRequest changeLoginRequest);
-    void delete(String userName);
-    List<TrainerDto> getUnassignedTrainers(String userName);
-    List<TrainerDto> updateTrainersList(String userName, List<String> trainersUserNames);
+    void changePassword(ChangeLoginRequest changeLoginRequest) throws EntityNotFoundException, NullEntityException;
+    void delete(String userName) throws EntityNotFoundException, NullEntityException;
+    List<TrainerForListResponse> getUnassignedTrainers(String userName) throws EntityNotFoundException;
+    List<TrainerForListResponse> updateTrainersList(String userName, List<String> trainersUserNames);
 }

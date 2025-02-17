@@ -1,205 +1,38 @@
 package org.gym.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.gym.dto.*;
+import org.gym.dto.TraineeDto;
 import org.gym.dto.request.ChangeLoginRequest;
 import org.gym.dto.request.trainee.TraineeUpdateRequest;
 import org.gym.dto.response.CreateResponse;
 import org.gym.dto.response.trainee.TraineeSelectResponse;
 import org.gym.dto.response.trainee.TraineeUpdateResponse;
-import org.gym.facade.TraineeFacade;
-
-import org.gym.mapper.TraineeMapper;
-import org.gym.service.TraineeService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.gym.dto.response.trainer.TrainerForListResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Slf4j
-@RestController
-@RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/trainees")
-@Validated
-//@Tag(name = "Trainees", description = "Operations related to managing trainees")
-public class TraineeController {
-
-    private final TraineeFacade traineeFacade;
-    private final TraineeService traineeService;
-    private final TraineeMapper traineeMapper;
-    private final TransactionIdGenerator transactionIdGenerator;
-
-    //    @SwaggerCreationInfo(
-//            summary = "Create a trainee",
-//            description = "Adds a new trainee",
-//            schema = TraineeCreateResponse.class
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public CreateResponse create(@RequestBody @Valid TraineeDto traineeDto){
-        String id = transactionIdGenerator.generate();
-        CreateResponse response = traineeFacade.create(traineeDto);
-        LOGGER.info("request {}, response {}, id {}", traineeDto, response, id);
-        return response;
-    }
-
-    @GetMapping("login/{username}/{password}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Void> login(@PathVariable("username") String userName,
-                                      @PathVariable("password") String password) {
-        String id = transactionIdGenerator.generate();
-        boolean response = traineeFacade.authenticate(userName, password);
-        LOGGER.info("userName {}, response {}, id {}", userName, response, id);
-        if(response) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @PutMapping("/changelogin")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Void> changeLogin(@RequestBody @Valid ChangeLoginRequest changeLoginRequest) {
-        String id = transactionIdGenerator.generate();
-        traineeFacade.changePassword(changeLoginRequest);
-        LOGGER.info("userName {}, id {}", changeLoginRequest.getUserName(), id);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/{username}")
-    @ResponseStatus(HttpStatus.OK)
-    public TraineeSelectResponse getTraineeProfile(@PathVariable("username") String userName) {
-        String id = transactionIdGenerator.generate();
-        TraineeSelectResponse response = traineeFacade.select(userName);
-        LOGGER.debug("userName {}, response {}, id {}", userName, response, id);
-        return response;
-    }
-
-    @PutMapping("/{username}")
-    @ResponseStatus(HttpStatus.OK)
-    public TraineeUpdateResponse update(@PathVariable("username") String userName,
-            @RequestBody @Valid TraineeUpdateRequest traineeUpdateRequest) {
-        String id = transactionIdGenerator.generate();
-        TraineeUpdateResponse traineeUpdateResponse = traineeFacade.update(userName, traineeUpdateRequest);
-        LOGGER.info("userName {}, id {}", userName, id);
-        return traineeUpdateResponse;
-    }
-
-    @PutMapping("/updatetrainerslist/{username}")
-    @ResponseStatus(HttpStatus.OK)
-    //public List<TrainerDto> updateTrainersList(
-    public List<TrainerDto> updateTrainersList(
+public interface TraineeController {
+    CreateResponse create(@RequestBody @Valid TraineeDto traineeDto);
+    ResponseEntity<Void> login(@PathVariable("username") String userName,
+                               @PathVariable("password") String password);
+    ResponseEntity<Void> changeLogin(@RequestBody @Valid ChangeLoginRequest changeLoginRequest);
+    TraineeSelectResponse getTraineeProfile(@PathVariable("username") String userName);
+    TraineeUpdateResponse update(@PathVariable("username") String userName,
+                                 @RequestBody @Valid TraineeUpdateRequest traineeUpdateRequest);
+    void changeStatus(@PathVariable("username") String userName,
+                      @RequestParam("isActive") Boolean isActive);
+    List<TrainerForListResponse> updateTrainersList(
             @PathVariable("username") String userName,
             @RequestBody List<String> trainersUserNamesList
-    ) {
-        String id = transactionIdGenerator.generate();
-        LOGGER.info("userName: {}, trainersUsernames {}:  with transaction id: {}",
-                userName, trainersUserNamesList, id);
+    );
 
-        List<TrainerDto> response = traineeFacade.updateTrainersList(userName, trainersUserNamesList);
+    ResponseEntity<Void> delete(@PathVariable("username") String userName);
 
-        LOGGER.info("Response: {}, HTTP Status: {}", response, HttpStatus.OK);
-        return response;
-    }
-
-    //ChangeLoginRequest
-
-//    @GetMapping(value = "/1/{username}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public TraineeForListResponse getTraineeProfile2(@PathVariable("username") String userName) {
-//        String id = transactionIdGenerator.generate();
-//        LOGGER.info("userName {}", userName);
-//        TraineeDto selectedTrainee = traineeFacade.select(userName);
-//        LOGGER.info("selectedTrainee {}, id {}", selectedTrainee, id);
-//        TraineeForListResponse traineeForListResponse = traineeMapper.convertToTraineeForListResponse(selectedTrainee);
-//        LOGGER.info("selectedTrainee {}, id {}", selectedTrainee, id);
-//        LOGGER.info("userName {}, response {}, id {}", userName, traineeForListResponse, id);
-//        //TraineeProfileResponse response = traineeMapper.convertToTraineeProfileResponse(selectedTrainee);
-//        return traineeForListResponse;
-//    }
-
-    @DeleteMapping(value = "/{username}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Void> delete(@PathVariable("username") String userName){
-        String id = transactionIdGenerator.generate();
-        LOGGER.info("delete: id {}, userName {}", id, userName);
-        traineeFacade.delete(userName);
-        return ResponseEntity.ok().build();
-    }
-//
-//    @GetMapping("/{username}/{password}")
-//    public ResponseEntity<TraineeDto> getTrainee(@PathVariable("username") String userName,
-//                                                 @PathVariable("password") String password) {
-//        return traineeFacade.select(userName, password).map(ResponseEntity::ok)
-//                .orElse(ResponseEntity.notFound().build());
-//    }
-
-//    )
-//    @PostMapping
-//    public ResponseEntity<UserRegisteredResponse> registerTrainee(
-//            @RequestBody @Valid RegisterTraineeRequest registerTraineeRequest,
-//            HttpServletRequest servletRequest) {
-//        UserRegisteredResponse response = traineeFacade.create(registerTraineeRequest);
-//        return ResponseEntity.created(Utilities. .getResourceURI)
-//    }
-
-
-    //@CreationResponse
-//    @PostMapping
-//    //@ResponseStatus(Http.CREATED)
-//    public TraineeCreateResponse createTrainee(@RequestBody @Valid TraineeCreateRequest request) {
-//        String transactionId = transactionIdGenerator.generate();
-//        LOGGER.info("POST /api/trainees called with request: {} with transaction id {}", request, transactionId);
-//
-//
-//    }
-//    @Autowired
-//    private Convertor<TraineeDto, Trainee> convertor;
-//
-//    @GetMapping
-//    ResponseEntity<List<BookDTO>> getAll(
-//            @RequestParam(defaultValue = "10", required = false) int limit,
-//            @RequestParam(defaultValue = "5", required = false) int offset) {
-//        List<Book> bookList = traineeFacade.getAllBooks(limit, offest);
-//        List<BookDTO> bookDTOList = convertor.convertModelListToDtoList(bookList);
-//        return new ResponseEntity<>(bookDTOList, HttpStatus.OK);
-//    }
-//
-//    @GetMapping(value = "/{id:\\d+}")
-//    ResponseEntity<List<BookDTO>> getById(@PathVariable long id) {
-//        Book book = traineeFacade.getBookById(id);
-//        BookDTO bookDTO = convertor.convertModelToDto(book);
-//        return new ResponseEntity<>(bookDTO, HttpStatus.OK);
-//    }
-//
-//    @PostMapping
-//    ResponseEntity<BookDTO> create(@RequestBody BookCreateDTO bookCreateDTO) {
-//        Book book = convertor.convertDtoToModel(bookCreateDTO);
-//        Book createdBook = traineeFacade.createBook(book);
-//        return new ResponseEntity<>(convertor.convertModelToDto(createdBook), HttpStatus.CREATE);
-//    }
-//
-//    @PutMapping(value = "/{id:\\d+}")
-//    ResponseEntity<BookDTO> update(@PathVariable long id, @Valid @RequestBody BookUpdateDTO bookUpdateDTO) {
-//        Book book = convertor.convertDtoToModel(bookUpdateDTO);
-//        Book updatedBook = traineeFacade.updateBook(book);
-//        return new ResponseEntity<>(convertor.convertModelToDto(updatedBook), HttpStatus.OK);
-//    }
-//
-//    @PatchMapping(value = "/{id:\\d+}")
-//    ResponseEntity<BookDTO> patch(@PathVariable long id, @Valid @RequestBody BookPatchDTO bookPatchDTO) {
-//        Book book = convertor.convertDtoToModel(bookPatchDTO);
-//        Book patchedBook = traineeFacade.patchBook(id, book);
-//        return new ResponseEntity<>(convertor.convertModelToDto(patchedBook), HttpStatus.OK);
-//    }
-//
-//    @DeleteMapping(value = "/{id:\\d+}")
-//    ResponseEntity<V> delete(@PathVariable long id) {
-//        traineeFacade.deleteBok(id);
-//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//    }
+    List<TrainerForListResponse> getUnassignedTrainers(
+            @PathVariable("username") String userName
+    );
 }

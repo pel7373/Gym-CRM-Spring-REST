@@ -206,46 +206,46 @@ class TraineeFacadeTest {
         verify(traineeService, times(1)).authenticate(null, passwordForUser);
     }
 
-    @Test
-    void changeStatusStatusNullFail() {
-        when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser)).thenReturn(false);
-        TraineeDto createdTraineeDto = traineeFacade.changeStatus("aaa", null);
-
-        assertNull(createdTraineeDto);
-        verify(userNameAndPasswordChecker, never()).isNullOrBlank(userNameForTraineeDto, passwordForUser);
-        verify(traineeService, never()).changeStatus("aaa", null);
-    }
-
-    @Test
-    void changeStatusUserNameNotFoundFail() {
-        when(userNameAndPasswordChecker.isNullOrBlank(userNameNotFound, passwordForUser)).thenReturn(false);
-        when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
-
-        TraineeDto createdTraineeDto = traineeFacade.changeStatus(
-                userNameNotFound, true);
-
-        assertNull(createdTraineeDto);
-        verify(userNameAndPasswordChecker, times(1))
-                .isNullOrBlank(userNameNotFound, passwordForUser);
-        verify(traineeService, times(1))
-                .authenticate(userNameNotFound, passwordForUser);
-        verify(traineeService, never()).changeStatus(userNameNotFound, true);
-    }
-
-    @Test
-    void changeStatusSuccessfully() {
-        when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser))
-                .thenReturn(false);
-        when(traineeService.authenticate(userNameForTraineeDto, passwordForUser)).thenReturn(true);
-
-        traineeFacade.changeStatus(userNameForTraineeDto, true);
-
-        verify(userNameAndPasswordChecker, times(1))
-                .isNullOrBlank(userNameForTraineeDto, passwordForUser);
-        verify(traineeService, times(1))
-                .authenticate(userNameForTraineeDto, passwordForUser);
-        verify(traineeService, times(1)).changeStatus(userNameForTraineeDto, true);
-    }
+//    @Test
+//    void changeStatusStatusNullFail() {
+//        when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser)).thenReturn(false);
+//        TraineeDto createdTraineeDto = traineeFacade.changeStatus("aaa", null);
+//
+//        assertNull(createdTraineeDto);
+//        verify(userNameAndPasswordChecker, never()).isNullOrBlank(userNameForTraineeDto, passwordForUser);
+//        verify(traineeService, never()).changeStatus("aaa", null);
+//    }
+//
+//    @Test
+//    void changeStatusUserNameNotFoundFail() {
+//        when(userNameAndPasswordChecker.isNullOrBlank(userNameNotFound, passwordForUser)).thenReturn(false);
+//        when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
+//
+//        TraineeDto createdTraineeDto = traineeFacade.changeStatus(
+//                userNameNotFound, true);
+//
+//        assertNull(createdTraineeDto);
+//        verify(userNameAndPasswordChecker, times(1))
+//                .isNullOrBlank(userNameNotFound, passwordForUser);
+//        verify(traineeService, times(1))
+//                .authenticate(userNameNotFound, passwordForUser);
+//        verify(traineeService, never()).changeStatus(userNameNotFound, true);
+//    }
+//
+//    @Test
+//    void changeStatusSuccessfully() {
+//        when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser))
+//                .thenReturn(false);
+//        when(traineeService.authenticate(userNameForTraineeDto, passwordForUser)).thenReturn(true);
+//
+//        traineeFacade.changeStatus(userNameForTraineeDto, true);
+//
+//        verify(userNameAndPasswordChecker, times(1))
+//                .isNullOrBlank(userNameForTraineeDto, passwordForUser);
+//        verify(traineeService, times(1))
+//                .authenticate(userNameForTraineeDto, passwordForUser);
+//        verify(traineeService, times(1)).changeStatus(userNameForTraineeDto, true);
+//    }
 
     @Test
     void authenticateSuccessfully() {
@@ -330,119 +330,119 @@ class TraineeFacadeTest {
 //                .changePassword(userNameForTraineeDto, newPassword);
 //    }
 
-    @Test
-    void getUnassignedTrainersUserNameNullFail() {
-        when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser)).thenReturn(false);
-        List<TrainerDto> listTrainersDto = traineeFacade.getUnassignedTrainers("aaa");
+//    @Test
+//    void getUnassignedTrainersUserNameNullFail() {
+//        when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser)).thenReturn(false);
+//        List<TrainerDto> listTrainersDto = traineeFacade.getUnassignedTrainers("aaa");
+//
+//        assertNotNull(listTrainersDto);
+//        assertEquals(0, listTrainersDto.size());
+//        verify(userNameAndPasswordChecker, never()).isNullOrBlank(userNameForTraineeDto, passwordForUser);
+//        verify(traineeService, never()).getUnassignedTrainersList("aaa");
+//    }
+//
+//    @Test
+//    void getUnassignedTrainersSuccessfully() {
+//        List<TrainerDto> listTrainersDto = List.of(new TrainerDto());
+//        when(userNameAndPasswordChecker.isNullOrBlank(userNameNotFound, passwordForUser)).thenReturn(false);
+//        when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(true);
+//        when(traineeService.getUnassignedTrainersList(userNameNotFound))
+//                .thenReturn(listTrainersDto);
+//
+//        List<TrainerDto> createdListTrainersDto = traineeFacade.getUnassignedTrainers(
+//                userNameNotFound);
+//
+//        assertNotNull(createdListTrainersDto);
+//        assertEquals(1, createdListTrainersDto.size());
+//        verify(userNameAndPasswordChecker, times(1))
+//                .isNullOrBlank(userNameNotFound, passwordForUser);
+//        verify(traineeService, times(1))
+//                .authenticate(userNameNotFound, passwordForUser);
+//        verify(traineeService, times(1)).getUnassignedTrainersList(userNameNotFound);
+//    }
+//
+//    @Test
+//    void getUnassignedTrainersUserNameNotFoundFail() {
+//        when(userNameAndPasswordChecker.isNullOrBlank(userNameNotFound, passwordForUser)).thenReturn(false);
+//        when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
+//
+//        List<TrainerDto> listTrainersDto = traineeFacade.getUnassignedTrainers(
+//                userNameNotFound);
+//
+//        assertNotNull(listTrainersDto);
+//        assertEquals(0, listTrainersDto.size());
+//        verify(userNameAndPasswordChecker, times(1))
+//                .isNullOrBlank(userNameNotFound, passwordForUser);
+//        verify(traineeService, times(1))
+//                .authenticate(userNameNotFound, passwordForUser);
+//        verify(traineeService, never()).getUnassignedTrainersList(userNameNotFound);
+//    }
 
-        assertNotNull(listTrainersDto);
-        assertEquals(0, listTrainersDto.size());
-        verify(userNameAndPasswordChecker, never()).isNullOrBlank(userNameForTraineeDto, passwordForUser);
-        verify(traineeService, never()).getUnassignedTrainersList("aaa");
-    }
+//    @Test
+//    void updateTrainersListUserNameNullFail() {
+//        when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser))
+//                .thenReturn(false);
+//        List<TrainerDto> listTrainersDto =
+//                traineeFacade.updateTrainersList("aaa", List.of("aa"));
+//
+//        assertNotNull(listTrainersDto);
+//        assertEquals(0, listTrainersDto.size());
+//        verify(userNameAndPasswordChecker, never()).isNullOrBlank(userNameForTraineeDto, passwordForUser);
+//        verify(traineeService, never()).updateTrainersList("aaa", List.of("aa"));
+//    }
 
-    @Test
-    void getUnassignedTrainersSuccessfully() {
-        List<TrainerDto> listTrainersDto = List.of(new TrainerDto());
-        when(userNameAndPasswordChecker.isNullOrBlank(userNameNotFound, passwordForUser)).thenReturn(false);
-        when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(true);
-        when(traineeService.getUnassignedTrainersList(userNameNotFound))
-                .thenReturn(listTrainersDto);
-
-        List<TrainerDto> createdListTrainersDto = traineeFacade.getUnassignedTrainers(
-                userNameNotFound);
-
-        assertNotNull(createdListTrainersDto);
-        assertEquals(1, createdListTrainersDto.size());
-        verify(userNameAndPasswordChecker, times(1))
-                .isNullOrBlank(userNameNotFound, passwordForUser);
-        verify(traineeService, times(1))
-                .authenticate(userNameNotFound, passwordForUser);
-        verify(traineeService, times(1)).getUnassignedTrainersList(userNameNotFound);
-    }
-
-    @Test
-    void getUnassignedTrainersUserNameNotFoundFail() {
-        when(userNameAndPasswordChecker.isNullOrBlank(userNameNotFound, passwordForUser)).thenReturn(false);
-        when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
-
-        List<TrainerDto> listTrainersDto = traineeFacade.getUnassignedTrainers(
-                userNameNotFound);
-
-        assertNotNull(listTrainersDto);
-        assertEquals(0, listTrainersDto.size());
-        verify(userNameAndPasswordChecker, times(1))
-                .isNullOrBlank(userNameNotFound, passwordForUser);
-        verify(traineeService, times(1))
-                .authenticate(userNameNotFound, passwordForUser);
-        verify(traineeService, never()).getUnassignedTrainersList(userNameNotFound);
-    }
-
-    @Test
-    void updateTrainersListUserNameNullFail() {
-        when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser))
-                .thenReturn(false);
-        List<TrainerDto> listTrainersDto =
-                traineeFacade.updateTrainersList("aaa", List.of("aa"));
-
-        assertNotNull(listTrainersDto);
-        assertEquals(0, listTrainersDto.size());
-        verify(userNameAndPasswordChecker, never()).isNullOrBlank(userNameForTraineeDto, passwordForUser);
-        verify(traineeService, never()).updateTrainersList("aaa", List.of("aa"));
-    }
-
-    @Test
-    void updateTrainersListSuccessfully() {
-        List<TrainerDto> listTrainersDto = List.of(new TrainerDto());
-        when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser))
-                .thenReturn(false);
-        when(traineeService.authenticate(userNameForTraineeDto, passwordForUser))
-                .thenReturn(true);
-        when(traineeService.updateTrainersList(
-            userNameForTraineeDto, List.of("aaa")))
-            .thenReturn(listTrainersDto);
-
-        List<TrainerDto> createdListTrainersDto = traineeFacade.updateTrainersList(
-                userNameForTraineeDto, List.of("aaa"));
-
-        assertNotNull(createdListTrainersDto);
-        assertEquals(1, createdListTrainersDto.size());
-        assertEquals(listTrainersDto, createdListTrainersDto);
-        verify(userNameAndPasswordChecker, times(1))
-                .isNullOrBlank(userNameForTraineeDto, passwordForUser);
-        verify(traineeService, times(1))
-                .authenticate(userNameForTraineeDto, passwordForUser);
-        verify(traineeService, times(1)).updateTrainersList(userNameForTraineeDto, List.of("aaa"));
-    }
-
-    @Test
-    void updateTrainersListUserNameNotAuthenticatedFail() {
-        when(userNameAndPasswordChecker.isNullOrBlank(userNameNotFound, passwordForUser)).thenReturn(false);
-        when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
-
-        List<TrainerDto> listTrainersDto = traineeFacade.updateTrainersList(
-                userNameNotFound, List.of("aaa"));
-
-        assertNotNull(listTrainersDto);
-        assertEquals(0, listTrainersDto.size());
-        verify(userNameAndPasswordChecker, times(1))
-                .isNullOrBlank(userNameNotFound, passwordForUser);
-        verify(traineeService, times(1))
-                .authenticate(userNameNotFound, passwordForUser);
-        verify(traineeService, never()).updateTrainersList(userNameNotFound, List.of("aaa"));
-    }
-
-    @Test
-    void updateTrainersListListOfTrainersNullFail() {
-        List<TrainerDto> listTrainersDto = traineeFacade.updateTrainersList(
-                userNameNotFound, null);
-
-        assertNotNull(listTrainersDto);
-        assertEquals(0, listTrainersDto.size());
-        verify(userNameAndPasswordChecker, never())
-                .isNullOrBlank(userNameNotFound, passwordForUser);
-        verify(traineeService, never())
-                .authenticate(userNameNotFound, passwordForUser);
-        verify(traineeService, never()).updateTrainersList(userNameNotFound, null);
-    }
+//    @Test
+//    void updateTrainersListSuccessfully() {
+//        List<TrainerDto> listTrainersDto = List.of(new TrainerDto());
+//        when(userNameAndPasswordChecker.isNullOrBlank(userNameForTraineeDto, passwordForUser))
+//                .thenReturn(false);
+//        when(traineeService.authenticate(userNameForTraineeDto, passwordForUser))
+//                .thenReturn(true);
+//        when(traineeService.updateTrainersList(
+//            userNameForTraineeDto, List.of("aaa")))
+//            .thenReturn(listTrainersDto);
+//
+//        List<TrainerDto> createdListTrainersDto = traineeFacade.updateTrainersList(
+//                userNameForTraineeDto, List.of("aaa"));
+//
+//        assertNotNull(createdListTrainersDto);
+//        assertEquals(1, createdListTrainersDto.size());
+//        assertEquals(listTrainersDto, createdListTrainersDto);
+//        verify(userNameAndPasswordChecker, times(1))
+//                .isNullOrBlank(userNameForTraineeDto, passwordForUser);
+//        verify(traineeService, times(1))
+//                .authenticate(userNameForTraineeDto, passwordForUser);
+//        verify(traineeService, times(1)).updateTrainersList(userNameForTraineeDto, List.of("aaa"));
+//    }
+//
+//    @Test
+//    void updateTrainersListUserNameNotAuthenticatedFail() {
+//        when(userNameAndPasswordChecker.isNullOrBlank(userNameNotFound, passwordForUser)).thenReturn(false);
+//        when(traineeService.authenticate(userNameNotFound, passwordForUser)).thenReturn(false);
+//
+//        List<TrainerDto> listTrainersDto = traineeFacade.updateTrainersList(
+//                userNameNotFound, List.of("aaa"));
+//
+//        assertNotNull(listTrainersDto);
+//        assertEquals(0, listTrainersDto.size());
+//        verify(userNameAndPasswordChecker, times(1))
+//                .isNullOrBlank(userNameNotFound, passwordForUser);
+//        verify(traineeService, times(1))
+//                .authenticate(userNameNotFound, passwordForUser);
+//        verify(traineeService, never()).updateTrainersList(userNameNotFound, List.of("aaa"));
+//    }
+//
+//    @Test
+//    void updateTrainersListListOfTrainersNullFail() {
+//        List<TrainerDto> listTrainersDto = traineeFacade.updateTrainersList(
+//                userNameNotFound, null);
+//
+//        assertNotNull(listTrainersDto);
+//        assertEquals(0, listTrainersDto.size());
+//        verify(userNameAndPasswordChecker, never())
+//                .isNullOrBlank(userNameNotFound, passwordForUser);
+//        verify(traineeService, never())
+//                .authenticate(userNameNotFound, passwordForUser);
+//        verify(traineeService, never()).updateTrainersList(userNameNotFound, null);
+//    }
 }

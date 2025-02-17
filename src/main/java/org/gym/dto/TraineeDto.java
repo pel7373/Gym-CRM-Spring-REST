@@ -1,8 +1,6 @@
 package org.gym.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +15,7 @@ import java.util.List;
 @Builder
 public class TraineeDto {
     @NotNull(message = "UserDto is required")
+    @Valid
     private UserDto user;
 
     //@ToString.Exclude

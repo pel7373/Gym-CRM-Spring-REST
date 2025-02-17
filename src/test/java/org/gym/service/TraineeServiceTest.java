@@ -355,49 +355,4 @@ class TraineeServiceTest {
         verify(traineeRepository, times(1)).findByUserName(traineeUserName);
         verify(trainerRepository, never()).findByUserName(any());
     }
-
-    @Test
-    void isFirstOrLastNamesChangedDoesntChangeNames() {
-        UserDto userDto2 = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
-        TraineeDto traineeDto2 = TraineeDto.builder()
-                .user(userDto2)
-                .build();
-
-        boolean result = traineeService.isFirstOrLastNamesChanged(traineeDto2, trainee);
-        assertAll(
-                () -> assertFalse(result),
-                () -> assertEquals(trainee.getUser().getFirstName(), traineeDto2.getUser().getFirstName()),
-                () -> assertEquals(trainee.getUser().getLastName(), traineeDto2.getUser().getLastName())
-        );
-    }
-
-    @Test
-    void isFirstOrLastNamesChangedFirstNames() {
-        UserDto userDto2 = new UserDto("Iryna", "Petrenko", "Maria.Petrenko", "",true);
-        TraineeDto traineeDto2 = TraineeDto.builder()
-                .user(userDto2)
-                .build();
-
-        boolean result = traineeService.isFirstOrLastNamesChanged(traineeDto2, trainee);
-        assertAll(
-                () -> assertTrue(result),
-                () -> assertNotEquals(trainee.getUser().getFirstName(), traineeDto2.getUser().getFirstName()),
-                () -> assertEquals(trainee.getUser().getLastName(), traineeDto2.getUser().getLastName())
-        );
-    }
-
-    @Test
-    void isFirstOrLastNamesChangedBothNames() {
-        UserDto userDto2 = new UserDto("Iryna", "Sergienko", "Maria.Petrenko", "",true);
-        TraineeDto traineeDto2 = TraineeDto.builder()
-                .user(userDto2)
-                .build();
-
-        boolean result = traineeService.isFirstOrLastNamesChanged(traineeDto2, trainee);
-        assertAll(
-                () -> assertTrue(result),
-                () -> assertNotEquals(trainee.getUser().getFirstName(), traineeDto2.getUser().getFirstName()),
-                () -> assertNotEquals(trainee.getUser().getLastName(), traineeDto2.getUser().getLastName())
-        );
-    }
 }

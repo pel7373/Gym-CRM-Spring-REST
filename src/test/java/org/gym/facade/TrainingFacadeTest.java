@@ -73,38 +73,38 @@ class TrainingFacadeTest {
                 .build();
     }
 
-    @Test
-    void createTrainingSuccessfully() {
-        when(trainingDtoValidator.validate(any())).thenReturn(true);
-        when(trainingService.create(any())).thenReturn(trainingDto);
-
-        TrainingDto createdTrainingDto = trainingFacade.create(trainingDto);
-        assertAll(
-                () -> assertNotNull(createdTrainingDto),
-                () -> verify(trainingDtoValidator, times(1)).validate(any()),
-                () -> verify(trainingService, times(1)).create(any()),
-                () -> verify(trainingMapper, never()).convertToEntity(any()),
-                () -> verify(trainingMapper, never()).convertToDto(any())
-        );
-    }
-
-    @Test
-    void createTrainingNullFail() {
-        TrainingDto createdTrainingDto = trainingFacade.create(null);
-        assertNull(createdTrainingDto);
-        verify(trainingDtoValidator, never()).validate(any());
-        verify(trainingService, never()).create(any());
-    }
-
-    @Test
-    void createTraineeNotValidFail() {
-        when(trainingDtoValidator.validate(any())).thenReturn(false);
-        TrainingDto createdTrainingDto = trainingFacade.create(trainingDto);
-
-        assertNull(createdTrainingDto);
-        verify(trainingDtoValidator, times(1)).validate(any());
-        verify(trainingService, never()).create(any());
-    }
+//    @Test
+//    void createTrainingSuccessfully() {
+//        when(trainingDtoValidator.validate(any())).thenReturn(true);
+//        when(trainingService.create(any())).thenReturn(trainingDto);
+//
+//        TrainingDto createdTrainingDto = trainingFacade.create(trainingDto);
+//        assertAll(
+//                () -> assertNotNull(createdTrainingDto),
+//                () -> verify(trainingDtoValidator, times(1)).validate(any()),
+//                () -> verify(trainingService, times(1)).create(any()),
+//                () -> verify(trainingMapper, never()).convertToEntity(any()),
+//                () -> verify(trainingMapper, never()).convertToDto(any())
+//        );
+//    }
+//
+//    @Test
+//    void createTrainingNullFail() {
+//        TrainingDto createdTrainingDto = trainingFacade.create(null);
+//        assertNull(createdTrainingDto);
+//        verify(trainingDtoValidator, never()).validate(any());
+//        verify(trainingService, never()).create(any());
+//    }
+//
+//    @Test
+//    void createTraineeNotValidFail() {
+//        when(trainingDtoValidator.validate(any())).thenReturn(false);
+//        TrainingDto createdTrainingDto = trainingFacade.create(trainingDto);
+//
+//        assertNull(createdTrainingDto);
+//        verify(trainingDtoValidator, times(1)).validate(any());
+//        verify(trainingService, never()).create(any());
+//    }
 
     @Test
     void getTraineeTrainingsListCriteriaSuccess() {

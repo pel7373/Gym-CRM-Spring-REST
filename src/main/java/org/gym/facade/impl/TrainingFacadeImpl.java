@@ -2,12 +2,15 @@ package org.gym.facade.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.gym.dto.TraineeTrainingsDto;
-import org.gym.dto.TrainerTrainingsDto;
-import org.gym.dto.TrainingDto;
+import org.gym.dto.*;
+import org.gym.dto.request.training.TrainingAddRequest;
+import org.gym.dto.response.training.TraineeTrainingsListResponse;
 import org.gym.exception.EntityNotFoundException;
+import org.gym.exception.NullEntityException;
 import org.gym.facade.TrainingFacade;
+import org.gym.mapper.TrainingMapper;
 import org.gym.service.TrainingService;
+import org.gym.validator.JakartaValidator;
 import org.gym.validator.TrainingDtoValidator;
 import org.springframework.stereotype.Component;
 
@@ -22,38 +25,33 @@ import static org.gym.config.Config.*;
 public class TrainingFacadeImpl implements TrainingFacade {
 
     private final TrainingService trainingService;
-    private final TrainingDtoValidator trainingDtoValidator;
     private final UserNameAndPasswordChecker userNameAndPasswordChecker;
+    private final TrainingMapper trainingMapper;
 
     @Override
-    public TrainingDto create(TrainingDto trainingDto) {
-        if(trainingDto == null) {
+    public void create(TrainingAddRequest request) {
+        if(request == null) {
             LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
-            return null;
-        }
-
-        if(!trainingDtoValidator.validate(trainingDto)) {
-            LOGGER.warn(trainingDtoValidator.getErrorMessage(trainingDto));
-            return null;
+            throw new NullEntityException(ENTITY_CANT_BE_NULL_OR_BLANK);
         }
 
         try {
-            return trainingService.create(trainingDto);
+            TrainingDto trainingDto = trainingMapper.trainingAddRequestToTrainingDto(request);
+            trainingService.create(trainingDto);
         } catch (EntityNotFoundException e) {
             LOGGER.warn(e.getMessage());
-            return null;
         }
     }
 
     @Override
-    public List<TrainingDto> getTraineeTrainings(TraineeTrainingsDto traineeTrainingsDto) {
-        if (userNameAndPasswordChecker.isNullOrBlank(traineeTrainingsDto.getTraineeUserName())) {
-            LOGGER.warn(USERNAME_CANT_BE_NULL_OR_BLANK);
-            return new ArrayList<>();
-        }
+    public List<TraineeTrainingsListResponse> getTraineeTrainings(TraineeTrainingsDto traineeTrainingsDto) {
 
         try {
-            return trainingService.getTraineeTrainingsListCriteria(traineeTrainingsDto);
+            //return
+            List<TrainingDto> traineeTrainingsList = trainingService.getTraineeTrainingsListCriteria(traineeTrainingsDto);
+            return traineeTrainingsList.stream()
+                    .map(trainingMapper::trainingDtoToTraineeTrainingsListResponse)
+                    .toList();
         } catch (EntityNotFoundException e) {
             LOGGER.warn(ENTITY_NOT_FOUND, traineeTrainingsDto.getTraineeUserName());
             return new ArrayList<>();
@@ -61,14 +59,13 @@ public class TrainingFacadeImpl implements TrainingFacade {
     }
 
     @Override
-    public List<TrainingDto> getTrainerTrainings(TrainerTrainingsDto trainerTrainingsDto) {
-        if(userNameAndPasswordChecker.isNullOrBlank(trainerTrainingsDto.getTrainerUserName())) {
-            LOGGER.warn(USERNAME_CANT_BE_NULL_OR_BLANK);
-            return new ArrayList<>();
-        }
+    public List<TrainerTrainingsListResponse> getTrainerTrainings(TrainerTrainingsDto trainerTrainingsDto) {
 
         try {
-            return trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto);
+            List<TrainingDto> trainerTrainingsList = trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto);
+            return trainerTrainingsList.stream()
+                    .map(trainingMapper::trainingDtoToTrainerTrainingsListResponse)
+                    .toList();
         } catch (EntityNotFoundException e) {
             LOGGER.warn(ENTITY_NOT_FOUND, trainerTrainingsDto.getTrainerUserName());
             return new ArrayList<>();

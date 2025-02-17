@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class UserForListResponse {
+    private String userName;
     private String firstName;
     private String lastName;
-    private String userName;
 }

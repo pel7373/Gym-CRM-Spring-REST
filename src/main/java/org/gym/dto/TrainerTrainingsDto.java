@@ -1,5 +1,6 @@
 package org.gym.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class TrainerTrainingsDto {
+    @NotBlank(message = "trainer's userName is required")
     String trainerUserName;
     LocalDate fromDate;
     LocalDate toDate;

@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.gym.dto.response.user.UserForListResponse;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class TraineeForListResponse {
-    private String userName;
-    private String firstName;
-    private String lastName;
-    //private UserForListResponse user;
+    private UserForListResponse user;
 }

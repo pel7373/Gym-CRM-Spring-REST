@@ -1,4 +1,4 @@
-package org.gym.dto.response.training;
+package org.gym.dto.response.trainingType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

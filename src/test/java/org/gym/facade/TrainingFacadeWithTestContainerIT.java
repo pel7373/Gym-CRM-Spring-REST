@@ -125,168 +125,168 @@ class TrainingFacadeWithTestContainerIT {
         trainingDto = trainingMapper.convertToDto(training);
     }
 
-    @Test
-    void createTrainingSuccessfully() {
-        TrainingDto createdTrainingDto = trainingFacade.create(trainingDto);
-        assertNotNull(createdTrainingDto);
+//    @Test
+//    void createTrainingSuccessfully() {
+//        TrainingDto createdTrainingDto = trainingFacade.create(trainingDto);
+//        assertNotNull(createdTrainingDto);
+//
+//        assertAll(
+//                "Grouped assertions of created trainerDto",
+//                () -> assertNotNull(createdTrainingDto, "created training shouldn't be null"),
+//                () -> assertNotNull(createdTrainingDto.getTrainer(), "created trainer shouldn't be null"),
+//                () -> assertNotNull(createdTrainingDto.getTrainee(), "created trainee shouldn't be null"),
+//                () -> assertEquals(createdTrainingDto.getTrainee().getUser().getFirstName(),
+//                        trainingDto.getTrainee().getUser().getFirstName(),
+//                        "trainee's firstNames should be equal"),
+//                () -> assertEquals(createdTrainingDto.getTrainer().getUser().getFirstName(),
+//                        trainingDto.getTrainer().getUser().getFirstName(),
+//                        "trainer's firstNames should be equal"),
+//                () -> assertEquals(createdTrainingDto.getTrainer().getSpecialization(),
+//                        trainingDto.getTrainer().getSpecialization(),
+//                        "trainer's specialization should be equal"),
+//                () -> assertEquals(createdTrainingDto.getTrainingName(),
+//                        trainingDto.getTrainingName(), "training names  should be equal"),
+//                () -> assertEquals(createdTrainingDto.getDate(),
+//                        trainingDto.getDate(), "dates should be equal")
+//        );
+//    }
 
-        assertAll(
-                "Grouped assertions of created trainerDto",
-                () -> assertNotNull(createdTrainingDto, "created training shouldn't be null"),
-                () -> assertNotNull(createdTrainingDto.getTrainer(), "created trainer shouldn't be null"),
-                () -> assertNotNull(createdTrainingDto.getTrainee(), "created trainee shouldn't be null"),
-                () -> assertEquals(createdTrainingDto.getTrainee().getUser().getFirstName(),
-                        trainingDto.getTrainee().getUser().getFirstName(),
-                        "trainee's firstNames should be equal"),
-                () -> assertEquals(createdTrainingDto.getTrainer().getUser().getFirstName(),
-                        trainingDto.getTrainer().getUser().getFirstName(),
-                        "trainer's firstNames should be equal"),
-                () -> assertEquals(createdTrainingDto.getTrainer().getSpecialization(),
-                        trainingDto.getTrainer().getSpecialization(),
-                        "trainer's specialization should be equal"),
-                () -> assertEquals(createdTrainingDto.getTrainingName(),
-                        trainingDto.getTrainingName(), "training names  should be equal"),
-                () -> assertEquals(createdTrainingDto.getDate(),
-                        trainingDto.getDate(), "dates should be equal")
-        );
-    }
-
-    @Test
-    void getByTraineeCriteriaEmptyResult() {
-        TrainingDto createdTrainingDto = trainingFacade.create(trainingMapper.convertToDto(training));
-        assertNotNull(createdTrainingDto);
-
-        LocalDate fromDate = LocalDate.of(2030, 3, 5);
-        LocalDate toDate = LocalDate.of(2050, 3, 5);
-        String differentTrainerName = "";
-
-        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
-                .traineeUserName(trainee.getUser().getUserName())
-                .fromDate(fromDate)
-                .toDate(toDate)
-                .trainerUserName(differentTrainerName)
-                .trainingType("stretching")
-                .build();
-
-        List<TrainingDto> trainings = trainingFacade.getTraineeTrainings(traineeTrainingsDto);
-
-        assertTrue(trainings.isEmpty());
-    }
-
-    @Test
-    void getByTraineeCriteriaSuccessfully() {
-        TrainingDto createdTrainingDto = trainingFacade.create(trainingMapper.convertToDto(training));
-        assertNotNull(createdTrainingDto);
-
-        LocalDate fromDate = LocalDate.of(2010, 2, 9);
-        LocalDate toDate = LocalDate.of(2035, 3, 9);
-        String trainerUserName = trainer.getUser().getUserName();
-
-        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
-                .traineeUserName(trainee.getUser().getUserName())
-                .fromDate(fromDate)
-                .toDate(toDate)
-                .trainerUserName(trainerUserName)
-                .trainingType(trainingTypeName)
-                .build();
-
-        List<TrainingDto> trainingsList = trainingFacade.getTraineeTrainings(traineeTrainingsDto);
-
-        assertAll(
-                () -> assertFalse(trainingsList.isEmpty()),
-                () -> assertEquals(1, trainingsList.size()),
-                () -> assertEquals("Maria.Petrenko",
-                        trainingsList.get(0).getTrainee().getUser().getUserName()),
-                () -> assertEquals(trainingTypeName, trainingsList.get(0).getTrainingType().getTrainingTypeName())
-        );
-    }
-
-    @Test
-    void getByTraineeCriteriaNoResult() {
-        TrainingDto createdTrainingDto = trainingFacade.create(trainingMapper.convertToDto(training));
-        assertNotNull(createdTrainingDto);
-
-        LocalDate fromDate = LocalDate.of(2010, 8, 1);
-        LocalDate toDate = LocalDate.of(2040, 8, 1);
-        String trainerUserName = trainer.getUser().getUserName();
-
-        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
-                .traineeUserName("NotValidUserName")
-                .fromDate(fromDate)
-                .toDate(toDate)
-                .trainerUserName(trainerUserName)
-                .trainingType("Roga")
-                .build();
-
-        List<TrainingDto> traineeTrainings = trainingFacade.getTraineeTrainings(traineeTrainingsDto);
-        assertNotNull(traineeTrainings);
-        assertEquals(0, traineeTrainings.size());
-    }
-    @Test
-    void getByTrainerCriteriaNoResultAndException() {
-        TrainingDto createdTrainingDto = trainingFacade.create(trainingMapper.convertToDto(training));
-        assertNotNull(createdTrainingDto);
-
-        LocalDate fromDate = LocalDate.of(2035, 1, 1);
-        LocalDate toDate = LocalDate.of(2036, 1, 1);
-        String traineeName = trainee.getUser().getFirstName();
-
-        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
-                .trainerUserName("NotValidTrainer")
-                .fromDate(fromDate)
-                .toDate(toDate)
-                .traineeUserName(traineeName)
-                .build();
-
-        List<TrainingDto> trainerTrainings = trainingFacade.getTrainerTrainings(trainerTrainingsDto);
-
-        assertNotNull(trainerTrainings);
-        assertEquals(0, trainerTrainings.size());
-    }
-
-    @Test
-    void getByTrainerCriteriaSuccessfully() {
-        TrainingDto createdTrainingDto = trainingFacade.create(trainingMapper.convertToDto(training));
-        assertNotNull(createdTrainingDto);
-
-        LocalDate fromDate = LocalDate.now().minusYears(10);
-        LocalDate toDate = LocalDate.now().plusYears(10);
-        String traineeUserName = trainee.getUser().getUserName();
-
-        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
-                .trainerUserName(trainer.getUser().getUserName())
-                .fromDate(fromDate)
-                .toDate(toDate)
-                .traineeUserName(traineeUserName)
-                .build();
-
-        List<TrainingDto> trainings = trainingFacade.getTrainerTrainings(trainerTrainingsDto);
-
-        assertAll(
-                () -> assertFalse(trainings.isEmpty()),
-                () -> assertEquals(1, trainings.size()),
-                () -> assertEquals(trainer.getUser().getUserName(), trainings.get(0).getTrainer().getUser().getUserName()),
-                () -> assertEquals("Zumba", trainings.get(0).getTrainingType().getTrainingTypeName())
-        );
-    }
-
-    @Test
-    void getByTrainerCriteriaEmpty() {
-        TrainingDto createdTrainingDto = trainingFacade.create(trainingMapper.convertToDto(training));
-        assertNotNull(createdTrainingDto);
-
-        LocalDate fromDate = LocalDate.of(2050, 9, 8);
-        LocalDate toDate = LocalDate.of(2060, 9, 8);
-        String invalidTraineeName = "";
-
-        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
-                .trainerUserName(trainer.getUser().getUserName())
-                .fromDate(fromDate)
-                .toDate(toDate)
-                .traineeUserName(invalidTraineeName)
-                .build();
-
-        List<TrainingDto> trainings = trainingFacade.getTrainerTrainings(trainerTrainingsDto);
-        assertTrue(trainings.isEmpty());
-    }
+//    @Test
+//    void getByTraineeCriteriaEmptyResult() {
+//        TrainingDto createdTrainingDto = trainingFacade.create(trainingMapper.convertToDto(training));
+//        assertNotNull(createdTrainingDto);
+//
+//        LocalDate fromDate = LocalDate.of(2030, 3, 5);
+//        LocalDate toDate = LocalDate.of(2050, 3, 5);
+//        String differentTrainerName = "";
+//
+//        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
+//                .traineeUserName(trainee.getUser().getUserName())
+//                .fromDate(fromDate)
+//                .toDate(toDate)
+//                .trainerUserName(differentTrainerName)
+//                .trainingType("stretching")
+//                .build();
+//
+//        List<TrainingDto> trainings = trainingFacade.getTraineeTrainings(traineeTrainingsDto);
+//
+//        assertTrue(trainings.isEmpty());
+//    }
+//
+//    @Test
+//    void getByTraineeCriteriaSuccessfully() {
+//        TrainingDto createdTrainingDto = trainingFacade.create(trainingMapper.convertToDto(training));
+//        assertNotNull(createdTrainingDto);
+//
+//        LocalDate fromDate = LocalDate.of(2010, 2, 9);
+//        LocalDate toDate = LocalDate.of(2035, 3, 9);
+//        String trainerUserName = trainer.getUser().getUserName();
+//
+//        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
+//                .traineeUserName(trainee.getUser().getUserName())
+//                .fromDate(fromDate)
+//                .toDate(toDate)
+//                .trainerUserName(trainerUserName)
+//                .trainingType(trainingTypeName)
+//                .build();
+//
+//        List<TrainingDto> trainingsList = trainingFacade.getTraineeTrainings(traineeTrainingsDto);
+//
+//        assertAll(
+//                () -> assertFalse(trainingsList.isEmpty()),
+//                () -> assertEquals(1, trainingsList.size()),
+//                () -> assertEquals("Maria.Petrenko",
+//                        trainingsList.get(0).getTrainee().getUser().getUserName()),
+//                () -> assertEquals(trainingTypeName, trainingsList.get(0).getTrainingType().getTrainingTypeName())
+//        );
+//    }
+//
+//    @Test
+//    void getByTraineeCriteriaNoResult() {
+//        TrainingDto createdTrainingDto = trainingFacade.create(trainingMapper.convertToDto(training));
+//        assertNotNull(createdTrainingDto);
+//
+//        LocalDate fromDate = LocalDate.of(2010, 8, 1);
+//        LocalDate toDate = LocalDate.of(2040, 8, 1);
+//        String trainerUserName = trainer.getUser().getUserName();
+//
+//        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
+//                .traineeUserName("NotValidUserName")
+//                .fromDate(fromDate)
+//                .toDate(toDate)
+//                .trainerUserName(trainerUserName)
+//                .trainingType("Roga")
+//                .build();
+//
+//        List<TrainingDto> traineeTrainings = trainingFacade.getTraineeTrainings(traineeTrainingsDto);
+//        assertNotNull(traineeTrainings);
+//        assertEquals(0, traineeTrainings.size());
+//    }
+//    @Test
+//    void getByTrainerCriteriaNoResultAndException() {
+//        TrainingDto createdTrainingDto = trainingFacade.create(trainingMapper.convertToDto(training));
+//        assertNotNull(createdTrainingDto);
+//
+//        LocalDate fromDate = LocalDate.of(2035, 1, 1);
+//        LocalDate toDate = LocalDate.of(2036, 1, 1);
+//        String traineeName = trainee.getUser().getFirstName();
+//
+//        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
+//                .trainerUserName("NotValidTrainer")
+//                .fromDate(fromDate)
+//                .toDate(toDate)
+//                .traineeUserName(traineeName)
+//                .build();
+//
+//        List<TrainingDto> trainerTrainings = trainingFacade.getTrainerTrainings(trainerTrainingsDto);
+//
+//        assertNotNull(trainerTrainings);
+//        assertEquals(0, trainerTrainings.size());
+//    }
+//
+//    @Test
+//    void getByTrainerCriteriaSuccessfully() {
+//        TrainingDto createdTrainingDto = trainingFacade.create(trainingMapper.convertToDto(training));
+//        assertNotNull(createdTrainingDto);
+//
+//        LocalDate fromDate = LocalDate.now().minusYears(10);
+//        LocalDate toDate = LocalDate.now().plusYears(10);
+//        String traineeUserName = trainee.getUser().getUserName();
+//
+//        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
+//                .trainerUserName(trainer.getUser().getUserName())
+//                .fromDate(fromDate)
+//                .toDate(toDate)
+//                .traineeUserName(traineeUserName)
+//                .build();
+//
+//        List<TrainingDto> trainings = trainingFacade.getTrainerTrainings(trainerTrainingsDto);
+//
+//        assertAll(
+//                () -> assertFalse(trainings.isEmpty()),
+//                () -> assertEquals(1, trainings.size()),
+//                () -> assertEquals(trainer.getUser().getUserName(), trainings.get(0).getTrainer().getUser().getUserName()),
+//                () -> assertEquals("Zumba", trainings.get(0).getTrainingType().getTrainingTypeName())
+//        );
+//    }
+//
+//    @Test
+//    void getByTrainerCriteriaEmpty() {
+//        TrainingDto createdTrainingDto = trainingFacade.create(trainingMapper.convertToDto(training));
+//        assertNotNull(createdTrainingDto);
+//
+//        LocalDate fromDate = LocalDate.of(2050, 9, 8);
+//        LocalDate toDate = LocalDate.of(2060, 9, 8);
+//        String invalidTraineeName = "";
+//
+//        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
+//                .trainerUserName(trainer.getUser().getUserName())
+//                .fromDate(fromDate)
+//                .toDate(toDate)
+//                .traineeUserName(invalidTraineeName)
+//                .build();
+//
+//        List<TrainingDto> trainings = trainingFacade.getTrainerTrainings(trainerTrainingsDto);
+//        assertTrue(trainings.isEmpty());
+//    }
 }

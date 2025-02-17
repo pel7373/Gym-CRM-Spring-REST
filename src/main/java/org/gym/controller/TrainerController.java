@@ -1,83 +1,32 @@
 package org.gym.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.gym.dto.*;
+import org.gym.dto.TrainerDto;
+import org.gym.dto.request.ChangeLoginRequest;
+import org.gym.dto.request.trainer.TrainerUpdateRequest;
 import org.gym.dto.response.CreateResponse;
 import org.gym.dto.response.trainer.TrainerSelectResponse;
-import org.gym.entity.Trainer;
-import org.gym.facade.TrainerFacade;
-import org.gym.mapper.TrainerMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.gym.dto.response.trainer.TrainerUpdateResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@Slf4j
-@RestController
-@RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/trainers")
-@Validated
-public class TrainerController {
+public interface TrainerController {
+    CreateResponse create(@RequestBody @Valid TrainerDto trainerDto);
+    ResponseEntity<Void> login(@PathVariable("username") String userName,
+                                      @PathVariable("password") String password);
 
-    private final TrainerFacade trainerFacade;
-    //private final TrainerService trainerService;
-    private final TrainerMapper trainerMapper;
-    private final TransactionIdGenerator transactionIdGenerator;
+    ResponseEntity<Void> changeLogin(@RequestBody @Valid ChangeLoginRequest changeLoginRequest);
 
-    //    @SwaggerCreationInfo(
-//            summary = "Create a trainee",
-//            description = "Adds a new trainee",
-//            schema = TraineeCreateResponse.class
-    @PostMapping//(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public CreateResponse create(@RequestBody @Valid TrainerDto trainerDto){
-        String id = transactionIdGenerator.generate();
-        CreateResponse response = trainerFacade.create(trainerDto);
-        LOGGER.info("request {}, response {}, id {}", trainerDto, response, id);
-        return response;
-    }
+    TrainerSelectResponse getTrainerProfile(@PathVariable("username") String userName);
 
-    @GetMapping("login/{username}/{password}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Void> login(@PathVariable("username") String userName,
-                                      @PathVariable("password") String password) {
-        String id = transactionIdGenerator.generate();
-        boolean response = trainerFacade.authenticate(userName, password);
-        LOGGER.info("userName {}, response {}, id {}", userName, response, id);
-        if(response) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+    TrainerUpdateResponse update(@PathVariable("username") String userName,
+                                 @RequestBody @Valid TrainerUpdateRequest trainerUpdateRequest);
+    void changeStatus(
+            @PathVariable("username") String userName,
+            @RequestParam("isActive") Boolean isActive
+    );
 
-    @PostMapping(value = "1", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public TrainerSelectResponse create2(@RequestBody @Valid TrainerDto trainerDto){
-        String id = transactionIdGenerator.generate();
-        //TrainerDto trainerDto = trainerMapper.convertCreateRequestToDto(request);
-        LOGGER.info("request {}, id {}", trainerDto, id);
-        Trainer trainer = trainerMapper.convertToEntity(trainerDto);
-        LOGGER.info("trainer {}, id {}", trainer, id);
 
-        TrainerSelectResponse trainerSelectResponse = trainerMapper.convertToTrainerGetProfileResponse(trainerDto);
-        LOGGER.info("trainerProfileResponse {}, id {}", trainerSelectResponse, id);
-        return trainerSelectResponse;
-        //TrainerCreateResponse response = trainerFacade.create(trainerDto);
-
-//        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
-//
-//        TrainerDto trainerDto2 = TrainerDto.builder()
-//                .user(userDto)
-//                .specialization(TrainingTypeDto.builder()
-//                        .trainingTypeName("Zumba")
-//                        .build())
-//                .build();
-//        LOGGER.info("id {}, request {}, response {}", id,  trainerDto, response);
-//
-        //return trainerProfileResponse;
-    }
 }

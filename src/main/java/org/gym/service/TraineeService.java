@@ -13,7 +13,7 @@ public interface TraineeService {
     TraineeDto changeStatus(String userName, Boolean isActive) throws EntityNotFoundException;
     boolean authenticate(String userName, String password);
     TraineeDto changePassword(String userName, String newPassword) throws EntityNotFoundException;
-    void delete(String userName);
-    List<TrainerDto> getUnassignedTrainersList(String username) throws EntityNotFoundException;
-    List<TrainerDto> updateTrainersList(String username, List<String> trainersUserNames) throws EntityNotFoundException;
+    void delete(String userName) throws EntityNotFoundException;
+    List<TrainerDto> getUnassignedTrainersList(String userName) throws EntityNotFoundException;
+    List<TrainerDto> updateTrainersList(String userName, List<String> trainersUserNames) throws EntityNotFoundException;
 }

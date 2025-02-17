@@ -2,15 +2,25 @@ package org.gym.facade.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.gym.dto.TraineeDto;
+import org.gym.dto.UserDto;
 import org.gym.dto.request.ChangeLoginRequest;
+import org.gym.dto.request.trainee.TraineeUpdateRequest;
+import org.gym.dto.request.trainer.TrainerUpdateRequest;
 import org.gym.dto.response.CreateResponse;
 import org.gym.dto.TrainerDto;
+import org.gym.dto.response.trainee.TraineeSelectResponse;
+import org.gym.dto.response.trainee.TraineeUpdateResponse;
+import org.gym.dto.response.trainer.TrainerSelectResponse;
+import org.gym.dto.response.trainer.TrainerUpdateResponse;
 import org.gym.entity.TrainingType;
 import org.gym.exception.EntityNotFoundException;
+import org.gym.exception.EntityNotValidException;
 import org.gym.exception.NullEntityException;
 import org.gym.facade.TrainerFacade;
 import org.gym.mapper.TrainerMapper;
 import org.gym.service.TrainerService;
+import org.gym.validator.JakartaValidator;
 import org.gym.validator.UserDtoValidator;
 import org.springframework.stereotype.Component;
 
@@ -27,88 +37,66 @@ public class TrainerFacadeImpl implements TrainerFacade {
     private final UserNameAndPasswordChecker userNameAndPasswordChecker;
 
     @Override
-    public CreateResponse create(TrainerDto trainerDto) {
-        if(trainerDto == null) {
+    public CreateResponse create(TrainerDto trainerDto) throws NullEntityException, EntityNotValidException {
+        if(trainerDto == null || trainerDto.getUser() == null) {
             LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
             throw new NullEntityException(ENTITY_CANT_BE_NULL_OR_BLANK);
         }
 
-//        if(trainerDto.getUser().getIsActive() == null) {
-//            trainerDto.getUser().setIsActive(true);
-//        }
-
-//        if(!userDtoValidator.validate(trainerDto.getUser())) {
-//            LOGGER.warn(userDtoValidator.getErrorMessage(trainerDto.getUser()));
-//            return null;
-//        }
-
-//        try {
-//            return trainerService.create(trainerDto);
-//        } catch (EntityNotFoundException e) {
-//            LOGGER.warn(ENTITY_NOT_FOUND, trainerDto.getUser().getFirstName());
-//            return null;
-//        }
         TrainerDto createdTrainerDto = trainerService.create(trainerDto);
         return trainerMapper.convertToCreateResponse(createdTrainerDto);
     }
 
     @Override
-    public TrainerDto select(String userName, String password) {
-        if(authenticate(userName, password)) {
-            try {
-                return trainerService.select(userName);
-            } catch (EntityNotFoundException e) {
-                LOGGER.warn(ENTITY_NOT_FOUND, userName);
-            }
-        } else {
-            LOGGER.warn(ACCESS_DENIED, userName);
-        }
-        return null;
-    }
-
-    @Override
-    public TrainerDto update(String userName, String password, TrainerDto trainerDto) {
-        if(trainerDto == null) {
+    public TrainerSelectResponse select(String userName) throws EntityNotFoundException, NullEntityException {
+        if(userName == null) {
             LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
-            return null;
-        }
-
-        if(!userDtoValidator.validate(trainerDto.getUser())) {
-            LOGGER.warn(userDtoValidator.getErrorMessage(trainerDto.getUser()));
-            return null;
-        }
-
-        if(!authenticate(userName, password)) {
-            LOGGER.warn(ACCESS_DENIED, userName);
-            return null;
+            throw new NullEntityException(ENTITY_CANT_BE_NULL_OR_BLANK);
         }
 
         try {
-            return trainerService.update(userName, trainerDto);
+            TrainerDto selectedTrainerDto = trainerService.select(userName);
+            return trainerMapper.convertToTrainerSelectResponse(selectedTrainerDto);
         } catch (EntityNotFoundException e) {
             LOGGER.warn(ENTITY_NOT_FOUND, userName);
-            return null;
+            throw new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_EXCEPTION, userName));
         }
     }
 
     @Override
-    public TrainerDto changeStatus(String userName, String password, Boolean isActive) {
-        if(isActive == null) {
+    public TrainerUpdateResponse update(String userName, TrainerUpdateRequest trainerUpdateRequest) throws EntityNotFoundException, NullEntityException, EntityNotValidException {
+        if(trainerUpdateRequest == null) {
             LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
-            return null;
+            throw new NullEntityException(ENTITY_CANT_BE_NULL_OR_BLANK);
         }
 
-        if(authenticate(userName, password)) {
-            try {
-                return trainerService.changeStatus(userName, isActive);
-            } catch (EntityNotFoundException e) {
-                LOGGER.warn(ENTITY_NOT_FOUND, userName);
-                return null;
-            }
-        } else {
-            LOGGER.warn(ACCESS_DENIED, userName);
-            return null;
+        TrainerDto trainerDto = trainerMapper.convertTrainerUpdateRequestToTrainerDto(trainerUpdateRequest);
+
+        try {
+            TrainerDto updatedTrainerDto = trainerService.update(userName, trainerDto);
+            TrainerUpdateResponse trainerUpdateResponse = trainerMapper.convertDtoToUpdateResponse(updatedTrainerDto);
+            LOGGER.info("Trainer with userName {} was updated", trainerUpdateResponse.getUser().getUserName());
+            return trainerUpdateResponse;
+        } catch (EntityNotFoundException e) {
+            LOGGER.warn(ENTITY_NOT_FOUND, userName);
+            throw new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_EXCEPTION, userName));
         }
+    }
+
+    @Override
+    public void changeStatus(String userName, Boolean isActive) throws EntityNotFoundException, NullEntityException {
+        if(isActive == null) {
+            LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
+            throw new NullEntityException(ENTITY_CANT_BE_NULL_OR_BLANK);
+        }
+
+        try {
+            trainerService.changeStatus(userName, isActive);
+        } catch (EntityNotFoundException e) {
+            LOGGER.warn(ENTITY_NOT_FOUND, userName);
+            throw new EntityNotFoundException(ENTITY_NOT_FOUND_EXCEPTION);
+        }
+
     }
 
     @Override
@@ -125,34 +113,29 @@ public class TrainerFacadeImpl implements TrainerFacade {
     public TrainerDto changeSpecialization(String userName, String password, TrainingType trainingType) {
         if(trainingType == null) {
             LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
-            return null;
+            throw new NullEntityException(ENTITY_CANT_BE_NULL_OR_BLANK);
         }
 
-        if(authenticate(userName, password)) {
-            try {
-                return trainerService.changeSpecialization(userName, trainingType);
-            } catch (EntityNotFoundException e) {
-                LOGGER.warn(ENTITY_NOT_FOUND, userName);
-                return null;
-            }
-        } else {
-            LOGGER.warn(ACCESS_DENIED, userName);
+        try {
+            return trainerService.changeSpecialization(userName, trainingType);
+        } catch (EntityNotFoundException e) {
+            LOGGER.warn(ENTITY_NOT_FOUND, userName);
             return null;
         }
     }
     
     @Override
-    public void changePassword(ChangeLoginRequest changeLoginRequest) {
+    public void changePassword(ChangeLoginRequest changeLoginRequest) throws EntityNotFoundException, NullEntityException {
         if(changeLoginRequest != null || userNameAndPasswordChecker.isNullOrBlank(changeLoginRequest.getNewPassword())) {
             LOGGER.warn(ENTITY_CANT_BE_NULL_OR_BLANK);
             throw new NullEntityException(ENTITY_CANT_BE_NULL_OR_BLANK);
         }
 
-            try {
-                trainerService.changePassword(changeLoginRequest.getUserName(), changeLoginRequest.getNewPassword());
-            } catch (EntityNotFoundException e) {
-                LOGGER.warn(ENTITY_NOT_FOUND, changeLoginRequest.getUserName());
-                throw new EntityNotFoundException(ENTITY_NOT_FOUND_EXCEPTION);
-            }
+        try {
+            trainerService.changePassword(changeLoginRequest.getUserName(), changeLoginRequest.getNewPassword());
+        } catch (EntityNotFoundException e) {
+            LOGGER.warn(ENTITY_NOT_FOUND, changeLoginRequest.getUserName());
+            throw new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_EXCEPTION, changeLoginRequest.getUserName()));
+        }
     }
 }

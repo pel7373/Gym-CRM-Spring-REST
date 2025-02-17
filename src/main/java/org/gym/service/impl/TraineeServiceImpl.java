@@ -52,10 +52,12 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public TraineeDto select(String userName) throws EntityNotFoundException {
-        return traineeMapper.convertToDto(traineeRepository.findByUserName(userName)
+        Trainee trainee = traineeRepository.findByUserName(userName)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
-        ));
+                );
+        LOGGER.debug("selected trainee with userName {}", trainee.getUser().getUserName());
+        return traineeMapper.convertToDto(trainee);
     }
 
     @Override
@@ -79,7 +81,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public void delete(String userName) {
+    public void delete(String userName) throws EntityNotFoundException {
         traineeRepository.delete(userName);
     }
 
@@ -150,12 +152,5 @@ public class TraineeServiceImpl implements TraineeService {
         return trainers.stream()
                 .map(trainerMapper::convertToDto)
                 .toList();
-    }
-
-    public boolean isFirstOrLastNamesChanged(TraineeDto traineeDto, Trainee oldTrainee) {
-        return !oldTrainee.getUser().getFirstName()
-                .equals(traineeDto.getUser().getFirstName())
-                || !oldTrainee.getUser().getLastName()
-                .equals(traineeDto.getUser().getLastName());
     }
 }

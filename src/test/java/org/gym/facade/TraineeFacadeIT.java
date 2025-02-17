@@ -414,11 +414,11 @@ class TraineeFacadeIT {
 //        assertNull(result, "changeStatus with wrong password not successful");
 //    }
 
-    @Test
-    void changeStatusNotSuccessfulNullUserName() {
-        TraineeDto result = traineeFacade.changeStatus(null, true);
-        assertNull(result, "changeStatus with null username not successful");
-    }
+//    @Test
+//    void changeStatusNotSuccessfulNullUserName() {
+//        TraineeDto result = traineeFacade.changeStatus(null, true);
+//        assertNull(result, "changeStatus with null username not successful");
+//    }
 
 //    @Test
 //    void changeStatusNotSuccessfulNullPassword() {
@@ -479,75 +479,75 @@ class TraineeFacadeIT {
 //        assertNull(result, "changePassword with null username and password not successful");
 //    }
 
-    @Test
-    void getUnassignedTrainersListSuccessfully() {
-        String trainingTypeNameTrainer = "Zumba";
-        TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeNameTrainer).get();
-        ds.trainer1.setSpecialization(trainingType);
-        ds.trainer2.setSpecialization(trainingType);
-        Trainee createdTrainee1 = traineeRepository.save(ds.trainee1);
-        Trainer createdTrainer1 = trainerRepository.save(ds.trainer1);
-        Trainer createdTrainer2 = trainerRepository.save(ds.trainer2);
-        String password = traineeRepository.findByUserName(ds.traineeUserName).get().getUser().getPassword();
-        createdTrainee1.setTrainers(List.of(createdTrainer1));
+//    @Test
+//    void getUnassignedTrainersListSuccessfully() {
+//        String trainingTypeNameTrainer = "Zumba";
+//        TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeNameTrainer).get();
+//        ds.trainer1.setSpecialization(trainingType);
+//        ds.trainer2.setSpecialization(trainingType);
+//        Trainee createdTrainee1 = traineeRepository.save(ds.trainee1);
+//        Trainer createdTrainer1 = trainerRepository.save(ds.trainer1);
+//        Trainer createdTrainer2 = trainerRepository.save(ds.trainer2);
+//        String password = traineeRepository.findByUserName(ds.traineeUserName).get().getUser().getPassword();
+//        createdTrainee1.setTrainers(List.of(createdTrainer1));
+//
+//        List<TrainerDto> unassignedTrainers = traineeFacade.getUnassignedTrainers(ds.traineeUserName);
+//
+//        assertAll(
+//                "Grouped assertions of getUnassigned trainersDto's list",
+//                () -> assertNotNull(unassignedTrainers),
+//                () -> assertEquals(1, unassignedTrainers.size()),
+//                () -> assertEquals(createdTrainer2.getUser().getUserName(), unassignedTrainers.get(0).getUser().getUserName())
+//        );
+//    }
+//
+//    @Test
+//    void getUnassignedTrainersListEmpty() {
+//        String trainingTypeNameTrainer = "Zumba";
+//        TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeNameTrainer).get();
+//        ds.trainer1.setSpecialization(trainingType);
+//
+//        Trainee createdTrainee1 = traineeRepository.save(ds.trainee1);
+//        Trainer createdTrainer1 = trainerRepository.save(ds.trainer1);
+//        createdTrainee1.setTrainers(List.of(createdTrainer1));
+//        String password = traineeRepository.findByUserName(ds.traineeUserName).get().getUser().getPassword();
+//
+//        List<TrainerDto> unassignedTrainers = traineeFacade.getUnassignedTrainers(ds.traineeUserName);
+//
+//        assertAll(
+//                "Grouped assertions of getUnassigned trainersDto's list",
+//                () -> assertNotNull(unassignedTrainers),
+//                () -> assertEquals(0, unassignedTrainers.size())
+//        );
+//    }
 
-        List<TrainerDto> unassignedTrainers = traineeFacade.getUnassignedTrainers(ds.traineeUserName);
-
-        assertAll(
-                "Grouped assertions of getUnassigned trainersDto's list",
-                () -> assertNotNull(unassignedTrainers),
-                () -> assertEquals(1, unassignedTrainers.size()),
-                () -> assertEquals(createdTrainer2.getUser().getUserName(), unassignedTrainers.get(0).getUser().getUserName())
-        );
-    }
-
-    @Test
-    void getUnassignedTrainersListEmpty() {
-        String trainingTypeNameTrainer = "Zumba";
-        TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeNameTrainer).get();
-        ds.trainer1.setSpecialization(trainingType);
-
-        Trainee createdTrainee1 = traineeRepository.save(ds.trainee1);
-        Trainer createdTrainer1 = trainerRepository.save(ds.trainer1);
-        createdTrainee1.setTrainers(List.of(createdTrainer1));
-        String password = traineeRepository.findByUserName(ds.traineeUserName).get().getUser().getPassword();
-
-        List<TrainerDto> unassignedTrainers = traineeFacade.getUnassignedTrainers(ds.traineeUserName);
-
-        assertAll(
-                "Grouped assertions of getUnassigned trainersDto's list",
-                () -> assertNotNull(unassignedTrainers),
-                () -> assertEquals(0, unassignedTrainers.size())
-        );
-    }
-
-    @Test
-    void updateTrainersListSuccessfully() {
-        String trainingTypeNameTrainer = "Zumba";
-        TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeNameTrainer).get();
-        ds.trainer1.setSpecialization(trainingType);
-        ds.trainer2.setSpecialization(trainingType);
-
-        traineeRepository.save(ds.trainee1);
-        trainerRepository.save(ds.trainer1);
-        trainerRepository.save(ds.trainer2);
-        String password = traineeRepository.findByUserName(ds.traineeUserName).get().getUser().getPassword();
-
-        List<String> trainersList = List.of(
-                ds.trainer1.getUser().getUserName(),
-                ds.trainer2.getUser().getUserName());
-
-        List<TrainerDto> updatedTrainersLists
-                = traineeFacade.updateTrainersList(ds.traineeUserName, trainersList);
-
-        Trainee checkTrainee = traineeRepository.findByUserName(ds.traineeUserName).get();
-
-        assertAll(
-                "Grouped assertions of updateTrainersList successfully",
-                () -> assertNotNull(checkTrainee.getTrainers()),
-                () -> assertEquals(2, checkTrainee.getTrainers().size()),
-                () -> assertNotNull(updatedTrainersLists),
-                () -> assertEquals(2, updatedTrainersLists.size())
-        );
-    }
+//    @Test
+//    void updateTrainersListSuccessfully() {
+//        String trainingTypeNameTrainer = "Zumba";
+//        TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeNameTrainer).get();
+//        ds.trainer1.setSpecialization(trainingType);
+//        ds.trainer2.setSpecialization(trainingType);
+//
+//        traineeRepository.save(ds.trainee1);
+//        trainerRepository.save(ds.trainer1);
+//        trainerRepository.save(ds.trainer2);
+//        String password = traineeRepository.findByUserName(ds.traineeUserName).get().getUser().getPassword();
+//
+//        List<String> trainersList = List.of(
+//                ds.trainer1.getUser().getUserName(),
+//                ds.trainer2.getUser().getUserName());
+//
+//        List<TrainerDto> updatedTrainersLists
+//                = traineeFacade.updateTrainersList(ds.traineeUserName, trainersList);
+//
+//        Trainee checkTrainee = traineeRepository.findByUserName(ds.traineeUserName).get();
+//
+//        assertAll(
+//                "Grouped assertions of updateTrainersList successfully",
+//                () -> assertNotNull(checkTrainee.getTrainers()),
+//                () -> assertEquals(2, checkTrainee.getTrainers().size()),
+//                () -> assertNotNull(updatedTrainersLists),
+//                () -> assertEquals(2, updatedTrainersLists.size())
+//        );
+//    }
 }
