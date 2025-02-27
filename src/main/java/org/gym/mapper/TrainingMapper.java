@@ -18,13 +18,13 @@ public interface TrainingMapper {
     @Mapping(source = "trainer", target = "trainer", qualifiedByName = "convertToEntity")
     Training convertToEntity(TrainingDto trainingDto);
 
-    @Mapping(target = "trainee.user.userName", source = "traineeUserName")
-    @Mapping(target = "trainer.user.userName", source = "trainerUserName")
-    TrainingDto trainingAddRequestToTrainingDto(TrainingAddRequest request);
+//    @Mapping(target = "trainee.user.userName", source = "traineeUserName")
+//    @Mapping(target = "trainer.user.userName", source = "trainerUserName")
+//    TrainingDto trainingAddRequestToTrainingDto(TrainingAddRequest request);
 
-    @Mapping(target = "trainerName", source = "trainer.user.firstName")
+    @Mapping(target = "trainerUserName", source = "trainer.user.userName")
     TraineeTrainingsListResponse trainingDtoToTraineeTrainingsListResponse(TrainingDto trainingDto);
 
-    @Mapping(target = "traineeName", source = "trainee.user.firstName")
+    @Mapping(target = "traineeUserName", source = "trainee.user.userName")
     TrainerTrainingsListResponse trainingDtoToTrainerTrainingsListResponse(TrainingDto trainingDto);
 }

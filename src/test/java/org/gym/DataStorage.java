@@ -4,6 +4,10 @@ import org.gym.dto.TraineeDto;
 import org.gym.dto.TrainerDto;
 import org.gym.dto.TrainingTypeDto;
 import org.gym.dto.UserDto;
+import org.gym.dto.request.ChangeLoginRequest;
+import org.gym.dto.request.trainee.TraineeUpdateRequest;
+import org.gym.dto.request.trainer.TrainerUpdateRequest;
+import org.gym.dto.request.user.UserUpdateRequest;
 import org.gym.entity.Trainee;
 import org.gym.entity.Trainer;
 import org.gym.entity.TrainingType;
@@ -11,6 +15,8 @@ import org.gym.entity.User;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static org.gym.config.Config.*;
 
 public class DataStorage {
 
@@ -22,12 +28,54 @@ public class DataStorage {
     public final TraineeDto traineeDto1;
     public final TrainerDto trainerDto2;
     public final TraineeDto traineeDtoNotValid;
+    public final String passwordForUser = "12345";
+    public final String userNameNotFound = "bbbbbbb";
+    public final String userNameForTrainerDto = "Maria.Petrenko";
 
     public final TraineeDto traineeDto;
     public final TraineeDto traineeDto2;
 
+    public final ChangeLoginRequest changeLoginRequest;
+    public final TrainerUpdateRequest trainerUpdateRequest;
+    public final UserUpdateRequest userForTrainerUpdateRequest;
+
+    public final TraineeUpdateRequest traineeUpdateRequest;
+    public final UserUpdateRequest userForTraineeUpdateRequest;
+
+    public final String exceptionMessageNotFound = String.format(ENTITY_NOT_FOUND_EXCEPTION, userNameNotFound);
+    public final String exceptionMessageAccessDenied;
+
     {
+        changeLoginRequest = ChangeLoginRequest.builder()
+                .userName("Ivan.Ivanenko")
+                .oldPassword("12345")
+                .newPassword("123456")
+                .build();
+
+        exceptionMessageAccessDenied = String.format(ACCESS_DENIED_EXCEPTION, changeLoginRequest.getUserName());
+
+        userForTraineeUpdateRequest = UserUpdateRequest.builder()
+                .firstName("Ivan")
+                .lastName("Ivanenko")
+                .isActive(true)
+                .build();
+
+        traineeUpdateRequest = TraineeUpdateRequest.builder()
+                .dateOfBirth(LocalDate.of(2000, 1, 1))
+                .address("Vinnitsya, Soborna str.")
+                .build();
+
         traineeUserName = "Ivan.Ivanenko";
+
+//        traineeCreateRequest = TraineeCreateRequest.builder()
+//                .user(UserCreateRequest.builder()
+//                        .firstName("Ivan")
+//                        .lastName("Ivanenko")
+//                        .build())
+//                .dateOfBirth(LocalDate.of(2000, 1, 1))
+//                .address("Vinnitsya, Soborna str.")
+//                .build();
+
         traineeDto1 = TraineeDto.builder()
                 .user(UserDto.builder()
                         .userName(traineeUserName)
@@ -37,7 +85,6 @@ public class DataStorage {
                 .address("Vinnitsya, Soborna str.")
                 .dateOfBirth(LocalDate.of(2000, 1, 1))
                 .build();
-
 
         UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
         UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", "", true);
@@ -125,6 +172,18 @@ public class DataStorage {
                         .build())
                 .specialization(TrainingTypeDto.builder()
                         .trainingTypeName("yoga")
+                        .build())
+                .build();
+
+        userForTrainerUpdateRequest = UserUpdateRequest.builder()
+                .firstName("Maria")
+                .lastName("Petrenko")
+                .isActive(true)
+                .build();
+        trainerUpdateRequest = TrainerUpdateRequest.builder()
+                .user(userForTrainerUpdateRequest)
+                .specialization(TrainingTypeDto.builder()
+                        .trainingTypeName("Zumba")
                         .build())
                 .build();
     }

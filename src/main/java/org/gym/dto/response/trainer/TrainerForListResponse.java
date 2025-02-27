@@ -4,9 +4,10 @@ import lombok.*;
 import org.gym.dto.TrainingTypeDto;
 import org.gym.dto.response.user.UserForListResponse;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 public class TrainerForListResponse {
     private UserForListResponse user;

@@ -5,12 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gym.controller.TrainingController;
 import org.gym.dto.*;
-import org.gym.dto.request.training.TraineeTrainingsCriteria;
-import org.gym.dto.request.training.TrainerTrainingsCriteria;
 import org.gym.dto.request.training.TrainingAddRequest;
 import org.gym.dto.response.training.TraineeTrainingsListResponse;
 import org.gym.dto.response.training.TrainerTrainingsListResponse;
-import org.gym.facade.TrainingFacade;
+import org.gym.service.TrainingService;
+import org.gym.util.TransactionIdGenerator;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +23,7 @@ import java.util.List;
 @Validated
 public class TrainingControllerImpl implements TrainingController {
 
-    private final TrainingFacade trainingFacade;
+    private final TrainingService trainingService;
     private final TransactionIdGenerator transactionIdGenerator;
 
     @PostMapping
@@ -32,7 +31,7 @@ public class TrainingControllerImpl implements TrainingController {
     public void addTraining(@RequestBody @Valid TrainingAddRequest request) {
         String id = transactionIdGenerator.generate();
         LOGGER.info("request starts to processing: transaction id: {}", id);
-        trainingFacade.create(request);
+        trainingService.create(request);
         LOGGER.info("HTTP Status: {}", HttpStatus.CREATED);
     }
 
@@ -44,7 +43,7 @@ public class TrainingControllerImpl implements TrainingController {
         String id = transactionIdGenerator.generate();
         LOGGER.info("traineeTrainingsDto {}, transaction id: {}", traineeTrainingsDto, id);
 
-        List<TraineeTrainingsListResponse> response = trainingFacade.getTraineeTrainings(
+        List<TraineeTrainingsListResponse> response = trainingService.getTraineeTrainingsListCriteria(
                 traineeTrainingsDto
         );
 
@@ -61,7 +60,7 @@ public class TrainingControllerImpl implements TrainingController {
         LOGGER.info("request {}, transaction id: {}", trainerTrainingsDto, id);
 
         List<TrainerTrainingsListResponse> response =
-                trainingFacade.getTrainerTrainings(trainerTrainingsDto);
+                trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto);
 
         LOGGER.info("Response: {}, HTTP Status: {}", response, HttpStatus.OK);
         return response;

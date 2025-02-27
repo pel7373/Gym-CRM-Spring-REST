@@ -12,7 +12,6 @@ import org.mapstruct.Mapping;
 public interface UserMapper {
     UserDto convertToDto(User user);
     User convertToEntity(UserDto userDto);
-
     UserDto convertUserUpdateRequestToUserDto(UserUpdateRequest userUpdateRequest);
 
     @Mapping(target="userName", expression="java(user.getUserName())")

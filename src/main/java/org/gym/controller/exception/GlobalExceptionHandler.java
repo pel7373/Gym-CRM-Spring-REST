@@ -1,6 +1,6 @@
 package org.gym.controller.exception;
 
-import org.gym.exception.EntityNotValidException;
+import org.gym.exception.AccessDeniedException;
 import org.gym.exception.NullEntityException;
 import org.gym.exception.EntityNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -22,9 +22,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(EntityNotValidException.class)
-    public ResponseEntity<String> handleEntityNotValidException(EntityNotValidException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -42,11 +42,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        String message = "";
         if(ex.getCause() instanceof ConstraintViolationException constraintViolationException) {
-            String message = "Database integrity violation: "
+            message = "Database integrity violation: "
                     + constraintViolationException.getSQLException().getMessage();
         }
-        return new ResponseEntity<>("A database error occurred: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("A database error occurred: " + ex.getMessage() + " " + message,
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)

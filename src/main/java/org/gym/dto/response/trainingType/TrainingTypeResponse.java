@@ -1,13 +1,11 @@
 package org.gym.dto.response.trainingType;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 public class TrainingTypeResponse {
     private String trainingTypeName;

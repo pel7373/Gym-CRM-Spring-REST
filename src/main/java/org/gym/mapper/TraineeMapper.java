@@ -25,14 +25,14 @@ public interface TraineeMapper {
     @Named("convertToEntity")
     Trainee convertToEntity(TraineeDto traineeDto);
 
-    @Mapping(target="userName", expression="java(traineeDto.getUser().getUserName())")
-    @Mapping(target="password", expression="java(traineeDto.getUser().getPassword())")
-    CreateResponse convertToCreateResponse(TraineeDto traineeDto);
+    @Mapping(target="userName", expression="java(trainee.getUser().getUserName())")
+    @Mapping(target="password", expression="java(trainee.getUser().getPassword())")
+    CreateResponse convertToCreateResponse(Trainee trainee);
 
     TraineeSelectResponse convertToTraineeSelectResponse(TraineeDto traineeDto);
     TraineeDto convertTraineeUpdateRequestToTraineeDto(TraineeUpdateRequest traineeUpdateRequest);
     TraineeUpdateResponse convertDtoToUpdateResponse(TraineeDto trainee);
-    TraineeForListResponse convertToTraineeForListResponse(TraineeDto traineeDto);
+    //TraineeForListResponse convertToTraineeForListResponse(TraineeDto traineeDto);
 
     default List<TraineeDto> convertTraineesListToTraineeDtoList(List<Trainee> list) {
         if (list == null) {

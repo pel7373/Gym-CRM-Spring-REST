@@ -1,6 +1,12 @@
 package org.gym.controller;
 
 import jakarta.validation.Valid;
+import org.gym.controller.annotation.SwaggerCreationInfo;
+import org.gym.controller.annotation.SwaggerDeletionInfo;
+import org.gym.controller.annotation.SwaggerOperationInfo;
+import org.gym.controller.annotation.responses.CreationResponse;
+import org.gym.controller.annotation.responses.DeletionResponse;
+import org.gym.controller.annotation.responses.OperationResponse;
 import org.gym.dto.TraineeDto;
 import org.gym.dto.request.ChangeLoginRequest;
 import org.gym.dto.request.trainee.TraineeUpdateRequest;
@@ -16,22 +22,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 public interface TraineeController {
+
+    @SwaggerCreationInfo(
+            summary = "Create the new trainee",
+            description = "Create the new trainee",
+            schema = CreateResponse.class
+    )
+    @CreationResponse
     CreateResponse create(@RequestBody @Valid TraineeDto traineeDto);
-    ResponseEntity<Void> login(@PathVariable("username") String userName,
-                               @PathVariable("password") String password);
-    ResponseEntity<Void> changeLogin(@RequestBody @Valid ChangeLoginRequest changeLoginRequest);
+
+
+    @SwaggerOperationInfo(
+            summary = "Get a trainee",
+            description = "Get data of the trainee by its username",
+            schema = TraineeSelectResponse.class
+    )
+    @OperationResponse
     TraineeSelectResponse getTraineeProfile(@PathVariable("username") String userName);
+
+    @SwaggerOperationInfo(
+            summary = "Update a trainee",
+            description = "Updates details of an trainee by its username",
+            schema = TraineeUpdateResponse.class
+    )
+    @OperationResponse
     TraineeUpdateResponse update(@PathVariable("username") String userName,
                                  @RequestBody @Valid TraineeUpdateRequest traineeUpdateRequest);
-    void changeStatus(@PathVariable("username") String userName,
-                      @RequestParam("isActive") Boolean isActive);
+
+
     List<TrainerForListResponse> updateTrainersList(
             @PathVariable("username") String userName,
             @RequestBody List<String> trainersUserNamesList
     );
 
+    @SwaggerDeletionInfo(
+            summary = "Delete the trainee",
+            description = "Delete the trainee by its username"
+    )
+    @DeletionResponse
     ResponseEntity<Void> delete(@PathVariable("username") String userName);
 
+    @SwaggerOperationInfo(
+            summary = "Get trainee's unassigned trainers",
+            description = "Get a list of trainers who are not assigned to the trainee",
+            schema = TrainerForListResponse.class
+    )
+    @OperationResponse
     List<TrainerForListResponse> getUnassignedTrainers(
             @PathVariable("username") String userName
     );

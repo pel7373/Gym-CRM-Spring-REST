@@ -3,13 +3,12 @@ package org.gym.mapper;
 import org.gym.dto.UserDto;
 import org.gym.entity.User;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
 class UserMapperTest {
 
     private final UserMapper userMapper = new UserMapperImpl();

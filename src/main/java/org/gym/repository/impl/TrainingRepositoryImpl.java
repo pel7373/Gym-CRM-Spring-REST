@@ -13,6 +13,7 @@ import org.gym.repository.TrainingRepository;
 import org.gym.entity.Training;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -41,14 +42,26 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         CriteriaQuery<Training> criteriaQuery = criteriaBuilder.createQuery(Training.class);
         Root<Training> root = criteriaQuery.from(Training.class);
 
-        Predicate[] predicates = new Predicate[5];
-        predicates[0] = criteriaBuilder.equal(root.get("trainee").get("user").get(USER_NAME), traineeTrainingsDto.getTraineeUserName());
-        predicates[1] = criteriaBuilder.greaterThanOrEqualTo(root.get("date"), traineeTrainingsDto.getFromDate());
-        predicates[2] = criteriaBuilder.lessThanOrEqualTo(root.get("date"), traineeTrainingsDto.getToDate());
-        predicates[3] = criteriaBuilder.equal(root.get("trainer").get("user").get(USER_NAME), traineeTrainingsDto.getTrainerUserName());
-        predicates[4] = criteriaBuilder.equal(root.get("trainingType").get("trainingTypeName"), traineeTrainingsDto.getTrainingType());
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(criteriaBuilder.equal(root.get("trainee").get("user").get(USER_NAME), traineeTrainingsDto.getTraineeUserName()));
 
-        criteriaQuery.select(root).where(predicates);
+        if(traineeTrainingsDto.getFromDate() != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("date"), traineeTrainingsDto.getFromDate()));
+        }
+
+        if(traineeTrainingsDto.getToDate() != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("date"), traineeTrainingsDto.getToDate()));
+        }
+
+        if(traineeTrainingsDto.getTrainerUserName() != null) {
+            predicates.add(criteriaBuilder.equal(root.get("trainer").get("user").get(USER_NAME), traineeTrainingsDto.getTrainerUserName()));
+        }
+
+        if(traineeTrainingsDto.getTrainingType() != null) {
+            predicates.add(criteriaBuilder.equal(root.get("trainingType").get("trainingTypeName"), traineeTrainingsDto.getTrainingType()));
+        }
+
+        criteriaQuery.select(root).where(predicates.toArray(predicates.toArray(new Predicate[0])));
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
@@ -58,13 +71,22 @@ public class TrainingRepositoryImpl implements TrainingRepository {
         CriteriaQuery<Training> criteriaQuery = criteriaBuilder.createQuery(Training.class);
         Root<Training> root = criteriaQuery.from(Training.class);
 
-        Predicate[] predicates = new Predicate[4];
-        predicates[0] = criteriaBuilder.equal(root.get("trainer").get("user").get(USER_NAME), trainerTrainingsDto.getTrainerUserName());
-        predicates[1] = criteriaBuilder.greaterThanOrEqualTo(root.get("date"), trainerTrainingsDto.getFromDate());
-        predicates[2] = criteriaBuilder.lessThanOrEqualTo(root.get("date"), trainerTrainingsDto.getToDate());
-        predicates[3] = criteriaBuilder.equal(root.get("trainee").get("user").get(USER_NAME), trainerTrainingsDto.getTraineeUserName());
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(criteriaBuilder.equal(root.get("trainer").get("user").get(USER_NAME), trainerTrainingsDto.getTrainerUserName()));
 
-        criteriaQuery.select(root).where(predicates);
+        if(trainerTrainingsDto.getFromDate() != null) {
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("date"), trainerTrainingsDto.getFromDate()));
+        }
+
+        if(trainerTrainingsDto.getToDate() != null) {
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("date"), trainerTrainingsDto.getToDate()));
+        }
+
+        if(trainerTrainingsDto.getTraineeUserName() != null) {
+            predicates.add(criteriaBuilder.equal(root.get("trainee").get("user").get(USER_NAME), trainerTrainingsDto.getTraineeUserName()));
+        }
+
+        criteriaQuery.select(root).where(predicates.toArray(predicates.toArray(new Predicate[0])));
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
 }

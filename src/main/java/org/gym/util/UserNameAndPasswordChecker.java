@@ -1,4 +1,4 @@
-package org.gym.facade.impl;
+package org.gym.util;
 
 import org.springframework.stereotype.Component;
 

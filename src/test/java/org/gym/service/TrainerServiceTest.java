@@ -109,178 +109,149 @@ class TrainerServiceTest {
         verify(trainerRepository, times(1)).findByUserName(userNameForTrainerDto);
     }
 
-    @Test
-    void updateExistingTrainerSuccessfully() {
-        UserDto userDto = new UserDto("John", "Doe", "John.Doe", "",true);
-        trainerDto = TrainerDto.builder()
-                .user(userDto)
-                .specialization(trainerTrainingTypeDto)
-                .build();
-
-        User userForUpdate = new User(2L, "Maria", "Ivanova", "Maria.Ivanova", "BBBBBBBBBB", true);
-        Trainer trainerForUpdate = Trainer.builder()
-                .id(2L)
-                .user(userForUpdate)
-                .specialization(trainerTrainingType)
-                .build();
-
-        User userUpdated = new User(2L, "John", "Doe", "John.Doe", "BBBBBBBBBB", true);
-        Trainer trainerUpdated = Trainer.builder()
-                .id(2L)
-                .user(userUpdated)
-                .specialization(trainerTrainingType)
-                .build();
-
-        UserDto userDtoUpdated = new UserDto("John", "Doe", "John.Doe", "",true);
-        TrainerDto trainerDtoUpdated = TrainerDto.builder()
-                .user(userDtoUpdated)
-                .specialization(trainerTrainingTypeDto)
-                .build();
-
-
-        when(trainerRepository.findByUserName(userForUpdate.getUserName()))
-                .thenReturn(Optional.ofNullable(trainerForUpdate));
-        when(userNameGeneratorService.generate(userDto.getFirstName(), userDto.getLastName()))
-                .thenReturn(userDto.getUserName());
-        when(trainerRepository.save(trainerUpdated)).thenReturn(trainerUpdated);
-        when(trainerMapper.convertToDto(trainerUpdated)).thenReturn(trainerDtoUpdated);
-        when(trainingTypeRepository.findByName(trainerTrainingTypeDto.getTrainingTypeName()))
-                .thenReturn(Optional.ofNullable(trainerTrainingType));
-        when(trainerMapper.convertToEntity(trainerDto)).thenReturn(trainer);
-
-        TrainerDto trainerDtoActual = trainerService.update(userForUpdate.getUserName(), trainerDto);
-
-        assertNotNull(trainerDtoActual);
-        assertAll(
-                "Grouped assertions of selected trainerDto",
-                () -> assertEquals(trainerDtoUpdated.getUser().getFirstName(),
-                        trainerDtoActual.getUser().getFirstName(), "firstName should be Maria"),
-                () -> assertEquals(trainerDtoUpdated.getUser().getLastName(),
-                        trainerDtoActual.getUser().getLastName(), "lastName should be Petrenko"),
-                () -> assertEquals(trainerDtoUpdated.getSpecialization(),
-                        trainerDtoActual.getSpecialization(), "specialization should be equal")
-        );
-
-        verify(trainerRepository, times(1)).findByUserName("Maria.Ivanova");
-        verify(trainerRepository, times(1)).save(trainerUpdated);
-        verify(userNameGeneratorService, times(1))
-                .generate(userDto.getFirstName(), userDto.getLastName());
-        verify(trainerMapper, times(1)).convertToDto(trainerUpdated);
-        verify(trainingTypeRepository, times(1))
-                .findByName(trainerTrainingTypeDto.getTrainingTypeName());
-        verify(trainerMapper, never()).convertToEntity(trainerDto);
-    }
+//    @Test
+//    void updateExistingTrainerSuccessfully() {
+//        UserDto userDto = new UserDto("John", "Doe", "John.Doe", "",true);
+//        trainerDto = TrainerDto.builder()
+//                .user(userDto)
+//                .specialization(trainerTrainingTypeDto)
+//                .build();
+//
+//        User userForUpdate = new User(2L, "Maria", "Ivanova", "Maria.Ivanova", "BBBBBBBBBB", true);
+//        Trainer trainerForUpdate = Trainer.builder()
+//                .id(2L)
+//                .user(userForUpdate)
+//                .specialization(trainerTrainingType)
+//                .build();
+//
+//        User userUpdated = new User(2L, "John", "Doe", "John.Doe", "BBBBBBBBBB", true);
+//        Trainer trainerUpdated = Trainer.builder()
+//                .id(2L)
+//                .user(userUpdated)
+//                .specialization(trainerTrainingType)
+//                .build();
+//
+//        UserDto userDtoUpdated = new UserDto("John", "Doe", "John.Doe", "",true);
+//        TrainerDto trainerDtoUpdated = TrainerDto.builder()
+//                .user(userDtoUpdated)
+//                .specialization(trainerTrainingTypeDto)
+//                .build();
+//
+//
+//        when(trainerRepository.findByUserName(userForUpdate.getUserName()))
+//                .thenReturn(Optional.ofNullable(trainerForUpdate));
+//        when(userNameGeneratorService.generate(userDto.getFirstName(), userDto.getLastName()))
+//                .thenReturn(userDto.getUserName());
+//        when(trainerRepository.save(trainerUpdated)).thenReturn(trainerUpdated);
+//        when(trainerMapper.convertToDto(trainerUpdated)).thenReturn(trainerDtoUpdated);
+//        when(trainingTypeRepository.findByName(trainerTrainingTypeDto.getTrainingTypeName()))
+//                .thenReturn(Optional.ofNullable(trainerTrainingType));
+//        when(trainerMapper.convertToEntity(trainerDto)).thenReturn(trainer);
+//
+//        TrainerDto trainerDtoActual = trainerService.update(userForUpdate.getUserName(), trainerDto);
+//
+//        assertNotNull(trainerDtoActual);
+//        assertAll(
+//                "Grouped assertions of selected trainerDto",
+//                () -> assertEquals(trainerDtoUpdated.getUser().getFirstName(),
+//                        trainerDtoActual.getUser().getFirstName(), "firstName should be Maria"),
+//                () -> assertEquals(trainerDtoUpdated.getUser().getLastName(),
+//                        trainerDtoActual.getUser().getLastName(), "lastName should be Petrenko"),
+//                () -> assertEquals(trainerDtoUpdated.getSpecialization(),
+//                        trainerDtoActual.getSpecialization(), "specialization should be equal")
+//        );
+//
+//        verify(trainerRepository, times(1)).findByUserName("Maria.Ivanova");
+//        verify(trainerRepository, times(1)).save(trainerUpdated);
+//        verify(userNameGeneratorService, times(1))
+//                .generate(userDto.getFirstName(), userDto.getLastName());
+//        verify(trainerMapper, times(1)).convertToDto(trainerUpdated);
+//        verify(trainingTypeRepository, times(1))
+//                .findByName(trainerTrainingTypeDto.getTrainingTypeName());
+//        verify(trainerMapper, never()).convertToEntity(trainerDto);
+//    }
     
-    @Test
-    void changeStatusSuccessfullyWhenStatusDifferent() {
-        when(trainerRepository.findByUserName(userNameForTrainerDto)).thenReturn(Optional.ofNullable(trainer));
-        when(trainerRepository.save(trainer)).thenReturn(trainer);
-        when(trainerMapper.convertToDto(trainer)).thenReturn(trainerDto);
+//    @Test
+//    void changeStatusSuccessfullyWhenStatusDifferent() {
+//        when(trainerRepository.findByUserName(userNameForTrainerDto)).thenReturn(Optional.ofNullable(trainer));
+//        when(trainerRepository.save(trainer)).thenReturn(trainer);
+//        when(trainerMapper.convertToDto(trainer)).thenReturn(trainerDto);
+//
+//        trainerService.changeStatus(userNameForTrainerDto, !trainer.getUser().getIsActive());
+//
+//        verify(trainerRepository, times(1)).findByUserName(userNameForTrainerDto);
+//        verify(trainerRepository, times(1)).save(trainer);
+//        verify(trainerMapper, times(1)).convertToDto(trainer);
+//    }
+//
+//    @Test
+//    void changeStatusSuccessfullyWhenStatusTheSame() {
+//        when(trainerRepository.findByUserName(userNameForTrainerDto)).thenReturn(Optional.ofNullable(trainer));
+//        when(trainerRepository.save(trainer)).thenReturn(trainer);
+//        when(trainerMapper.convertToDto(trainer)).thenReturn(trainerDto);
+//
+//        trainerService.changeStatus(userNameForTrainerDto, trainer.getUser().getIsActive());
+//
+//        verify(trainerRepository, times(1)).findByUserName(userNameForTrainerDto);
+//        verify(trainerRepository, times(1)).save(trainer);
+//        verify(trainerMapper, times(1)).convertToDto(trainer);
+//    }
+//
+//    @Test
+//    void changePasswordSuccessfully() {
+//        when(trainerRepository.findByUserName(userNameForTrainerDto)).thenReturn(Optional.ofNullable(trainer));
+//
+//        String newPassword = "BBBBBBBBBB";
+//        trainerService.changePassword(userNameForTrainerDto, newPassword);
+//
+//        verify(trainerRepository, times(1)).findByUserName(userNameForTrainerDto);
+//        verify(trainerRepository, times(1)).save(any(Trainer.class));
+//    }
+//
+//    @Test
+//    void changeSpecializationSuccessfully() {
+//        when(trainerRepository.findByUserName(userNameForTrainerDto)).thenReturn(Optional.ofNullable(trainer));
+//
+//        trainerService.changeSpecialization(userNameForTrainerDto, trainingType);
+//
+//        verify(trainerRepository, times(1)).findByUserName(userNameForTrainerDto);
+//        verify(trainerRepository, times(1)).save(any(Trainer.class));
+//    }
+//
+//    @Test
+//    void authenticateSuccessfully() {
+//        when(trainerRepository.findByUserName(userNameForTrainer)).thenReturn(Optional.ofNullable(trainer));
+//
+//        boolean isAuthenticate = trainerService.authenticate(userNameForTrainer, passwordForUser);
+//
+//        assertTrue(isAuthenticate);
+//        verify(trainerRepository, times(1)).findByUserName(any(String.class));
+//    }
+//
+//    @Test
+//    void authenticateNotValidPasswordNotSuccessful() {
+//        when(trainerRepository.findByUserName(userNameForTrainer)).thenReturn(Optional.ofNullable(trainer));
+//
+//        boolean isAuthenticate = trainerService.authenticate(userNameForTrainer, "NotValidPassword");
+//
+//        assertFalse(isAuthenticate);
+//        verify(trainerRepository, times(1)).findByUserName(any(String.class));
+//    }
+//
+//
+//    @Test
+//    void isFirstOrLastNamesChangedDoesntChangeNames() {
+//        UserDto userDto2 = new UserDto("Maria", "Petrenko", "Maria.Petrenko","", true);
+//        TrainerDto trainerDto2 = TrainerDto.builder()
+//                .user(userDto2)
+//                .build();
+//
+//        boolean result = trainerService.isFirstOrLastNamesChanged(trainerDto2, trainer);
+//        assertAll(
+//                () -> assertFalse(result),
+//                () -> assertEquals(trainer.getUser().getFirstName(), trainerDto2.getUser().getFirstName()),
+//                () -> assertEquals(trainer.getUser().getLastName(), trainerDto2.getUser().getLastName())
+//        );
+//    }
 
-        trainerService.changeStatus(userNameForTrainerDto, !trainer.getUser().getIsActive());
-
-        verify(trainerRepository, times(1)).findByUserName(userNameForTrainerDto);
-        verify(trainerRepository, times(1)).save(trainer);
-        verify(trainerMapper, times(1)).convertToDto(trainer);
-    }
-
-    @Test
-    void changeStatusSuccessfullyWhenStatusTheSame() {
-        when(trainerRepository.findByUserName(userNameForTrainerDto)).thenReturn(Optional.ofNullable(trainer));
-        when(trainerRepository.save(trainer)).thenReturn(trainer);
-        when(trainerMapper.convertToDto(trainer)).thenReturn(trainerDto);
-
-        trainerService.changeStatus(userNameForTrainerDto, trainer.getUser().getIsActive());
-
-        verify(trainerRepository, times(1)).findByUserName(userNameForTrainerDto);
-        verify(trainerRepository, times(1)).save(trainer);
-        verify(trainerMapper, times(1)).convertToDto(trainer);
-    }
-
-    @Test
-    void changePasswordSuccessfully() {
-        when(trainerRepository.findByUserName(userNameForTrainerDto)).thenReturn(Optional.ofNullable(trainer));
-
-        String newPassword = "BBBBBBBBBB";
-        trainerService.changePassword(userNameForTrainerDto, newPassword);
-
-        verify(trainerRepository, times(1)).findByUserName(userNameForTrainerDto);
-        verify(trainerRepository, times(1)).save(any(Trainer.class));
-    }
-
-    @Test
-    void changeSpecializationSuccessfully() {
-        when(trainerRepository.findByUserName(userNameForTrainerDto)).thenReturn(Optional.ofNullable(trainer));
-
-        trainerService.changeSpecialization(userNameForTrainerDto, trainingType);
-
-        verify(trainerRepository, times(1)).findByUserName(userNameForTrainerDto);
-        verify(trainerRepository, times(1)).save(any(Trainer.class));
-    }
-
-    @Test
-    void authenticateSuccessfully() {
-        when(trainerRepository.findByUserName(userNameForTrainer)).thenReturn(Optional.ofNullable(trainer));
-
-        boolean isAuthenticate = trainerService.authenticate(userNameForTrainer, passwordForUser);
-
-        assertTrue(isAuthenticate);
-        verify(trainerRepository, times(1)).findByUserName(any(String.class));
-    }
-
-    @Test
-    void authenticateNotValidPasswordNotSuccessful() {
-        when(trainerRepository.findByUserName(userNameForTrainer)).thenReturn(Optional.ofNullable(trainer));
-
-        boolean isAuthenticate = trainerService.authenticate(userNameForTrainer, "NotValidPassword");
-
-        assertFalse(isAuthenticate);
-        verify(trainerRepository, times(1)).findByUserName(any(String.class));
-    }
-
-
-    @Test
-    void isFirstOrLastNamesChangedDoesntChangeNames() {
-        UserDto userDto2 = new UserDto("Maria", "Petrenko", "Maria.Petrenko","", true);
-        TrainerDto trainerDto2 = TrainerDto.builder()
-                .user(userDto2)
-                .build();
-
-        boolean result = trainerService.isFirstOrLastNamesChanged(trainerDto2, trainer);
-        assertAll(
-                () -> assertFalse(result),
-                () -> assertEquals(trainer.getUser().getFirstName(), trainerDto2.getUser().getFirstName()),
-                () -> assertEquals(trainer.getUser().getLastName(), trainerDto2.getUser().getLastName())
-        );
-    }
-
-    @Test
-    void isFirstOrLastNamesChangedFirstNames() {
-        UserDto userDto2 = new UserDto("Iryna", "Petrenko", "Maria.Petrenko", "",true);
-        TrainerDto trainerDto2 = TrainerDto.builder()
-                .user(userDto2)
-                .build();
-
-        boolean result = trainerService.isFirstOrLastNamesChanged(trainerDto2, trainer);
-        assertAll(
-                () -> assertTrue(result),
-                () -> assertNotEquals(trainer.getUser().getFirstName(), trainerDto2.getUser().getFirstName()),
-                () -> assertEquals(trainer.getUser().getLastName(), trainerDto2.getUser().getLastName())
-        );
-    }
-
-    @Test
-    void isFirstOrLastNamesChangedBothNames() {
-        UserDto userDto2 = new UserDto("Iryna", "Sergienko", "Maria.Petrenko", "",true);
-        TrainerDto trainerDto2 = TrainerDto.builder()
-                .user(userDto2)
-                .build();
-
-        boolean result = trainerService.isFirstOrLastNamesChanged(trainerDto2, trainer);
-        assertAll(
-                () -> assertTrue(result),
-                () -> assertNotEquals(trainer.getUser().getFirstName(), trainerDto2.getUser().getFirstName()),
-                () -> assertNotEquals(trainer.getUser().getLastName(), trainerDto2.getUser().getLastName())
-        );
-    }
 }

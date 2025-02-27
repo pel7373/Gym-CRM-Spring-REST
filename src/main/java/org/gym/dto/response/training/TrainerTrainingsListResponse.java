@@ -22,5 +22,5 @@ public class TrainerTrainingsListResponse {
 
     private Integer duration;
 
-    private String traineeName;
+    private String traineeUserName;
 }

@@ -2,13 +2,12 @@ package org.gym.dto.response;
 
 import lombok.*;
 
-import java.io.Serializable;
-
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
-public class CreateResponse implements Serializable {
+public class CreateResponse {
     private String userName;
     private String password;
 }

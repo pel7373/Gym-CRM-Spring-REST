@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.gym.dto.TrainingTypeDto;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
 

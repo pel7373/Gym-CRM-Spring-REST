@@ -12,10 +12,8 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
-
 @Configuration
 public class MainWebAppInitializer implements WebApplicationInitializer {
-
     /**
      * Register and configure all Servlet container components necessary to power the web application.
      */

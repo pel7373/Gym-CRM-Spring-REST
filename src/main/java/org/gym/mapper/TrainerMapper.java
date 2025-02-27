@@ -23,9 +23,9 @@ public interface TrainerMapper {
     @Named("convertToEntity")
     Trainer convertToEntity(TrainerDto trainerDto);
 
-    @Mapping(target="userName", expression="java(trainerDto.getUser().getUserName())")
-    @Mapping(target="password", expression="java(trainerDto.getUser().getPassword())")
-    CreateResponse convertToCreateResponse(TrainerDto trainerDto);
+    @Mapping(target="userName", expression="java(trainer.getUser().getUserName())")
+    @Mapping(target="password", expression="java(trainer.getUser().getPassword())")
+    CreateResponse convertToCreateResponse(Trainer trainer);
 
     TrainerSelectResponse convertToTrainerSelectResponse(TrainerDto trainerDto);
     TrainerDto convertTrainerUpdateRequestToTrainerDto(TrainerUpdateRequest trainerUpdateRequest);
@@ -34,8 +34,6 @@ public interface TrainerMapper {
 
     TrainerForListResponse convertTrainerDtoToTrainerForListResponse(TrainerDto trainer);
     List<TrainerForListResponse> convertTrainerDtoListToTrainerResponseList(List<TrainerDto> trainerDtoList);
-    //TrainerCreateResponse convertToTrainerCreateResponse(Trainer trainer);
-
 
     default List<TrainerDto> convertTrainersListToTrainerDtoList(List<Trainer> list) {
         if (list == null) {

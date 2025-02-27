@@ -2,18 +2,20 @@ package org.gym.service;
 
 import org.gym.dto.TraineeDto;
 import org.gym.dto.TrainerDto;
+import org.gym.dto.request.trainee.TraineeUpdateRequest;
+import org.gym.dto.response.CreateResponse;
+import org.gym.dto.response.trainee.TraineeSelectResponse;
+import org.gym.dto.response.trainee.TraineeUpdateResponse;
+import org.gym.dto.response.trainer.TrainerForListResponse;
 import org.gym.exception.EntityNotFoundException;
 
 import java.util.List;
 
 public interface TraineeService {
-    TraineeDto create(TraineeDto traineeDto);
-    TraineeDto select(String userName) throws EntityNotFoundException;
-    TraineeDto update(String userName, TraineeDto traineeDto) throws EntityNotFoundException;
-    TraineeDto changeStatus(String userName, Boolean isActive) throws EntityNotFoundException;
-    boolean authenticate(String userName, String password);
-    TraineeDto changePassword(String userName, String newPassword) throws EntityNotFoundException;
+    CreateResponse create(TraineeDto traineeDto);
+    TraineeSelectResponse select(String userName) throws EntityNotFoundException;
+    TraineeUpdateResponse update(String userName, TraineeUpdateRequest traineeUpdateRequest) throws EntityNotFoundException;
     void delete(String userName) throws EntityNotFoundException;
-    List<TrainerDto> getUnassignedTrainersList(String userName) throws EntityNotFoundException;
-    List<TrainerDto> updateTrainersList(String userName, List<String> trainersUserNames) throws EntityNotFoundException;
+    List<TrainerForListResponse> getUnassignedTrainersList(String userName) throws EntityNotFoundException;
+    List<TrainerForListResponse> updateTrainersList(String userName, List<String> trainersUserNames) throws EntityNotFoundException;
 }

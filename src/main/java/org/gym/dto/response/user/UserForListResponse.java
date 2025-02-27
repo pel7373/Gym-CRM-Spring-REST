@@ -2,9 +2,10 @@ package org.gym.dto.response.user;
 
 import lombok.*;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 public class UserForListResponse {
     private String userName;

@@ -10,8 +10,4 @@ import org.mapstruct.Mapping;
 public interface TrainingTypeMapper {
     TrainingTypeDto convertToDto(TrainingType trainingType);
     TrainingType convertToEntity(TrainingTypeDto trainingTypeDto);
-
-    //@Mapping(target="trainingTypeName", expression="java(trainingType.getTrainingTypeName())")
-    @Mapping(target="id", expression="java(trainingType.getId())")
-    TrainingTypeResponse convertToTrainingTypeResponse(TrainingType trainingType);
 }

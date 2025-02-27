@@ -16,12 +16,10 @@ import java.text.SimpleDateFormat;
 public class Config {
     public static final String ENTITY_CANT_BE_NULL_OR_BLANK = "Entity can't be null or blank";
     public static final String USERNAME_PASSWORD_CANT_BE_NULL_OR_BLANK = "UserName or/and password can't be null or blank";
-    public static final String USERNAME_CANT_BE_NULL_OR_BLANK = "UserName can't be null or blank";
     public static final String ENTITY_NOT_FOUND = "Entity not found by {}";
     public static final String ENTITY_NOT_FOUND_EXCEPTION = "Entity not found by %s";
-    public static final String ENTITY_NOT_VALID_EXCEPTION = "Entity not valid. Error message %s";
-    public static final String ENTITY_NOT_VALID = "Entity not valid. Error message {}";
-
+    public static final String ACCESS_DENIED = "access denied to {}";
+    public static final String ACCESS_DENIED_EXCEPTION = "access denied to %s";
 
     @Bean
     public SecureRandom secureRandom() {

@@ -1,4 +1,4 @@
-package org.gym.controller.impl;
+package org.gym.util;
 
 import org.springframework.stereotype.Component;
 
