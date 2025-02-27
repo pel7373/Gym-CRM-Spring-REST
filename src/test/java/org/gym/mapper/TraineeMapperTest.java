@@ -1,5 +1,6 @@
 package org.gym.mapper;
 
+import org.gym.config.Config;
 import org.gym.config.TestConfig;
 import org.gym.dto.TraineeDto;
 import org.gym.dto.UserDto;
@@ -18,9 +19,9 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestConfig.class)
+@ContextConfiguration(classes = {Config.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
 class TraineeMapperTest {
 
     @Autowired

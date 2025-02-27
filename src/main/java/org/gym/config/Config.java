@@ -3,19 +3,16 @@ package org.gym.config;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.*;
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-@Slf4j
 @Configuration
 @ComponentScan(basePackages = "org.gym")
 @PropertySource("classpath:application.properties")
+@Import({WebConfig.class})
 public class Config {
-    public static final String ENTITY_CANT_BE_NULL_OR_BLANK = "Entity can't be null or blank";
-    public static final String USERNAME_PASSWORD_CANT_BE_NULL_OR_BLANK = "UserName or/and password can't be null or blank";
     public static final String ENTITY_NOT_FOUND = "Entity not found by {}";
     public static final String ENTITY_NOT_FOUND_EXCEPTION = "Entity not found by %s";
     public static final String ACCESS_DENIED = "access denied to {}";

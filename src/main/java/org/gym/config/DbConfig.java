@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -42,11 +43,25 @@ public class DbConfig {
     }
 
     @Bean
+    @Profile("!test")
     public DataSource dataSource(@Value("${spring.datasource.url}") String dataSourceUrl,
                                 @Value("${spring.datasource.username}") String dataSourceUsername,
                                 @Value("${spring.datasource.password}") String dataSourcePassword) {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName(org.postgresql.Driver.class.getName());
+        dataSource.setJdbcUrl(dataSourceUrl);
+        dataSource.setUsername(dataSourceUsername);
+        dataSource.setPassword(dataSourcePassword);
+        return dataSource;
+    }
+
+    @Bean("dataSource")
+    @Profile("test")
+    public DataSource dataSourceTest(@Value("${spring.datasource.url}") String dataSourceUrl,
+                                 @Value("${spring.datasource.username}") String dataSourceUsername,
+                                 @Value("${spring.datasource.password}") String dataSourcePassword) {
+        HikariDataSource dataSource = new HikariDataSource();
+        //dataSource.setDriverClassName(org.postgresql.Driver.class.getName());
         dataSource.setJdbcUrl(dataSourceUrl);
         dataSource.setUsername(dataSourceUsername);
         dataSource.setPassword(dataSourcePassword);

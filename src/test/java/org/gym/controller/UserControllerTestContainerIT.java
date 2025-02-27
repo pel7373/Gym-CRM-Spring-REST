@@ -2,7 +2,7 @@ package org.gym.controller;
 
 import org.gym.DataStorage;
 import org.gym.config.Config;
-import org.gym.config.MainWebAppInitializer;
+
 import org.gym.config.TestConfig;
 import org.gym.config.WebConfig;
 import org.gym.entity.Trainee;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Config.class, TestConfig.class, MainWebAppInitializer.class, WebConfig.class})
+@ContextConfiguration(classes = {Config.class, TestConfig.class})
 public class UserControllerTestContainerIT {
 
     @Autowired

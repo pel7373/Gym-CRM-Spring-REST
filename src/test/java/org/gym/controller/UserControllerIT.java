@@ -3,7 +3,6 @@ package org.gym.controller;
 import lombok.RequiredArgsConstructor;
 import org.gym.DataStorage;
 import org.gym.config.Config;
-import org.gym.config.MainWebAppInitializer;
 import org.gym.config.TestConfig;
 import org.gym.config.WebConfig;
 import org.gym.entity.Trainee;
@@ -28,7 +27,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Config.class, TestConfig.class, MainWebAppInitializer.class, WebConfig.class})
+@ContextConfiguration(classes = {Config.class, TestConfig.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
 public class UserControllerIT {
 

@@ -1,5 +1,7 @@
 package org.gym.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,9 +22,12 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = {"org.gym"})
+@ComponentScan(basePackages = {"org.gym.controller"})
 public class WebConfig implements WebMvcConfigurer
 {
+    @Autowired
+    private ApplicationContext applicationContext;
+
 //    @Bean
 //    public DataSource dataSource() {
 //        return new DriverManagerDataSource(
@@ -32,12 +37,7 @@ public class WebConfig implements WebMvcConfigurer
 //        );
 //    }
 
-//    @Bean
-//    public MethodValidationPostProcessor methodValidationPostProcessor() {
-//        return new MethodValidationPostProcessor();
-//    }
-
-        @Bean
+    @Bean
     public HandlerMapping resourseHandlerMapping() {
         SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
         handlerMapping.setOrder(Integer.MAX_VALUE - 1);
