@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.gym</groupId>
-  <artifactId>Gym-CRM-Spring-Hibernate</artifactId>
+  <artifactId>Gym-CRM-Spring-REST</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
@@ -18,31 +18,41 @@
     <org.apache.maven.plugins.version>3.10.1</org.apache.maven.plugins.version>
     <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
     <spring.version>6.2.1</spring.version>
+    <springdoc.version>2.7.0</springdoc.version>
     <org.springframework.data.version>3.4.0</org.springframework.data.version>
     <junit.jupiter.version>5.11.3</junit.jupiter.version>
     <jackson.version>2.17.2</jackson.version>
     <jackson-datatype-jsr310.version>2.13.3</jackson-datatype-jsr310.version>
-    <jakarta.annotation>3.0.0</jakarta.annotation>
-    <mapstruct.version>1.6.3</mapstruct.version>
     <projectlombok.version>1.18.36</projectlombok.version>
     <mockito.version>5.5.0</mockito.version>
     <org.mockito-inline.version>5.2.0</org.mockito-inline.version>
     <slf4j.version>1.7.32</slf4j.version>
+    <slf4j-log4j12.version>1.7.30</slf4j-log4j12.version>
     <ch.qos.logback.version>1.2.6</ch.qos.logback.version>
     <org.jacoco.version>0.8.12</org.jacoco.version>
     <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
     <org.testcontainers.version>1.20.4</org.testcontainers.version>
-    <jakarta.persistence.version>3.0.0</jakarta.persistence.version>
     <org.hibernate.version>5.6.15.Final</org.hibernate.version>
+    <org.hibernate.validator.version>8.0.1.Final</org.hibernate.validator.version>
+    <hibernate-core-jakarta.version>5.6.14.Final</hibernate-core-jakarta.version>
     <com.zaxxer.version>6.2.0</com.zaxxer.version>
-    <org.hibernate.validator.version>6.0.13.Final</org.hibernate.validator.version>
+    <mapstruct.version>1.6.3</mapstruct.version>
+    <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+    <jakarta.annotation>3.0.0</jakarta.annotation>
+    <jakarta.persistence.version>3.0.0</jakarta.persistence.version>
     <jakarta.validation.version>3.1.0</jakarta.validation.version>
     <jakarta.el.version>6.0.0</jakarta.el.version>
-    <hibernate-core-jakarta.version>5.6.14.Final</hibernate-core-jakarta.version>
+    <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
     <p6spy.version>3.9.1</p6spy.version>
     <postgresql.version>42.7.3</postgresql.version>
     <com.h2database.version>2.3.232</com.h2database.version>
     <h2.version>2.3.232</h2.version>
+    <tomcat.embed.version>11.0.2</tomcat.embed.version>
+    <rest-assured.version>5.3.2</rest-assured.version>
+    <spring-webmvc.version>6.2.1</spring-webmvc.version>
+    <swagger-annotations.version>2.1.6</swagger-annotations.version>
+    <springdoc.version>2.8.0</springdoc.version>
+    <springdoc-openapi-ui.version>1.5.2</springdoc-openapi-ui.version>
   </properties>
 
   <dependencies>
@@ -68,20 +78,35 @@
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
       <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
+      <artifactId>spring-jdbc</artifactId>
       <version>${spring.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-jpa</artifactId>
       <version>${org.springframework.data.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>${springdoc.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>jakarta.annotation</groupId>
       <artifactId>jakarta.annotation-api</artifactId>
@@ -118,6 +143,24 @@
       <version>${jakarta.el.version}</version>
     </dependency>
     <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>${jakarta.servlet-api.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.5</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>com.zaxxer</groupId>
       <artifactId>HikariCP</artifactId>
       <version>${com.zaxxer.version}</version>
@@ -131,11 +174,6 @@
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
       <version>${jackson-datatype-jsr310.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.30</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
@@ -156,17 +194,17 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.30</version>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
+      <version>${slf4j-log4j12.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
       <version>${mapstruct.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok-mapstruct-binding</artifactId>
+      <version>${lombok-mapstruct-binding.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>
@@ -190,7 +228,28 @@
       <version>${com.h2database.version}</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>${swagger-annotations.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>${springdoc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
+      <version>${springdoc-openapi-ui.version}</version>
+    </dependency>
 
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -251,10 +310,34 @@
       <version>${org.testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>${tomcat.embed.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <version>${rest-assured.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>jakarta.el</artifactId>
+      <version>4.0.2</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
+    <finalName>root</finalName>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.3.2</version>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -270,6 +353,11 @@
               <groupId>org.mapstruct</groupId>
               <artifactId>mapstruct-processor</artifactId>
               <version>${mapstruct.version}</version>
+            </path>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok-mapstruct-binding</artifactId>
+              <version>${lombok-mapstruct-binding.version}</version>
             </path>
           </annotationProcessorPaths>
           <source>${java.version}</source>
@@ -314,7 +402,6 @@
             <exclude>org/gym/entity/*</exclude>
             <exclude>org/gym/dto/*</exclude>
             <exclude>org/gym/exception/*</exclude>
-            <exclude>org/gym/exception/*</exclude>
             <exclude>org/gym/config/*</exclude>
           </excludes>
         </configuration>
@@ -355,5 +442,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>
