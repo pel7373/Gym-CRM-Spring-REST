@@ -2,6 +2,7 @@ package org.gym.mapper;
 
 import org.gym.config.Config;
 import org.gym.config.TestConfig;
+import org.gym.config.TestServiceConfig;
 import org.gym.dto.TraineeDto;
 import org.gym.dto.UserDto;
 import org.gym.entity.Trainee;
@@ -13,16 +14,22 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Config.class})
+@ContextConfiguration(classes = {TestConfig.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
+@WebAppConfiguration
 class TraineeMapperTest {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private TraineeMapper traineeMapper;

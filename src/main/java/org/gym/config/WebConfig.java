@@ -1,12 +1,11 @@
 package org.gym.config;
 
+import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -16,27 +15,11 @@ import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 import java.util.Collections;
 
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
-import javax.sql.DataSource;
-
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {"org.gym.controller"})
 public class WebConfig implements WebMvcConfigurer
 {
-    @Autowired
-    private ApplicationContext applicationContext;
-
-//    @Bean
-//    public DataSource dataSource() {
-//        return new DriverManagerDataSource(
-//                "jdbc:postgresql://localhost:5432/testdb",
-//                "testuser",
-//                "testpass"
-//        );
-//    }
-
     @Bean
     public HandlerMapping resourseHandlerMapping() {
         SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();

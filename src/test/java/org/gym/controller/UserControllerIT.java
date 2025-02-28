@@ -8,28 +8,35 @@ import org.gym.config.WebConfig;
 import org.gym.entity.Trainee;
 import org.gym.entity.User;
 import org.gym.repository.TraineeRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Transactional
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class, TestConfig.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
+@WebAppConfiguration
+@ActiveProfiles("test")
 public class UserControllerIT {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private UserController userController;

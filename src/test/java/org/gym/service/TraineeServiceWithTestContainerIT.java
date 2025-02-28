@@ -2,12 +2,8 @@ package org.gym.service;
 
 import org.gym.DataStorage;
 import org.gym.config.Config;
-import org.gym.dto.TraineeDto;
-import org.gym.dto.TrainerDto;
-import org.gym.dto.UserDto;
+import org.gym.dto.response.CreateResponse;
 import org.gym.entity.Trainee;
-import org.gym.entity.Trainer;
-import org.gym.entity.TrainingType;
 import org.gym.repository.TraineeRepository;
 import org.gym.repository.TrainerRepository;
 import org.gym.repository.TrainingTypeRepository;
@@ -15,17 +11,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.time.LocalDate;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +30,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @jakarta.transaction.Transactional
+@ActiveProfiles("prod")
+@WebAppConfiguration
 class TraineeServiceWithTestContainerIT {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private TraineeService traineeService;
@@ -49,8 +50,6 @@ class TraineeServiceWithTestContainerIT {
     private TrainingTypeRepository trainingTypeRepository;
 
     private final DataStorage ds = new DataStorage();
-    private final TraineeDto traineeDto;
-    private final TraineeDto traineeDto2;
     private String userNameForTrainee;
 
     @Container
@@ -68,60 +67,34 @@ class TraineeServiceWithTestContainerIT {
         registry.add("hibernate.jdbc.lob.non_contextual_creation", () -> true);
     }
 
-    {
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
-        UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", "",true);
-
-        traineeDto = TraineeDto.builder()
-                .user(userDto)
-                .dateOfBirth(LocalDate.of(1995, 1, 23))
-                .address("Vinnitsya, Soborna str. 35, ap. 26")
-                .build();
-
-        traineeDto2 = TraineeDto.builder()
-                .user(userDto2)
-                .dateOfBirth(LocalDate.of(1985, 1, 23))
-                .address("Kyiv, Soborna str. 35, ap. 26")
-                .build();
-    }
-
     @AfterEach
     void destroy() {
         traineeRepository.delete(userNameForTrainee);
     }
 
-//    @Test
-//    void createTraineeSuccessfully() {
-//        TraineeDto createdTraineeDto = traineeService.create(traineeDto);
-//        userNameForTrainee = createdTraineeDto.getUser().getUserName();
-//
-//        assertNotNull(createdTraineeDto);
-//        assertNotNull(createdTraineeDto.getUser());
-//        assertAll(
-//                "Grouped assertions of created traineeDto",
-//                () -> assertEquals("Maria", createdTraineeDto.getUser().getFirstName(),
-//                        "firstName should be Maria"),
-//                () -> assertEquals("Petrenko", createdTraineeDto.getUser().getLastName(),
-//                        "lastName should be Petrenko"),
-//                () -> assertTrue(createdTraineeDto.getUser().getIsActive(), "isActive should be true"),
-//                () -> assertEquals("Vinnitsya, Soborna str. 35, ap. 26", createdTraineeDto.getAddress(),
-//                        "address should be Vinnitsya, Soborna str. 35, ap. 26")
-//        );
-//
-//        Trainee createdTrainee = traineeRepository.findByUserName(createdTraineeDto.getUser().getUserName()).get();
-//        assertNotNull(createdTrainee);
-//        assertNotNull(createdTrainee.getUser());
-//        assertAll(
-//                "Grouped assertions of created trainee",
-//                () -> assertEquals("Maria", createdTrainee.getUser().getFirstName(),
-//                        "firstName should be Maria"),
-//                () -> assertEquals("Petrenko", createdTrainee.getUser().getLastName(),
-//                        "lastName should be Petrenko"),
-//                () -> assertTrue(createdTrainee.getUser().getIsActive(), "isActive should be true"),
-//                () -> assertEquals("Vinnitsya, Soborna str. 35, ap. 26", createdTrainee.getAddress(),
-//                        "address should be Vinnitsya, Soborna str. 35, ap. 26")
-//        );
-//    }
+    @Test
+    void createTraineeSuccessfully() {
+        CreateResponse createResponse = traineeService.create(ds.traineeDto);
+        userNameForTrainee = ds.traineeDto.getUser().getUserName();
+        Trainee createdTrainee = traineeRepository.findByUserName(userNameForTrainee).get();
+
+        assertNotNull(createResponse);
+        assertNotNull(createdTrainee);
+        assertNotNull(createdTrainee.getUser());
+        assertAll(
+                "Grouped assertions of created traineeDto",
+                () -> assertNotNull(createResponse),
+                () -> assertNotNull(createdTrainee),
+                () -> assertNotNull(createdTrainee.getUser()),
+                () -> assertEquals("Maria", createdTrainee.getUser().getFirstName(),
+                        "firstName should be Maria"),
+                () -> assertEquals("Petrenko", createdTrainee.getUser().getLastName(),
+                        "lastName should be Petrenko"),
+                () -> assertTrue(createdTrainee.getUser().getIsActive(), "isActive should be true"),
+                () -> assertEquals("Vinnitsya, Soborna str. 35, ap. 26", createdTrainee.getAddress(),
+                        "address should be Vinnitsya, Soborna str. 35, ap. 26")
+        );
+    }
 //
 //    @Test
 //    void selectTraineeSuccessfully() {

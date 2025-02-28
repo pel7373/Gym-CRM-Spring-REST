@@ -2,8 +2,11 @@ package org.gym.service;
 
 import org.gym.DataStorage;
 import org.gym.config.Config;
+import org.gym.config.TestConfig;
+import org.gym.config.TestServiceConfig;
 import org.gym.dto.TraineeDto;
 import org.gym.dto.TrainerDto;
+import org.gym.dto.response.CreateResponse;
 import org.gym.entity.Trainee;
 import org.gym.entity.Trainer;
 import org.gym.entity.TrainingType;
@@ -13,10 +16,13 @@ import org.gym.repository.TrainingTypeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
@@ -24,11 +30,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Config.class})
+@ContextConfiguration(classes = {TestConfig.class})
 @jakarta.transaction.Transactional
 @TestPropertySource(locations = "classpath:application-test.properties")
+@ActiveProfiles("test")
+@WebAppConfiguration
 class TraineeServiceIT {
-    
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
     @Autowired
     private TraineeService traineeService;
 
@@ -44,38 +55,29 @@ class TraineeServiceIT {
     private final DataStorage ds = new DataStorage();
     private String userNameForTrainee;
 
-//    @Test
-//    void createTraineeSuccessfully() {
-//        TraineeDto createdTraineeDto = traineeService.create(ds.traineeDto);
-//        userNameForTrainee = createdTraineeDto.getUser().getUserName();
-//
-//        assertNotNull(createdTraineeDto);
-//        assertNotNull(createdTraineeDto.getUser());
-//        assertAll(
-//                "Grouped assertions of created traineeDto",
-//                () -> assertEquals("Maria", createdTraineeDto.getUser().getFirstName(),
-//                        "firstName should be Maria"),
-//                () -> assertEquals("Petrenko", createdTraineeDto.getUser().getLastName(),
-//                        "lastName should be Petrenko"),
-//                () -> assertTrue(createdTraineeDto.getUser().getIsActive(), "isActive should be true"),
-//                () -> assertEquals("Vinnitsya, Soborna str. 35, ap. 26", createdTraineeDto.getAddress(),
-//                        "address should be Vinnitsya, Soborna str. 35, ap. 26")
-//        );
-//
-//        Trainee createdTrainee = traineeRepository.findByUserName(createdTraineeDto.getUser().getUserName()).get();
-//        assertNotNull(createdTrainee);
-//        assertNotNull(createdTrainee.getUser());
-//        assertAll(
-//                "Grouped assertions of created trainee",
-//                () -> assertEquals("Maria", createdTrainee.getUser().getFirstName(),
-//                        "firstName should be Maria"),
-//                () -> assertEquals("Petrenko", createdTrainee.getUser().getLastName(),
-//                        "lastName should be Petrenko"),
-//                () -> assertTrue(createdTrainee.getUser().getIsActive(), "isActive should be true"),
-//                () -> assertEquals("Vinnitsya, Soborna str. 35, ap. 26", createdTrainee.getAddress(),
-//                        "address should be Vinnitsya, Soborna str. 35, ap. 26")
-//        );
-//    }
+    @Test
+    void createTraineeSuccessfully() {
+        CreateResponse createResponse = traineeService.create(ds.traineeDto);
+        userNameForTrainee = ds.traineeDto.getUser().getUserName();
+        Trainee createdTrainee = traineeRepository.findByUserName(userNameForTrainee).get();
+
+        assertNotNull(createResponse);
+        assertNotNull(createdTrainee);
+        assertNotNull(createdTrainee.getUser());
+        assertAll(
+                "Grouped assertions of created traineeDto",
+                () -> assertNotNull(createResponse),
+                () -> assertNotNull(createdTrainee),
+                () -> assertNotNull(createdTrainee.getUser()),
+                () -> assertEquals("Maria", createdTrainee.getUser().getFirstName(),
+                        "firstName should be Maria"),
+                () -> assertEquals("Petrenko", createdTrainee.getUser().getLastName(),
+                        "lastName should be Petrenko"),
+                () -> assertTrue(createdTrainee.getUser().getIsActive(), "isActive should be true"),
+                () -> assertEquals("Vinnitsya, Soborna str. 35, ap. 26", createdTrainee.getAddress(),
+                        "address should be Vinnitsya, Soborna str. 35, ap. 26")
+        );
+    }
 //
 //    @Test
 //    void selectTraineeSuccessfully() {

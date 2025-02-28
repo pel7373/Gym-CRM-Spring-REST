@@ -4,14 +4,20 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.context.annotation.*;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 @Configuration
-@ComponentScan(basePackages = "org.gym")
+@ComponentScan(basePackages = "org.gym"
+        ,
+        excludeFilters={
+                @ComponentScan.Filter(type= FilterType.ANNOTATION, value= EnableWebMvc.class)
+        }
+        )
 @PropertySource("classpath:application.properties")
-@Import({WebConfig.class})
 public class Config {
     public static final String ENTITY_NOT_FOUND = "Entity not found by {}";
     public static final String ENTITY_NOT_FOUND_EXCEPTION = "Entity not found by %s";

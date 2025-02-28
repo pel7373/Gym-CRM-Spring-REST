@@ -8,6 +8,7 @@ import org.gym.dto.request.ChangeLoginRequest;
 import org.gym.dto.request.trainee.TraineeUpdateRequest;
 import org.gym.dto.request.trainer.TrainerUpdateRequest;
 import org.gym.dto.request.user.UserUpdateRequest;
+import org.gym.dto.response.CreateResponse;
 import org.gym.entity.Trainee;
 import org.gym.entity.Trainer;
 import org.gym.entity.TrainingType;
@@ -41,6 +42,8 @@ public class DataStorage {
 
     public final TraineeUpdateRequest traineeUpdateRequest;
     public final UserUpdateRequest userForTraineeUpdateRequest;
+
+    public final CreateResponse traineeCreateResponse;
 
     public final String exceptionMessageNotFound = String.format(ENTITY_NOT_FOUND_EXCEPTION, userNameNotFound);
     public final String exceptionMessageAccessDenied;
@@ -89,6 +92,11 @@ public class DataStorage {
         UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
         UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", "", true);
 
+        traineeCreateResponse = CreateResponse.builder()
+                .userName(userDto.getUserName())
+                .password(passwordForUser)
+                .build();
+
         traineeDto = TraineeDto.builder()
                 .user(userDto)
                 .dateOfBirth(LocalDate.of(1995, 1, 23))
@@ -115,7 +123,8 @@ public class DataStorage {
                         .userName(traineeUserName)
                         .firstName("Ivan")
                         .lastName("Ivanenko")
-                        .password("password")
+                        .userName("Ivan.Ivanenko")
+                        .password("12345")
                         .isActive(true)
                         .build())
                 .address("Vinnitsya, Soborna str.")
