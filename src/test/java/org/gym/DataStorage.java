@@ -23,18 +23,19 @@ public class DataStorage {
 
     public final String traineeUserName;
     public final Trainee trainee1;
+    public final TraineeDto traineeDto1;
+    public final TraineeDto traineeDtoNotValid;
+    public final TraineeDto traineeDto;
+    public final TraineeDto traineeDto2;
+
     public final Trainer trainer1;
     public final TrainerDto trainerDto1;
     public final Trainer trainer2;
-    public final TraineeDto traineeDto1;
     public final TrainerDto trainerDto2;
-    public final TraineeDto traineeDtoNotValid;
-    public final String passwordForUser = "12345";
-    public final String userNameNotFound = "bbbbbbb";
     public final String userNameForTrainerDto = "Maria.Petrenko";
 
-    public final TraineeDto traineeDto;
-    public final TraineeDto traineeDto2;
+    public final String passwordForUser = "12345";
+    public final String userNameNotFound = "bbbbbbb";
 
     public final ChangeLoginRequest changeLoginRequest;
     public final TrainerUpdateRequest trainerUpdateRequest;
@@ -70,15 +71,6 @@ public class DataStorage {
 
         traineeUserName = "Ivan.Ivanenko";
 
-//        traineeCreateRequest = TraineeCreateRequest.builder()
-//                .user(UserCreateRequest.builder()
-//                        .firstName("Ivan")
-//                        .lastName("Ivanenko")
-//                        .build())
-//                .dateOfBirth(LocalDate.of(2000, 1, 1))
-//                .address("Vinnitsya, Soborna str.")
-//                .build();
-
         traineeDto1 = TraineeDto.builder()
                 .user(UserDto.builder()
                         .userName(traineeUserName)
@@ -89,8 +81,8 @@ public class DataStorage {
                 .dateOfBirth(LocalDate.of(2000, 1, 1))
                 .build();
 
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
-        UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", "", true);
+        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
+        UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", true);
 
         traineeCreateResponse = CreateResponse.builder()
                 .userName(userDto.getUserName())
@@ -109,7 +101,7 @@ public class DataStorage {
                 .address("Kyiv, Soborna str. 35, ap. 26")
                 .build();
 
-        UserDto userDtoNotValid = new UserDto("Pa", "Pa", "Maria.Petrenko2", "",false);
+        UserDto userDtoNotValid = new UserDto("Pa", "Pa", "Maria.Petrenko2", false);
 
         traineeDtoNotValid = TraineeDto.builder()
                 .user(userDtoNotValid)

@@ -1,7 +1,6 @@
 package org.gym.service.impl;
 
 import org.gym.annotation.GymService;
-import org.gym.dto.TrainerDto;
 import org.gym.dto.request.trainee.TraineeUpdateRequest;
 import org.gym.dto.response.CreateResponse;
 import org.gym.dto.response.trainee.TraineeSelectResponse;
@@ -62,33 +61,28 @@ public class TraineeServiceImpl implements TraineeService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
                 );
-        LOGGER.debug("selected trainee with userName {}", trainee.getUser().getUserName());
-        TraineeDto traineeDto = traineeMapper.convertToDto(trainee);
-        return traineeMapper.convertToTraineeSelectResponse(traineeDto);
+        LOGGER.debug("trainee was selected successfully for userName {}", trainee.getUser().getUserName());
+        return traineeMapper.convertTraineeToTraineeSelectResponse(trainee);
     }
 
     @Override
     public TraineeUpdateResponse update(String userName, TraineeUpdateRequest traineeUpdateRequest) throws EntityNotFoundException {
-
-        TraineeDto traineeDto = traineeMapper.convertTraineeUpdateRequestToTraineeDto(traineeUpdateRequest);
-
         Trainee oldTrainee = traineeRepository.findByUserName(userName)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
         );
-        oldTrainee.getUser().setFirstName(traineeDto.getUser().getFirstName());
-        oldTrainee.getUser().setLastName(traineeDto.getUser().getLastName());
-        oldTrainee.getUser().setIsActive(traineeDto.getUser().getIsActive());
-        if(traineeDto.getDateOfBirth() != null) {
-            oldTrainee.setDateOfBirth(traineeDto.getDateOfBirth());
+        oldTrainee.getUser().setFirstName(traineeUpdateRequest.getUser().getFirstName());
+        oldTrainee.getUser().setLastName( traineeUpdateRequest.getUser().getLastName());
+        oldTrainee.getUser().setIsActive( traineeUpdateRequest.getUser().getIsActive());
+        if(traineeUpdateRequest.getDateOfBirth() != null) {
+            oldTrainee.setDateOfBirth(traineeUpdateRequest.getDateOfBirth());
         }
-        if(traineeDto.getAddress() != null) {
-            oldTrainee.setAddress(traineeDto.getAddress());
+        if(!traineeUpdateRequest.getAddress().isBlank()) {
+            oldTrainee.setAddress(traineeUpdateRequest.getAddress());
         }
 
         Trainee trainee = traineeRepository.save(oldTrainee);
-        TraineeDto updatedTraineeDto = traineeMapper.convertToDto(trainee);
-        return traineeMapper.convertDtoToUpdateResponse(updatedTraineeDto);
+        return traineeMapper.convertTraineeToUpdateResponse(trainee);
     }
 
     @Override
@@ -96,23 +90,20 @@ public class TraineeServiceImpl implements TraineeService {
         traineeRepository.delete(userName);
     }
 
-
     @Override
     public List<TrainerForListResponse> getUnassignedTrainersList(String userName) throws EntityNotFoundException {
         Trainee trainee = traineeRepository.findByUserName(userName)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
                 );
-        List<Trainer> trainers = trainerRepository.findAll();
 
-        List<TrainerDto> trainerDtoList = trainers.stream()
+        List<Trainer> trainerUnassignedList =
+                trainerRepository.findAll().stream()
                 .filter(trainer -> !trainer.getTrainees().contains(trainee))
-                .map(trainerMapper::convertToDto)
                 .toList();
 
-//        return trainerMapper.convertTrainerDtoListToTrainerResponseList(trainerDtoList);
-        return trainerMapper.convertTrainerDtoListToTrainerResponseList(trainerDtoList);
-
+        LOGGER.debug("list created successfully for userName {}", userName);
+        return trainerMapper.convertTrainerListToTrainerForListResponseList(trainerUnassignedList);
     }
 
     @Override
@@ -122,18 +113,15 @@ public class TraineeServiceImpl implements TraineeService {
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
                 );
 
-        List<Trainer> trainers = listTrainersUserNames.stream()
+        List<Trainer> trainerList = listTrainersUserNames.stream()
                 .map(trainerRepository::findByUserName)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
+        trainee.setTrainers(trainerList);
 
-        trainee.setTrainers(trainers);
-
-        List<TrainerDto> trainerDtoList = trainers.stream()
-                .map(trainerMapper::convertToDto)
-                .toList();
-
-        return trainerMapper.convertTrainerDtoListToTrainerResponseList(trainerDtoList);
+        List<TrainerForListResponse> trainerForListResponses = trainerMapper.convertTrainerListToTrainerForListResponseList(trainerList);
+        LOGGER.debug("updated successfully for userName {}", userName);
+        return trainerForListResponses;
     }
 }

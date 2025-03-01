@@ -3,13 +3,11 @@ package org.gym.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gym.annotation.GymService;
-import org.gym.dto.TraineeDto;
 import org.gym.dto.TrainerDto;
 import org.gym.dto.request.trainer.TrainerUpdateRequest;
 import org.gym.dto.response.CreateResponse;
 import org.gym.dto.response.trainer.TrainerSelectResponse;
 import org.gym.dto.response.trainer.TrainerUpdateResponse;
-import org.gym.entity.Trainee;
 import org.gym.entity.Trainer;
 import org.gym.entity.TrainingType;
 import org.gym.exception.EntityNotFoundException;
@@ -61,30 +59,29 @@ public class TrainerServiceImpl implements TrainerService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, userName)));
         LOGGER.debug("selected trainer with userName {}", trainer.getUser().getUserName());
-        TrainerDto trainerDto = trainerMapper.convertToDto(trainer);
-        return trainerMapper.convertToTrainerSelectResponse(trainerDto);
+        //TrainerDto trainerDto = trainerMapper.convertToDto(trainer);
+        return trainerMapper.convertToTrainerSelectResponse(trainer);
     }
 
     @Override
     public TrainerUpdateResponse update(String userName, TrainerUpdateRequest trainerUpdateRequest) throws EntityNotFoundException {
-        TrainerDto trainerDto = trainerMapper.convertTrainerUpdateRequestToTrainerDto(trainerUpdateRequest);
-
         Trainer oldTrainer = trainerRepository.findByUserName(userName)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
         );
 
-        oldTrainer.getUser().setFirstName(trainerDto.getUser().getFirstName());
-        oldTrainer.getUser().setLastName(trainerDto.getUser().getLastName());
-        oldTrainer.getUser().setIsActive(trainerDto.getUser().getIsActive());
-        String trainingTypeName = trainerDto.getSpecialization().getTrainingTypeName();
+        oldTrainer.getUser().setFirstName(trainerUpdateRequest.getUser().getFirstName());
+        oldTrainer.getUser().setLastName(trainerUpdateRequest.getUser().getLastName());
+        oldTrainer.getUser().setIsActive(trainerUpdateRequest.getUser().getIsActive());
+        String trainingTypeName = trainerUpdateRequest.getSpecialization().getTrainingTypeName();
         TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeName)
-                .orElse(null);
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format(ENTITY_NOT_FOUND_EXCEPTION, trainingTypeName))
+                );
 
         oldTrainer.setSpecialization(trainingType);
         Trainer trainer = trainerRepository.save(oldTrainer);
-        TrainerDto updatedTrainerDto = trainerMapper.convertToDto(trainer);
-        return trainerMapper.convertDtoToUpdateResponse(updatedTrainerDto);
+        return trainerMapper.convertTrainerToTrainerUpdateResponse(trainer);
     }
 
     @Override

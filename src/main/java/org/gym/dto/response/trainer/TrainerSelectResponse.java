@@ -15,6 +15,6 @@ import java.util.List;
 @Builder
 public class TrainerSelectResponse {
     private UserSelectResponse user;
-    private TrainingTypeDto specialization;
+    private String specialization;
     private List<TraineeForListResponse> trainees = new ArrayList<>();
 }

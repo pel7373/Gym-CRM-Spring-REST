@@ -72,7 +72,7 @@ class TraineeServiceTest {
 
     @BeforeEach
     void setUp() {
-        userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
+        userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
         user = new User(null, "Maria", "Petrenko", "Maria.Petrenko", passwordForUser, true);
 
         traineeDto = TraineeDto.builder()

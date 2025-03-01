@@ -11,5 +11,5 @@ import org.gym.dto.response.user.UserForListResponse;
 @Builder
 public class TrainerForListResponse {
     private UserForListResponse user;
-    private TrainingTypeDto specialization;
+    private String specialization;
 }

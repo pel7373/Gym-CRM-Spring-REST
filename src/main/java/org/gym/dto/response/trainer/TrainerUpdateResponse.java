@@ -16,6 +16,6 @@ import java.util.List;
 public class TrainerUpdateResponse {
     private UserUpdateResponse user;
 
-    private TrainingTypeDto specialization;
+    private String specialization;
     private List<TraineeForListResponse> trainees = new ArrayList<>();
 }

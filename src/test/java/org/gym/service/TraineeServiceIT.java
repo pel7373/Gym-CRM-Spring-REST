@@ -61,9 +61,6 @@ class TraineeServiceIT {
         userNameForTrainee = ds.traineeDto.getUser().getUserName();
         Trainee createdTrainee = traineeRepository.findByUserName(userNameForTrainee).get();
 
-        assertNotNull(createResponse);
-        assertNotNull(createdTrainee);
-        assertNotNull(createdTrainee.getUser());
         assertAll(
                 "Grouped assertions of created traineeDto",
                 () -> assertNotNull(createResponse),

@@ -18,13 +18,13 @@ public class User {
     private Long id;
 
     @NotBlank(message = "First name is required")
-    @Size(min = 4, message = "User's first name must be at least 4 letters long")
+    @Size(min = 2, message = "User's first name must be at least 2 letters long")
     @Pattern(regexp = "^[A-Z][a-z]+$", message = "User's first name must consist of letters only (the first one is capital)")
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @NotBlank(message = "Last name is required")
-    @Size(min = 4, message = "User's last name must be at least 4 letters long")
+    @Size(min = 2, message = "User's last name must be at least 2 letters long")
     @Pattern(regexp = "^[A-Z][a-z]+$", message = "User's last name must consist of letters only (the first one is capital)")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

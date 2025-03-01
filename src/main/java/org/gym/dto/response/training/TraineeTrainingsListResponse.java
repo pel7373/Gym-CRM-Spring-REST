@@ -19,7 +19,7 @@ public class TraineeTrainingsListResponse {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
-    private TrainingTypeDto trainingType;
+    private String trainingType;
 
     private Integer duration;
 

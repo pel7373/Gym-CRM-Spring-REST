@@ -14,13 +14,19 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
 @ActiveProfiles("test")
+@WebAppConfiguration
 class TrainerMapperTest {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private TrainerMapper trainerMapper;

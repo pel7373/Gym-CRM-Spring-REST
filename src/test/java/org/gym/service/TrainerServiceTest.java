@@ -60,7 +60,7 @@ class TrainerServiceTest {
 
     @BeforeEach
     void setUp() {
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
+        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
         User user = new User(null, "Maria", "Petrenko", "Maria.Petrenko", passwordForUser, true);
 
         trainerDto = TrainerDto.builder()

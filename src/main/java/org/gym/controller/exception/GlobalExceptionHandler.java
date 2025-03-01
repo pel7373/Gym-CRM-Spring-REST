@@ -1,5 +1,7 @@
 package org.gym.controller.exception;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.gym.exception.AccessDeniedException;
 import org.gym.exception.NullEntityException;
 import org.gym.exception.EntityNotFoundException;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,9 +54,17 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(JsonParseException.class)
+    public ResponseEntity<String> handleJsonParseException(JsonParseException ex) {
+        return new ResponseEntity<>(
+                "Bad request: " + ex.getMessage(),
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception ex) {
         return new ResponseEntity<>(
-                "An unexpected error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                "The error: " + ex.getMessage(),
+                HttpStatus.BAD_REQUEST);
     }
 }

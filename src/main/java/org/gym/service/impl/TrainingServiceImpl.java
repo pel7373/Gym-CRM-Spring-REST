@@ -66,34 +66,20 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public List<TraineeTrainingsListResponse> getTraineeTrainingsListCriteria(TraineeTrainingsDto traineeTrainingsDto) {
 
-        List<TrainingDto> trainingDtoList = trainingRepository.getByTraineeCriteria(traineeTrainingsDto)
-                .stream()
-                .map(trainingMapper::convertToDto)
-                .toList();
+//        List<TrainingDto> trainingDtoList = trainingRepository.getByTraineeCriteria(traineeTrainingsDto)
+//                .stream()
+//                .map(trainingMapper::convertToDto)
+//                .toList();
 
-        List<TraineeTrainingsListResponse> traineeTrainingsListResponseList =
-                trainingDtoList.stream()
-                        .map(trainingMapper::trainingDtoToTraineeTrainingsListResponse)
+        return trainingRepository.getByTraineeCriteria(traineeTrainingsDto).stream()
+                        .map(trainingMapper::trainingToTraineeTrainingsListResponse)
                         .toList();
-        return traineeTrainingsListResponseList;
     }
 
     @Override
     public List<TrainerTrainingsListResponse> getTrainerTrainingsListCriteria(TrainerTrainingsDto trainerTrainingsDto) {
-        trainerRepository.findByUserName(trainerTrainingsDto.getTrainerUserName())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format(ENTITY_NOT_FOUND_EXCEPTION, trainerTrainingsDto.getTrainerUserName()))
-        );
-
-        List<TrainingDto> trainingDtoList = trainingRepository.getByTrainerCriteria(trainerTrainingsDto)
-                .stream()
-                .map(trainingMapper::convertToDto)
+        return trainingRepository.getByTrainerCriteria(trainerTrainingsDto).stream()
+                .map(trainingMapper::trainingToTrainerTrainingsListResponse)
                 .toList();
-
-        List<TrainerTrainingsListResponse> trainerTrainingsListResponseList = trainingDtoList.stream()
-                .map(trainingMapper::trainingDtoToTrainerTrainingsListResponse)
-                .toList();
-
-        return trainerTrainingsListResponseList;
     }
 }

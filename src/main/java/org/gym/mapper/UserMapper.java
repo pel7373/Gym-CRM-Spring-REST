@@ -12,11 +12,13 @@ import org.mapstruct.Mapping;
 public interface UserMapper {
     UserDto convertToDto(User user);
     User convertToEntity(UserDto userDto);
-    UserDto convertUserUpdateRequestToUserDto(UserUpdateRequest userUpdateRequest);
 
     @Mapping(target="userName", expression="java(user.getUserName())")
     UserUpdateResponse convertUserDtoToUserUpdateResponse(UserDto user);
 
-    UserForListResponse convertToUserForListResponse(UserDto user);
+    @Mapping(target="userName", expression="java(user.getUserName())")
+    UserUpdateResponse convertUserToUserUpdateResponse(User user);
 
+    UserForListResponse convertDtoToForListResponse(User user);
+    //    UserForListResponse convertToUserForListResponse(UserDto user);
 }

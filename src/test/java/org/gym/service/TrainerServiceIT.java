@@ -1,9 +1,14 @@
 package org.gym.service;
 
+import org.gym.DataStorage;
 import org.gym.config.Config;
 import org.gym.dto.TrainerDto;
 import org.gym.dto.TrainingTypeDto;
 import org.gym.dto.UserDto;
+import org.gym.dto.response.CreateResponse;
+import org.gym.dto.response.trainer.TrainerSelectResponse;
+import org.gym.dto.response.trainer.TrainerUpdateResponse;
+import org.gym.entity.Trainee;
 import org.gym.entity.Trainer;
 import org.gym.repository.TrainerRepository;
 import org.junit.jupiter.api.Test;
@@ -29,136 +34,113 @@ class TrainerServiceIT {
     @Autowired
     private TrainerRepository trainerRepository;
 
-    private final TrainerDto trainerDto;
-    private final TrainerDto trainerDto2;
+    private final DataStorage ds = new DataStorage();
+//    private final TrainerDto trainerDto;
+//    private final TrainerDto trainerDto2;
     private String userNameForTrainer;
 
     {
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", "",true);
-        UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", "",true);
-
-        trainerDto = TrainerDto.builder()
-                .user(userDto)
-                .specialization(TrainingTypeDto.builder()
-                        .trainingTypeName("Zumba")
-                        .build())
-                .build();
-
-        trainerDto2 = TrainerDto.builder()
-                .user(userDto2)
-                .specialization(TrainingTypeDto.builder()
-                        .trainingTypeName("Zumba")
-                        .build())
-                .build();
+//        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
+//        UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", true);
+//
+//        trainerDto = TrainerDto.builder()
+//                .user(userDto)
+//                .specialization(TrainingTypeDto.builder()
+//                        .trainingTypeName("Zumba")
+//                        .build())
+//                .build();
+//
+//        trainerDto2 = TrainerDto.builder()
+//                .user(userDto2)
+//                .specialization(TrainingTypeDto.builder()
+//                        .trainingTypeName("Zumba")
+//                        .build())
+//                .build();
     }
 
-//    @Test
-//    void createTrainerSuccessfully() {
-//        TrainerDto createdTrainerDto = trainerService.create(trainerDto);
-//        userNameForTrainer = createdTrainerDto.getUser().getUserName();
-//
-//        assertNotNull(createdTrainerDto);
-//        assertNotNull(createdTrainerDto.getUser());
-//        assertAll(
-//                "Grouped assertions of created trainerDto",
-//                () -> assertEquals("Maria", createdTrainerDto.getUser().getFirstName(),
-//                        "firstName should be equal"),
-//                () -> assertEquals("Petrenko", createdTrainerDto.getUser().getLastName(),
-//                        "lastName should be equal"),
-//                () -> assertEquals(trainerDto.getUser().getIsActive(), createdTrainerDto.getUser().getIsActive(),
-//                        "isActive should be equal"),
-//                () -> assertEquals(trainerDto.getSpecialization(), createdTrainerDto.getSpecialization(),
-//                        "specialization should be equal")
-//        );
-//
-//        Trainer createdTrainer = trainerRepository.findByUserName(createdTrainerDto.getUser().getUserName()).get();
-//        assertNotNull(createdTrainer);
-//        assertNotNull(createdTrainer.getUser());
-//        assertAll(
-//                "Grouped assertions of created trainer",
-//                () -> assertEquals("Maria", createdTrainer.getUser().getFirstName(),
-//                        "firstName should be equal"),
-//                () -> assertEquals("Petrenko", createdTrainer.getUser().getLastName(),
-//                        "lastName should be equal"),
-//                () -> assertEquals(trainerDto.getUser().getIsActive(), createdTrainer.getUser().getIsActive(),
-//                        "isActive should be equal"),
-//                () -> assertEquals(trainerDto.getSpecialization().getTrainingTypeName(),
-//                        createdTrainer.getSpecialization().getTrainingTypeName(),
-//                        "specialization should be equal")
-//        );
-//    }
-//
-//    @Test
-//    void selectTrainerSuccessfully() {
-//        TrainerDto createdTrainerDto = trainerService.create(trainerDto);
-//        userNameForTrainer = createdTrainerDto.getUser().getUserName();
-//        TrainerDto selectedTrainerDto = trainerService.select(userNameForTrainer);
-//
-//        assertNotNull(createdTrainerDto);
-//        assertNotNull(createdTrainerDto.getUser());
-//        assertNotNull(selectedTrainerDto);
-//        assertNotNull(selectedTrainerDto);
-//        assertAll(
-//                "Grouped assertions of selected trainerDto",
-//                () -> assertEquals("Maria", createdTrainerDto.getUser().getFirstName(),
-//                        "firstName should be equal"),
-//                () -> assertEquals("Petrenko", createdTrainerDto.getUser().getLastName(),
-//                        "lastName should be equal"),
-//                () -> assertEquals(trainerDto.getUser().getIsActive(), createdTrainerDto.getUser().getIsActive(),
-//                        "isActive should be equal"),
-//                () -> assertEquals(trainerDto.getSpecialization(), createdTrainerDto.getSpecialization(),
-//                        "specialization should be equal")
-//        );
-//
-//        Trainer selectedTrainer = trainerRepository.findByUserName(selectedTrainerDto.getUser().getUserName()).get();
-//        assertNotNull(selectedTrainer);
-//        assertNotNull(selectedTrainer.getUser());
-//        assertAll(
-//                "Grouped assertions of created trainer",
-//                () -> assertEquals("Maria", selectedTrainer.getUser().getFirstName(), "firstName should be equal"),
-//                () -> assertEquals("Petrenko", selectedTrainer.getUser().getLastName(), "lastName should be equal"),
-//                () -> assertEquals(trainerDto.getUser().getIsActive(), selectedTrainer.getUser().getIsActive(), "isActive should be equal"),
-//                () -> assertEquals(trainerDto.getSpecialization().getTrainingTypeName(), selectedTrainer.getSpecialization().getTrainingTypeName(), "specialization should be equal")
-//        );
-//    }
-//
-//    @Test
-//    void updateTrainerSuccessfully() {
-//        TrainerDto createdTrainerDto = trainerService.create(trainerDto);
-//        userNameForTrainer = createdTrainerDto.getUser().getUserName();
-//        TrainerDto updatedTrainerDto = trainerService.update(userNameForTrainer, trainerDto2);
-//        userNameForTrainer = updatedTrainerDto.getUser().getUserName();
-//
-//        assertNotNull(updatedTrainerDto);
-//        assertNotNull(updatedTrainerDto.getUser());
-//        assertAll(
-//                "Grouped assertions of selected trainerDto",
-//                () -> assertEquals("Petro", updatedTrainerDto.getUser().getFirstName(),
-//                        "firstName should be Maria"),
-//                () -> assertEquals("Ivanenko", updatedTrainerDto.getUser().getLastName(),
-//                        "lastName should be Petrenko"),
-//                () -> assertEquals(trainerDto.getUser().getIsActive(), updatedTrainerDto.getUser().getIsActive(),
-//                        "isActive should be equal"),
-//                () -> assertEquals(trainerDto.getSpecialization(), updatedTrainerDto.getSpecialization(),
-//                        "specialization should be equal")
-//        );
-//
-//        Trainer updatedTrainer = trainerRepository.findByUserName(updatedTrainerDto.getUser().getUserName()).get();
-//        assertNotNull(updatedTrainer);
-//        assertNotNull(updatedTrainer.getUser());
-//        assertAll(
-//                "Grouped assertions of created trainer",
-//                () -> assertEquals("Petro", updatedTrainer.getUser().getFirstName(),
-//                        "firstName should be Maria"),
-//                () -> assertEquals("Ivanenko", updatedTrainer.getUser().getLastName(),
-//                        "lastName should be Petrenko"),
-//                () -> assertEquals(trainerDto.getUser().getIsActive(), updatedTrainer.getUser().getIsActive(), "isActive should be equal"),
-//                () -> assertEquals(trainerDto.getSpecialization().getTrainingTypeName(),
-//                        updatedTrainer.getSpecialization().getTrainingTypeName(),
-//                        "specialization should be equal")
-//        );
-//    }
-//
+    @Test
+    void createTrainerSuccessfully() {
+        CreateResponse createResponse = trainerService.create(ds.trainerDto1);
+        userNameForTrainer = ds.trainerDto1.getUser().getUserName();
+        Trainer createdTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
+
+        assertAll(
+                "Grouped assertions of created trainerDto",
+                () -> assertNotNull(createResponse),
+                () -> assertNotNull(createdTrainer),
+                () -> assertNotNull(createdTrainer.getUser()),
+                () -> assertEquals(createResponse.getUserName(), createdTrainer.getUser().getUserName(),
+                        "userName should be equal"),
+                () -> assertEquals(createResponse.getPassword(), createdTrainer.getUser().getPassword(),
+                        "password should be equal"),
+                () -> assertEquals(ds.trainerDto1.getUser().getFirstName(), createdTrainer.getUser().getFirstName(),
+                        "firstName should be equal"),
+                () -> assertEquals(ds.trainerDto1.getUser().getLastName(), createdTrainer.getUser().getLastName(),
+                        "lastName should be equal"),
+                () -> assertEquals(ds.trainerDto1.getUser().getIsActive(), createdTrainer.getUser().getIsActive(),
+                        "isActive should be equal"),
+                () -> assertEquals(ds.trainerDto1.getSpecialization(), createdTrainer.getSpecialization(),
+                        "specialization should be equal")
+        );
+    }
+
+    @Test
+    void selectTrainerSuccessfully() {
+        CreateResponse createResponse = trainerService.create(ds.trainerDto1);
+        userNameForTrainer = createResponse.getUserName();
+        Trainer createdTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
+        TrainerSelectResponse selectedTrainer = trainerService.select(userNameForTrainer);
+
+        assertAll(
+                "Grouped assertions of selected trainer",
+                () -> assertNotNull(createdTrainer),
+                () -> assertNotNull(createdTrainer.getUser()),
+                () -> assertNotNull(selectedTrainer),
+                () -> assertNotNull(selectedTrainer.getUser()),
+                () -> assertEquals(createdTrainer.getUser().getFirstName(), selectedTrainer.getUser().getFirstName(),
+                        "firstName should be equal"),
+                () -> assertEquals(createdTrainer.getUser().getLastName(), selectedTrainer.getUser().getLastName(),
+                        "lastName should be equal"),
+                () -> assertEquals(createdTrainer.getUser().getIsActive(), selectedTrainer.getUser().getIsActive(),
+                        "isActive should be equal"),
+                () -> assertEquals(createdTrainer.getSpecialization(), selectedTrainer.getSpecialization(),
+                        "specialization should be equal")
+        );
+    }
+
+    @Test
+    void updateTrainerSuccessfully() {
+        CreateResponse createResponse = trainerService.create(ds.trainerDto1);
+        userNameForTrainer = createResponse.getUserName();
+
+        TrainerUpdateResponse updatedTrainerResponse =
+                trainerService.update(userNameForTrainer, ds.trainerUpdateRequest);
+        String userNameForUpdatedTrainer = updatedTrainerResponse.getUser().getUserName();
+        Trainer updatedTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
+
+        assertAll(
+                "Grouped assertions of selected trainerDto",
+                () -> assertNotNull(updatedTrainer),
+                () -> assertNotNull(updatedTrainer.getUser()),
+                () -> assertNotNull(updatedTrainerResponse),
+                () -> assertNotNull(updatedTrainerResponse.getUser()),
+                () -> assertEquals(userNameForTrainer, userNameForUpdatedTrainer,
+                        "userName for created and then updated trainer must be equal"),
+                () -> assertEquals(ds.trainerUpdateRequest.getUser().getFirstName(),
+                        updatedTrainer.getUser().getFirstName(),
+                        "firstName should be Maria"),
+                () -> assertEquals(ds.trainerUpdateRequest.getUser().getLastName(),
+                        updatedTrainer.getUser().getLastName(),
+                        "lastName should be Petrenko"),
+                () -> assertEquals(ds.trainerUpdateRequest.getUser().getIsActive(),
+                        updatedTrainer.getUser().getIsActive(),
+                        "isActive should be equal"),
+                () -> assertEquals(ds.trainerUpdateRequest.getSpecialization(),
+                        updatedTrainer.getSpecialization(),
+                        "specialization should be equal")
+        );
+    }
+
 //    @Test
 //    void changeStatusSuccessfully() {
 //        TrainerDto createdTrainerDto = trainerService.create(trainerDto);
