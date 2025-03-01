@@ -33,6 +33,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public CreateResponse create(TrainerDto trainerDto) {
+
         trainerDto.getUser().setUserName(
                 userNameGeneratorService.generate(
                         trainerDto.getUser().getFirstName(),

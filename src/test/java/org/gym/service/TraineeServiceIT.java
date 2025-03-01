@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {TestConfig.class})
-@jakarta.transaction.Transactional
 @TestPropertySource(locations = "classpath:application-test.properties")
 @ActiveProfiles("test")
 @WebAppConfiguration

@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
-@jakarta.transaction.Transactional
 @ActiveProfiles("prod")
 @WebAppConfiguration
 class TraineeServiceWithTestContainerIT {

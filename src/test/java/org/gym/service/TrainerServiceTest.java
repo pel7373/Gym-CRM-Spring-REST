@@ -1,5 +1,6 @@
 package org.gym.service;
 
+import org.gym.DataStorage;
 import org.gym.dto.TrainerDto;
 import org.gym.dto.TrainingTypeDto;
 import org.gym.dto.UserDto;
@@ -47,6 +48,8 @@ class TrainerServiceTest {
     @InjectMocks
     private TrainerServiceImpl trainerService;
 
+    private final DataStorage ds = new DataStorage();
+
     private TrainerDto trainerDto;
     private Trainer trainer;
     private final String passwordForUser = "AAAAAAAAAA";
@@ -90,13 +93,12 @@ class TrainerServiceTest {
         when(trainingTypeRepository.findByName(trainerTrainingTypeDto.getTrainingTypeName()))
                 .thenReturn(Optional.ofNullable(trainerTrainingType));
         when(trainerMapper.convertToEntity(trainerDto)).thenReturn(trainer);
-        when(trainerMapper.convertToDto(trainer)).thenReturn(trainerDto);
+        when(trainerMapper.convertToCreateResponse(trainer)).thenReturn(ds.trainerCreateResponse);
 
         trainerService.create(trainerDto);
         verify(trainerRepository, times(1)).save(any(Trainer.class));
         verify(trainingTypeRepository, times(1)).findByName(any(String.class));
-        verify(trainerMapper, times(1)).convertToEntity(trainerDto);
-        verify(trainerMapper, times(1)).convertToDto(trainer);
+        verify(trainerMapper, times(1)).convertToCreateResponse(trainer);
     }
 
     @Test
@@ -237,21 +239,4 @@ class TrainerServiceTest {
 //        assertFalse(isAuthenticate);
 //        verify(trainerRepository, times(1)).findByUserName(any(String.class));
 //    }
-//
-//
-//    @Test
-//    void isFirstOrLastNamesChangedDoesntChangeNames() {
-//        UserDto userDto2 = new UserDto("Maria", "Petrenko", "Maria.Petrenko","", true);
-//        TrainerDto trainerDto2 = TrainerDto.builder()
-//                .user(userDto2)
-//                .build();
-//
-//        boolean result = trainerService.isFirstOrLastNamesChanged(trainerDto2, trainer);
-//        assertAll(
-//                () -> assertFalse(result),
-//                () -> assertEquals(trainer.getUser().getFirstName(), trainerDto2.getUser().getFirstName()),
-//                () -> assertEquals(trainer.getUser().getLastName(), trainerDto2.getUser().getLastName())
-//        );
-//    }
-
 }

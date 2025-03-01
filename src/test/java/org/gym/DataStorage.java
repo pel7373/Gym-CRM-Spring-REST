@@ -45,6 +45,7 @@ public class DataStorage {
     public final UserUpdateRequest userForTraineeUpdateRequest;
 
     public final CreateResponse traineeCreateResponse;
+    public final CreateResponse trainerCreateResponse;
 
     public final String exceptionMessageNotFound = String.format(ENTITY_NOT_FOUND_EXCEPTION, userNameNotFound);
     public final String exceptionMessageAccessDenied;
@@ -137,10 +138,15 @@ public class DataStorage {
                         .build())
                 .build();
 
+        trainerCreateResponse = CreateResponse.builder()
+                .userName(trainer1.getUser().getUserName())
+                .password(passwordForUser)
+                .build();
+
         trainerDto1 = TrainerDto.builder()
                 .user(UserDto.builder()
                         .firstName("Petro")
-                        .firstName("Petrenko")
+                        .lastName("Petrenko")
                         .userName("Petro.Petrenko")
                         .isActive(true)
                         .build())
@@ -181,6 +187,7 @@ public class DataStorage {
                 .lastName("Petrenko")
                 .isActive(true)
                 .build();
+
         trainerUpdateRequest = TrainerUpdateRequest.builder()
                 .user(userForTrainerUpdateRequest)
                 .specialization(TrainingTypeDto.builder()
