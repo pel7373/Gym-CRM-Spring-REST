@@ -1,8 +1,8 @@
-package org.gym.controller;
+package org.gym.controller.Test;
 
 import jakarta.transaction.Transactional;
-import org.gym.config.Config;
-import org.gym.config.TestConfig;
+import org.gym.DataStorage;
+import org.gym.controller.UserController;
 import org.gym.controller.impl.UserControllerImpl;
 import org.gym.service.UserService;
 import org.gym.util.TransactionIdGenerator;
@@ -15,29 +15,18 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-//@ExtendWith(SpringExtension.class)
-////@ExtendWith(MockitoExtension.class)
-//@ContextConfiguration(classes = {TestConfig.class, Config.class})
-//@TestPropertySource(locations = "classpath:application-test.properties")
-//@ActiveProfiles("test")
-@Transactional
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 public class UserControllerTest {
 
     private MockMvc mockMvc;
@@ -51,20 +40,55 @@ public class UserControllerTest {
     @InjectMocks
     private UserControllerImpl userController;
 
+    private final DataStorage ds = new DataStorage();
+
     @BeforeEach
-    void setup() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
         when(transactionIdGenerator.generate()).thenReturn(UUID.randomUUID().toString());
     }
 
     @Test
-    void testChangeStatus() throws Exception {
-        String userName = "User";
+    void changeStatus() throws Exception {
+        String userName = "user";
 
         when(userService.changeStatus(userName)).thenReturn(true);
 
         mockMvc.perform(patch("/api/v1/{username}/status", userName))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void changePassword() throws Exception {
+
+        doNothing().when(userService).changePassword(ds.changeLoginRequest);
+        when(userService.authenticate(ds.changeLoginRequest.getUserName(), ds.changeLoginRequest.getOldPassword()))
+                .thenReturn(true);
+
+        mockMvc.perform(put("/api/v1/password", ds.changeLoginRequest))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void authenticateSuccess() throws Exception {
+        String userName = "user";
+        String password = "password";
+
+        when(userService.authenticate(userName, password)).thenReturn(true);
+
+        mockMvc.perform(get("/api/v1/{username}/{password}", userName, password))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void authenticateFailure() throws Exception {
+        String userName = "user";
+        String password = "password";
+
+        when(userService.authenticate(userName, password)).thenReturn(false);
+
+        mockMvc.perform(get("/api/v1/users/authenticate", userName, password))
+                .andExpect(status().isNotFound());
     }
 }

@@ -1,4 +1,4 @@
-package org.gym.controller;
+package org.gym.controller.IT;
 
 import org.gym.config.Config;
 import org.gym.config.TestConfig;

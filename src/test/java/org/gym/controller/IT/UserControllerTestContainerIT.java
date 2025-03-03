@@ -1,10 +1,10 @@
-package org.gym.controller;
+package org.gym.controller.IT;
 
 import org.gym.DataStorage;
 import org.gym.config.Config;
 
+import org.gym.controller.UserController;
 import org.gym.controller.impl.UserControllerImpl;
-import org.gym.repository.TraineeRepository;
 import org.gym.repository.UserRepository;
 import org.gym.repository.impl.UserRepositoryImpl;
 import org.gym.service.UserService;
@@ -56,10 +56,6 @@ public class UserControllerTestContainerIT {
     String password = ds.changeLoginRequest.getOldPassword();
     @Autowired
     private UserRepositoryImpl userRepositoryImpl;
-
-    {
-        //traineeRepository.save(ds.trainee1);
-    }
 
     @BeforeAll
     static void startContainer() {

@@ -1,4 +1,4 @@
-package org.gym.controller;
+package org.gym.controller.IT;
 
 public class TraineeControllerTestContainerIT {
 }

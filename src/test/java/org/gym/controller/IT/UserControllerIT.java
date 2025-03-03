@@ -1,8 +1,10 @@
-package org.gym.controller;
+package org.gym.controller.IT;
 
 import org.gym.DataStorage;
 import org.gym.config.Config;
 import org.gym.config.TestConfig;
+import org.gym.controller.TraineeController;
+import org.gym.controller.UserController;
 import org.gym.entity.Trainee;
 import org.gym.repository.TraineeRepository;
 import org.junit.jupiter.api.BeforeEach;
