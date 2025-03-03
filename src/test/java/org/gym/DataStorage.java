@@ -21,6 +21,7 @@ import static org.gym.config.Config.*;
 
 public class DataStorage {
 
+    public final User user;
     public final String traineeUserName;
     public final Trainee trainee1;
     public final TraineeDto traineeDto1;
@@ -32,7 +33,9 @@ public class DataStorage {
     public final TrainerDto trainerDto1;
     public final Trainer trainer2;
     public final TrainerDto trainerDto2;
-    public final String userNameForTrainerDto = "Maria.Petrenko";
+    public final String userNameForTrainerDto1;
+    public final TrainingType trainerTrainingType;
+    public final String trainerTrainingTypeName = "Zumba";
 
     public final String passwordForUser = "12345";
     public final String userNameNotFound = "bbbbbbb";
@@ -51,9 +54,13 @@ public class DataStorage {
     public final String exceptionMessageAccessDenied;
 
     {
+        String traineeAddress = "Vinnitsya, Soborna str. 35, ap. 26";
+        String traineeAddress2 = "Kyiv, Khreschatik str. 35, ap. 26";
+        user = new User(null, "Ivan", "Ivanenko", "Ivan.Ivanenko", "12345", true);
+
         changeLoginRequest = ChangeLoginRequest.builder()
-                .userName("Ivan.Ivanenko")
-                .oldPassword("12345")
+                .userName(user.getUserName())
+                .oldPassword(user.getPassword())
                 .newPassword("123456")
                 .build();
 
@@ -66,8 +73,9 @@ public class DataStorage {
                 .build();
 
         traineeUpdateRequest = TraineeUpdateRequest.builder()
+                .user(userForTraineeUpdateRequest)
                 .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("Vinnitsya, Soborna str.")
+                .address(traineeAddress)
                 .build();
 
         traineeUserName = "Ivan.Ivanenko";
@@ -78,12 +86,12 @@ public class DataStorage {
                         .firstName("Ivan")
                         .lastName("Ivanenko")
                         .build())
-                .address("Vinnitsya, Soborna str.")
+                .address(traineeAddress)
                 .dateOfBirth(LocalDate.of(2000, 1, 1))
                 .build();
 
-        UserDto userDto = new UserDto("Maria", "Petrenko", "Maria.Petrenko", true);
-        UserDto userDto2 = new UserDto("Petro", "Ivanenko", "Petro.Ivanenko", true);
+        UserDto userDto = new UserDto("Ivan", "Ivanenko", "Ivan.Ivanenko", true);
+        UserDto userDto2 = new UserDto("Petro", "Petrenko", "Petro.Petrenko", true);
 
         traineeCreateResponse = CreateResponse.builder()
                 .userName(userDto.getUserName())
@@ -93,13 +101,13 @@ public class DataStorage {
         traineeDto = TraineeDto.builder()
                 .user(userDto)
                 .dateOfBirth(LocalDate.of(1995, 1, 23))
-                .address("Vinnitsya, Soborna str. 35, ap. 26")
+                .address(traineeAddress)
                 .build();
 
         traineeDto2 = TraineeDto.builder()
                 .user(userDto2)
                 .dateOfBirth(LocalDate.of(1985, 1, 23))
-                .address("Kyiv, Soborna str. 35, ap. 26")
+                .address(traineeAddress2)
                 .build();
 
         UserDto userDtoNotValid = new UserDto("Pa", "Pa", "Maria.Petrenko2", false);
@@ -107,22 +115,17 @@ public class DataStorage {
         traineeDtoNotValid = TraineeDto.builder()
                 .user(userDtoNotValid)
                 .dateOfBirth(LocalDate.of(1995, 1, 23))
-                .address("Kyiv, Soborna str. 35, ap. 26")
+                .address(traineeAddress2)
                 .build();
 
 
         trainee1 = Trainee.builder()
-                .user(User.builder()
-                        .userName(traineeUserName)
-                        .firstName("Ivan")
-                        .lastName("Ivanenko")
-                        .userName("Ivan.Ivanenko")
-                        .password("12345")
-                        .isActive(true)
-                        .build())
-                .address("Vinnitsya, Soborna str.")
+                .user(user)
+                .address(traineeAddress)
                 .dateOfBirth(LocalDate.of(2000, 1, 1))
                 .build();
+
+        // trainers section!
 
         trainer1 = Trainer.builder()
                 .trainees(List.of(trainee1))
@@ -130,11 +133,11 @@ public class DataStorage {
                         .firstName("Petro")
                         .lastName("Petrenko")
                         .userName("Petro.Petrenko")
-                        .password("password")
+                        .password(passwordForUser)
                         .isActive(true)
                         .build())
                 .specialization(TrainingType.builder()
-                        .trainingTypeName("Zumba")
+                        .trainingTypeName(trainerTrainingTypeName)
                         .build())
                 .build();
 
@@ -151,16 +154,19 @@ public class DataStorage {
                         .isActive(true)
                         .build())
                 .specialization(TrainingTypeDto.builder()
-                        .trainingTypeName("Zumba")
+                        .trainingTypeName(trainerTrainingTypeName)
                         .build())
                 .build();
+
+        userNameForTrainerDto1 = trainerDto1.getUser().getUserName();
+        trainerTrainingType = trainer1.getSpecialization();
 
         trainer2 = Trainer.builder()
                 .trainees(List.of())
                 .user(User.builder()
-                        .firstName("PetroPetro")
-                        .lastName("Petrenko")
-                        .userName("PetroPetro.Petrenko")
+                        .firstName("Sergiy")
+                        .lastName("Sidorenko")
+                        .userName("Sergiy.Sidorenko")
                         .password("password")
                         .isActive(true)
                         .build())

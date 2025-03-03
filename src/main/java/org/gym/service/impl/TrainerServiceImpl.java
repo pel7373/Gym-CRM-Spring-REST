@@ -60,7 +60,6 @@ public class TrainerServiceImpl implements TrainerService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, userName)));
         LOGGER.debug("selected trainer with userName {}", trainer.getUser().getUserName());
-        //TrainerDto trainerDto = trainerMapper.convertToDto(trainer);
         return trainerMapper.convertToTrainerSelectResponse(trainer);
     }
 

@@ -2,9 +2,12 @@ package org.gym.service;
 
 import org.gym.config.Config;
 import org.gym.dto.*;
+import org.gym.dto.request.training.TrainingAddRequest;
+import org.gym.dto.response.training.TraineeTrainingsListResponse;
+import org.gym.dto.response.training.TrainerTrainingsListResponse;
 import org.gym.entity.*;
-import org.gym.exception.EntityNotFoundException;
 import org.gym.mapper.TrainingMapper;
+import org.gym.mapper.TrainingTypeMapper;
 import org.gym.repository.TraineeRepository;
 import org.gym.repository.TrainerRepository;
 import org.gym.repository.TrainingTypeRepository;
@@ -16,7 +19,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,7 +34,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(classes = {Config.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
 @ActiveProfiles("test")
+@WebAppConfiguration
 class TrainingServiceIT {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
     @Autowired
     private TrainingService trainingService;
@@ -44,20 +53,19 @@ class TrainingServiceIT {
     private TrainingTypeRepository trainingTypeRepository;
 
     @Autowired
+    private TrainingTypeMapper trainingTypeMapper;
+
+    @Autowired
     private UserNameGeneratorService userNameGeneratorService;
 
     @Autowired
     private PasswordGeneratorService passwordGeneratorService;
 
-    @Autowired
-    private TrainingMapper trainingMapper;
-
     private Trainee trainee;
     private Trainer trainer;
-    private TrainingDto trainingDto;
-    private Training training;
     private TrainingType trainingType;
     private final String trainingTypeName = "Zumba";
+    private TrainingAddRequest trainingAddRequest;
 
     @BeforeEach
     void setUp()
@@ -92,7 +100,7 @@ class TrainingServiceIT {
         Trainee createdTrainee = traineeRepository.save(trainee);
         Trainer createdTrainer = trainerRepository.save(trainer);
 
-        training = Training.builder()
+        Training training = Training.builder()
                 .trainingType(trainingType)
                 .trainer(createdTrainer)
                 .trainee(createdTrainee)
@@ -102,165 +110,153 @@ class TrainingServiceIT {
                 .duration(45)
                 .build();
 
-        trainingDto = trainingMapper.convertToDto(training);
+        trainingAddRequest = TrainingAddRequest.builder()
+                .trainerUserName(trainer.getUser().getUserName())
+                .traineeUserName(trainee.getUser().getUserName())
+                .trainingType(trainingTypeMapper.convertToDto(trainingType))
+                .trainingName(training.getTrainingName())
+                .date(training.getDate())
+                .duration(training.getDuration())
+                .build();
     }
 
-//    @Test
-//    void createTrainingSuccessfully() {
-//        TrainingDto createdTrainingDto = trainingService.create(trainingDto);
-//
-//        assertAll(
-//                "Grouped assertions of created trainerDto",
-//                () -> assertNotNull(createdTrainingDto, "created training shouldn't be null"),
-//                () -> assertNotNull(createdTrainingDto.getTrainer(), "created trainer shouldn't be null"),
-//                () -> assertNotNull(createdTrainingDto.getTrainee(), "created trainee shouldn't be null"),
-//                () -> assertEquals(createdTrainingDto.getTrainee().getUser().getFirstName(),
-//                        trainingDto.getTrainee().getUser().getFirstName(),
-//                        "trainee's firstNames should be equal"),
-//                () -> assertEquals(createdTrainingDto.getTrainer().getUser().getFirstName(),
-//                        trainingDto.getTrainer().getUser().getFirstName(),
-//                        "trainer's firstNames should be equal"),
-//                () -> assertEquals(createdTrainingDto.getTrainer().getSpecialization(),
-//                        trainingDto.getTrainer().getSpecialization(),
-//                        "trainer's specialization should be equal"),
-//                () -> assertEquals(createdTrainingDto.getTrainingName(),
-//                        trainingDto.getTrainingName(), "training names  should be equal"),
-//                () -> assertEquals(createdTrainingDto.getDate(),
-//                        trainingDto.getDate(), "dates should be equal")
-//        );
-//    }
-//
-//    @Test
-//    void getByTraineeCriteriaEmptyResult() {
-//        trainingService.create(trainingMapper.convertToDto(training));
-//
-//        LocalDate fromDate = LocalDate.of(2030, 3, 5);
-//        LocalDate toDate = LocalDate.of(2050, 3, 5);
-//        String differentTrainerName = "";
-//
-//        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
-//                .traineeUserName(trainee.getUser().getUserName())
-//                .fromDate(fromDate)
-//                .toDate(toDate)
-//                .trainerUserName(differentTrainerName)
-//                .trainingType("stretching")
-//                .build();
-//
-//        List<TrainingDto> trainings = trainingService.getTraineeTrainingsListCriteria(traineeTrainingsDto);
-//
-//        assertTrue(trainings.isEmpty());
-//    }
-//
-//    @Test
-//    void getByTraineeCriteriaSuccessfully() {
-//        trainingService.create(trainingMapper.convertToDto(training));
-//
-//        LocalDate fromDate = LocalDate.of(2010, 2, 9);
-//        LocalDate toDate = LocalDate.of(2035, 3, 9);
-//        String trainerUserName = trainer.getUser().getUserName();
-//        trainingType = TrainingType.builder().trainingTypeName(trainingTypeName).build();
-//
-//        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
-//                .traineeUserName(trainee.getUser().getUserName())
-//                .fromDate(fromDate)
-//                .toDate(toDate)
-//                .trainerUserName(trainerUserName)
-//                .trainingType(trainingTypeName)
-//                .build();
-//
-//        List<TrainingDto> trainingsList = trainingService.getTraineeTrainingsListCriteria(traineeTrainingsDto);
-//
-//        assertAll(
-//                () -> assertFalse(trainingsList.isEmpty()),
-//                () -> assertEquals(1, trainingsList.size()),
-//                () -> assertEquals("Maria.Petrenko", trainingsList.get(0).getTrainee().getUser().getUserName()),
-//                () -> assertEquals(trainingTypeName, trainingsList.get(0).getTrainingType().getTrainingTypeName())
-//        );
-//    }
-//
-//    @Test
-//    void getByTraineeCriteriaNoResult() {
-//        trainingService.create(trainingMapper.convertToDto(training));
-//
-//        LocalDate fromDate = LocalDate.of(2010, 8, 1);
-//        LocalDate toDate = LocalDate.of(2040, 8, 1);
-//        String trainerUserName = trainer.getUser().getFirstName();
-//
-//        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
-//                .traineeUserName("NotValidUserName")
-//                .fromDate(fromDate)
-//                .toDate(toDate)
-//                .trainerUserName(trainerUserName)
-//                .trainingType("Roga")
-//                .build();
-//
-//        assertThrows(EntityNotFoundException.class,
-//                () -> trainingService.getTraineeTrainingsListCriteria(traineeTrainingsDto),
-//                "findByUserName: entity not found by userName NotValidUserName");
-//    }
-//
-//    @Test
-//    void getByTrainerCriteriaNoResultAndException() {
-//        trainingService.create(trainingMapper.convertToDto(training));
-//
-//        LocalDate fromDate = LocalDate.of(2035, 1, 1);
-//        LocalDate toDate = LocalDate.of(2036, 1, 1);
-//        String traineeName = trainee.getUser().getFirstName();
-//
-//        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
-//                .trainerUserName("NotValidTrainer")
-//                .fromDate(fromDate)
-//                .toDate(toDate)
-//                .traineeUserName(traineeName)
-//                .build();
-//
-//        assertThrows(EntityNotFoundException.class,
-//                () -> trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto),
-//                "entity not found by userName NotValidTrainer");
-//    }
-//
-//    @Test
-//    void getByTrainerCriteriaSuccessfully() {
-//        trainingService.create(trainingMapper.convertToDto(training));
-//
-//        LocalDate fromDate = LocalDate.of(2020, 1, 1);
-//        LocalDate toDate = LocalDate.of(2040, 1, 1);
-//        String traineeUserName = trainee.getUser().getUserName();
-//
-//        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
-//                .trainerUserName(trainer.getUser().getUserName())
-//                .fromDate(fromDate)
-//                .toDate(toDate)
-//                .traineeUserName(traineeUserName)
-//                .build();
-//
-//        List<TrainingDto> trainings = trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto);
-//
-//        assertAll(
-//                () -> assertFalse(trainings.isEmpty()),
-//                () -> assertEquals(1, trainings.size()),
-//                () -> assertEquals(trainer.getUser().getUserName(), trainings.get(0).getTrainer().getUser().getUserName()),
-//                () -> assertEquals("Zumba", trainings.get(0).getTrainingType().getTrainingTypeName())
-//        );
-//    }
-//
-//    @Test
-//    void getByTrainerCriteriaEmpty() {
-//        trainingService.create(trainingMapper.convertToDto(training));
-//
-//        LocalDate fromDate = LocalDate.of(2050, 9, 8);
-//        LocalDate toDate = LocalDate.of(2060, 9, 8);
-//        String invalidTraineeName = "";
-//
-//        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
-//                .trainerUserName(trainer.getUser().getUserName())
-//                .fromDate(fromDate)
-//                .toDate(toDate)
-//                .traineeUserName(invalidTraineeName)
-//                .build();
-//
-//        List<TrainingDto> trainings = trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto);
-//
-//        assertTrue(trainings.isEmpty());
-//    }
+    @Test
+    void createTrainingSuccessfully() {
+        assertDoesNotThrow(() -> trainingService.create(trainingAddRequest));
+    }
+
+    @Test
+    void getByTraineeCriteriaEmptyResult() {
+        trainingService.create(trainingAddRequest);
+
+        LocalDate fromDate = LocalDate.of(2030, 3, 5);
+        LocalDate toDate = LocalDate.of(2050, 3, 5);
+        String differentTrainerName = "";
+
+        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
+                .traineeUserName(trainee.getUser().getUserName())
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .trainerUserName(differentTrainerName)
+                .trainingType("stretching")
+                .build();
+
+        List<TraineeTrainingsListResponse> traineeTrainingsListCriteria
+                = trainingService.getTraineeTrainingsListCriteria(traineeTrainingsDto);
+
+        assertTrue(traineeTrainingsListCriteria.isEmpty());
+    }
+
+    @Test
+    void getByTraineeCriteriaSuccessfully() {
+        trainingService.create(trainingAddRequest);
+
+        LocalDate fromDate = LocalDate.of(2010, 2, 9);
+        LocalDate toDate = LocalDate.of(2035, 3, 9);
+        String trainerUserName = trainer.getUser().getUserName();
+        trainingType = TrainingType.builder().trainingTypeName(trainingTypeName).build();
+
+        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
+                .traineeUserName(trainee.getUser().getUserName())
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .trainerUserName(trainerUserName)
+                .trainingType(trainingTypeName)
+                .build();
+
+        List<TraineeTrainingsListResponse> traineeTrainingsListCriteria
+                = trainingService.getTraineeTrainingsListCriteria(traineeTrainingsDto);
+
+        assertAll(
+                () -> assertFalse(traineeTrainingsListCriteria.isEmpty()),
+                () -> assertEquals(1, traineeTrainingsListCriteria.size()),
+                () -> assertEquals(trainingTypeName, traineeTrainingsListCriteria.get(0).getTrainingType())
+        );
+    }
+
+    @Test
+    void getByTraineeCriteriaNoResult() {
+        trainingService.create(trainingAddRequest);
+
+        LocalDate fromDate = LocalDate.of(2010, 8, 1);
+        LocalDate toDate = LocalDate.of(2040, 8, 1);
+        String trainerUserName = trainer.getUser().getFirstName();
+
+        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
+                .traineeUserName("NotValidUserName")
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .trainerUserName(trainerUserName)
+                .trainingType("Roga")
+                .build();
+
+        List<TraineeTrainingsListResponse> traineeTrainingsListCriteria = trainingService.getTraineeTrainingsListCriteria(traineeTrainingsDto);
+
+        assertEquals(0, traineeTrainingsListCriteria.size());
+    }
+
+    @Test
+    void getByTrainerCriteriaNoResultAndException() {
+        trainingService.create(trainingAddRequest);
+
+        LocalDate fromDate = LocalDate.of(2035, 1, 1);
+        LocalDate toDate = LocalDate.of(2036, 1, 1);
+        String traineeName = trainee.getUser().getFirstName();
+
+        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
+                .trainerUserName("NotValidTrainer")
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .traineeUserName(traineeName)
+                .build();
+
+        List<TrainerTrainingsListResponse> trainerTrainingsListCriteria = trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto);
+
+        assertEquals(0, trainerTrainingsListCriteria.size());
+    }
+
+    @Test
+    void getByTrainerCriteriaSuccessfully() {
+        trainingService.create(trainingAddRequest);
+
+        LocalDate fromDate = LocalDate.of(2020, 1, 1);
+        LocalDate toDate = LocalDate.of(2040, 1, 1);
+        String traineeUserName = trainee.getUser().getUserName();
+
+        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
+                .trainerUserName(trainer.getUser().getUserName())
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .traineeUserName(traineeUserName)
+                .build();
+
+        List<TrainerTrainingsListResponse> trainerTrainingsListCriteria
+                = trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto);
+
+        assertAll(
+                () -> assertFalse(trainerTrainingsListCriteria.isEmpty()),
+                () -> assertEquals(1, trainerTrainingsListCriteria.size()),
+                () -> assertEquals("Zumba",trainerTrainingsListCriteria.get(0).getTrainingType())
+        );
+    }
+
+    @Test
+    void getByTrainerCriteriaEmpty() {
+        trainingService.create(trainingAddRequest);
+
+        LocalDate fromDate = LocalDate.of(2050, 9, 8);
+        LocalDate toDate = LocalDate.of(2060, 9, 8);
+        String invalidTraineeName = "";
+
+        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
+                .trainerUserName(trainer.getUser().getUserName())
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .traineeUserName(invalidTraineeName)
+                .build();
+
+        List<TrainerTrainingsListResponse> trainerTrainingsListCriteria = trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto);
+
+        assertTrue(trainerTrainingsListCriteria.isEmpty());
+    }
 }

@@ -40,13 +40,13 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public CreateResponse create(TraineeDto traineeDto) {
+        Trainee trainee = traineeMapper.convertToEntity(traineeDto);
         traineeDto.getUser().setUserName(
                 userNameGeneratorService.generate(
                         traineeDto.getUser().getFirstName(),
                         traineeDto.getUser().getLastName()
                 ));
 
-        Trainee trainee = traineeMapper.convertToEntity(traineeDto);
         trainee.getUser().setPassword(passwordGeneratorService.generate());
         if(trainee.getUser().getIsActive() == null) {
             trainee.getUser().setIsActive(true);
@@ -77,12 +77,12 @@ public class TraineeServiceImpl implements TraineeService {
         if(traineeUpdateRequest.getDateOfBirth() != null) {
             oldTrainee.setDateOfBirth(traineeUpdateRequest.getDateOfBirth());
         }
-        if(!traineeUpdateRequest.getAddress().isBlank()) {
+        if(traineeUpdateRequest.getAddress() != null) {
             oldTrainee.setAddress(traineeUpdateRequest.getAddress());
         }
 
         Trainee trainee = traineeRepository.save(oldTrainee);
-        return traineeMapper.convertTraineeToUpdateResponse(trainee);
+        return traineeMapper.convertTraineeToTraineeUpdateResponse(trainee);
     }
 
     @Override

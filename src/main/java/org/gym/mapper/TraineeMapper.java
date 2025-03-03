@@ -8,7 +8,6 @@ import org.gym.entity.Trainee;
 import org.gym.entity.TrainingType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,7 +22,7 @@ public interface TraineeMapper {
     CreateResponse convertToCreateResponse(Trainee trainee);
 
     TraineeSelectResponse convertTraineeToTraineeSelectResponse(Trainee trainee);
-    TraineeUpdateResponse convertTraineeToUpdateResponse(Trainee trainee);
+    TraineeUpdateResponse convertTraineeToTraineeUpdateResponse(Trainee trainee);
 
     default String convertToString(TrainingType trainingType) {
         return trainingType.getTrainingTypeName();

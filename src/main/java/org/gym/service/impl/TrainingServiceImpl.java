@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.gym.annotation.GymService;
 import org.gym.dto.TraineeTrainingsDto;
 import org.gym.dto.TrainerTrainingsDto;
-import org.gym.dto.TrainingDto;
 import org.gym.dto.request.training.TrainingAddRequest;
 import org.gym.dto.response.training.TraineeTrainingsListResponse;
 import org.gym.dto.response.training.TrainerTrainingsListResponse;
@@ -65,12 +64,6 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public List<TraineeTrainingsListResponse> getTraineeTrainingsListCriteria(TraineeTrainingsDto traineeTrainingsDto) {
-
-//        List<TrainingDto> trainingDtoList = trainingRepository.getByTraineeCriteria(traineeTrainingsDto)
-//                .stream()
-//                .map(trainingMapper::convertToDto)
-//                .toList();
-
         return trainingRepository.getByTraineeCriteria(traineeTrainingsDto).stream()
                         .map(trainingMapper::trainingToTraineeTrainingsListResponse)
                         .toList();

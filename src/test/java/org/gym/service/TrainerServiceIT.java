@@ -102,7 +102,7 @@ class TrainerServiceIT {
         Trainer updatedTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
 
         assertAll(
-                "Grouped assertions of selected trainerDto",
+                "Grouped assertions of updated trainer",
                 () -> assertNotNull(updatedTrainer),
                 () -> assertNotNull(updatedTrainer.getUser()),
                 () -> assertNotNull(updatedTrainerResponse),

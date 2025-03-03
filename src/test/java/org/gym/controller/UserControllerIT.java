@@ -1,19 +1,14 @@
 package org.gym.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.gym.DataStorage;
 import org.gym.config.Config;
 import org.gym.config.TestConfig;
-import org.gym.config.WebConfig;
 import org.gym.entity.Trainee;
-import org.gym.entity.User;
 import org.gym.repository.TraineeRepository;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.*;
@@ -21,9 +16,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -67,11 +59,11 @@ public class UserControllerIT {
     @Test
     void changeStatusSuccessfully() {
         boolean newStatus = false;
-        userController.changeStatus(ds.userNameForTrainerDto);
-        Trainee trainee = traineeRepository.findByUserName(ds.userNameForTrainerDto).get();
+        userController.changeStatus(ds.userNameForTrainerDto1);
+        Trainee trainee = traineeRepository.findByUserName(ds.userNameForTrainerDto1).get();
         assertAll(
                 () -> assertEquals(newStatus, trainee.getUser().getIsActive()),
-                () -> assertEquals(ds.userNameForTrainerDto, trainee.getUser().getUserName())
+                () -> assertEquals(ds.userNameForTrainerDto1, trainee.getUser().getUserName())
         );
     }
 
@@ -85,6 +77,6 @@ public class UserControllerIT {
     void loginNotValidPasswordFail() {
         String notValidPassword = "notValidPassword";
         ResponseEntity<Void> response = userController.login(userName, notValidPassword);
-        assertEquals(ResponseEntity.badRequest().build(), response.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
