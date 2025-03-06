@@ -60,12 +60,13 @@ public class UserControllerIT {
 
     @Test
     void changeStatusSuccessfully() {
-        boolean newStatus = false;
-        userController.changeStatus(ds.userNameForTrainerDto1);
-        Trainee trainee = traineeRepository.findByUserName(ds.userNameForTrainerDto1).get();
+        boolean oldStatus = traineeRepository.findByUserName(ds.traineeDto.getUser().getUserName()).get().getUser().getIsActive();
+        boolean result = userController.changeStatus(ds.traineeDto.getUser().getUserName());
+        boolean newStatus = traineeRepository.findByUserName(ds.traineeDto.getUser().getUserName()).get().getUser().getIsActive();
         assertAll(
-                () -> assertEquals(newStatus, trainee.getUser().getIsActive()),
-                () -> assertEquals(ds.userNameForTrainerDto1, trainee.getUser().getUserName())
+                () -> assertEquals(newStatus, result),
+                () -> assertEquals(!oldStatus, newStatus),
+                () -> assertEquals(result, newStatus)
         );
     }
 
@@ -79,6 +80,6 @@ public class UserControllerIT {
     void loginNotValidPasswordFail() {
         String notValidPassword = "notValidPassword";
         ResponseEntity<Void> response = userController.login(userName, notValidPassword);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
 }

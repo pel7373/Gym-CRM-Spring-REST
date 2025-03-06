@@ -6,7 +6,6 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import org.gym.entity.Trainee;
 import org.gym.entity.User;
 import org.gym.repository.UserRepository;
 import org.springframework.stereotype.Repository;

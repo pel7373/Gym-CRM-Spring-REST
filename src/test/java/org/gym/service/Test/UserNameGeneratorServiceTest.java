@@ -1,24 +1,18 @@
-package org.gym.service;
+package org.gym.service.Test;
 
-import org.gym.Main;
 import org.gym.exception.NullEntityException;
 import org.gym.repository.UserRepository;
 import org.gym.service.impl.UserNameGeneratorServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = Main.class)
 class UserNameGeneratorServiceTest {
 
     @Mock
@@ -46,9 +40,8 @@ class UserNameGeneratorServiceTest {
 
     @Test
     void generateUserNameWithSuffix() {
-        when(userRepository.isExistsByUserName("John.Doe")).thenReturn(true);
-
-        when(userRepository.isExistsByUserName("John.Doe0")).thenReturn(false);
+        when(userRepository.isExistsByUserName("John.Doe")).thenReturn(Boolean.TRUE);
+        when(userRepository.isExistsByUserName("John.Doe0")).thenReturn(Boolean.FALSE);
 
         String firstName = "John";
         String lastName = "Doe";

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.gym.config.Config.ENTITY_NOT_FOUND;
+import static org.gym.config.Config.ENTITY_NOT_FOUND_MESSAGE_TEMPLATE;
 import static org.gym.config.Config.ENTITY_NOT_FOUND_EXCEPTION;
 
 @Slf4j
@@ -57,7 +57,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
         findByUserName(userName)
                 .ifPresentOrElse(entityManager::remove,
                     () -> {
-                        LOGGER.debug(ENTITY_NOT_FOUND, userName);
+                        LOGGER.debug(ENTITY_NOT_FOUND_MESSAGE_TEMPLATE, userName);
                         throw new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_EXCEPTION, userName));
                     });
     }

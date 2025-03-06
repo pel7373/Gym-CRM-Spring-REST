@@ -1,4 +1,4 @@
-package org.gym.service;
+package org.gym.service.IT;
 
 import org.gym.DataStorage;
 import org.gym.config.Config;
@@ -12,7 +12,7 @@ import org.gym.entity.TrainingType;
 import org.gym.repository.TraineeRepository;
 import org.gym.repository.TrainerRepository;
 import org.gym.repository.TrainingTypeRepository;
-import org.junit.jupiter.api.AfterEach;
+import org.gym.service.TraineeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,11 +71,6 @@ class TraineeServiceWithTestContainerIT {
         registry.add("hibernate.show_sql", () -> true);
         registry.add("hibernate.format_sql", () -> true);
         registry.add("hibernate.jdbc.lob.non_contextual_creation", () -> true);
-    }
-
-    @AfterEach
-    void destroy() {
-        traineeRepository.delete(userNameForTrainee);
     }
 
     @Test

@@ -27,13 +27,8 @@ public class TrainingRepositoryImpl implements TrainingRepository {
 
     @Override
     public Training save(Training training) {
-        Training savedTraining = training;
-        if (training.getId() == null) {
-            entityManager.persist(training);
-        } else {
-            savedTraining = entityManager.merge(training);
-        }
-        return savedTraining;
+        entityManager.persist(training);
+        return training;
     }
 
     @Override

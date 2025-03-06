@@ -1,9 +1,9 @@
 package org.gym.service;
 
-import org.gym.entity.TrainingType;
+import org.gym.dto.response.trainingType.TrainingTypeResponse;
 
 import java.util.List;
 
 public interface TrainingTypeService {
-    List<TrainingType> findAll();
+    List<TrainingTypeResponse> findAll();
 }

@@ -1,8 +1,9 @@
-package org.gym.service;
+package org.gym.service.Test;
 
 import org.gym.dto.*;
 import org.gym.dto.request.training.TrainingAddRequest;
 import org.gym.entity.*;
+import org.gym.exception.EntityNotFoundException;
 import org.gym.mapper.TrainingMapper;
 import org.gym.repository.TraineeRepository;
 import org.gym.repository.TrainerRepository;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,6 +47,7 @@ class TrainingServiceTest {
 
     @InjectMocks
     private TrainingServiceImpl trainingService;
+
     private Trainee trainee;
     private TrainingType trainingType;
     private String trainingTypeName;
@@ -114,6 +117,51 @@ class TrainingServiceTest {
         verify(trainerRepository, times(1)).findByUserName(trainerUserName);
         verify(traineeRepository, times(1)).findByUserName(traineeUserName);
         verify(trainingRepository, times(1)).save(training);
+    }
+
+    @Test
+    void createTrainingNotValidTrainingTypeNameFail() {
+        when(trainingTypeRepository.findByName(trainingTypeName)).thenReturn(Optional.empty());
+        when(trainerRepository.findByUserName(trainerUserName)).thenReturn(Optional.ofNullable(trainer));
+        when(traineeRepository.findByUserName(traineeUserName)).thenReturn(Optional.ofNullable(trainee));
+        when(trainingRepository.save(training)).thenReturn(training);
+
+        assertThrows(EntityNotFoundException.class, () -> trainingService.create(trainingAddRequest));
+
+        verify(trainingTypeRepository, times(1)).findByName(trainingTypeName);
+        verify(trainerRepository, times(0)).findByUserName(trainerUserName);
+        verify(traineeRepository, times(0)).findByUserName(traineeUserName);
+        verify(trainingRepository, times(0)).save(training);
+    }
+
+    @Test
+    void createTrainingNotValidTrainerNameFail() {
+        when(trainingTypeRepository.findByName(trainingTypeName)).thenReturn(Optional.ofNullable(trainingType));
+        when(trainerRepository.findByUserName(trainerUserName)).thenReturn(Optional.empty());
+        when(traineeRepository.findByUserName(traineeUserName)).thenReturn(Optional.ofNullable(trainee));
+        when(trainingRepository.save(training)).thenReturn(training);
+
+        assertThrows(EntityNotFoundException.class, () -> trainingService.create(trainingAddRequest));
+
+        verify(trainingTypeRepository, times(1)).findByName(trainingTypeName);
+        verify(trainerRepository, times(1)).findByUserName(trainerUserName);
+        verify(traineeRepository, times(0)).findByUserName(traineeUserName);
+        verify(trainingRepository, times(0)).save(training);
+    }
+
+    @Test
+    void createTrainingNotValidTraineeNameFail() {
+        when(trainingTypeRepository.findByName(trainingTypeName)).thenReturn(Optional.empty());
+        when(trainerRepository.findByUserName(trainerUserName)).thenReturn(Optional.ofNullable(trainer));
+        when(traineeRepository.findByUserName(traineeUserName)).thenReturn(Optional.empty());
+        when(trainingRepository.save(training)).thenReturn(training);
+
+        assertThrows(EntityNotFoundException.class, () -> trainingService.create(trainingAddRequest));
+
+        verify(trainingTypeRepository, times(1)).findByName(trainingTypeName);
+        verify(trainerRepository, times(0)).findByUserName(trainerUserName);
+        verify(traineeRepository, times(0)).findByUserName(traineeUserName);
+        verify(trainingRepository, times(0)).save(training);
     }
 
     @Test

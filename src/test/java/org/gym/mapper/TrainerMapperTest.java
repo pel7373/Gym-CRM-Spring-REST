@@ -20,7 +20,8 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestConfig.class)
+@ContextConfiguration(classes = {TestConfig.class})
+@TestPropertySource(locations = "classpath:application-test.properties")
 @ActiveProfiles("test")
 @WebAppConfiguration
 class TrainerMapperTest {

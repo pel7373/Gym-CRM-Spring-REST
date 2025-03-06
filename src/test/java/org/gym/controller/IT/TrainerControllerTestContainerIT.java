@@ -1,7 +1,8 @@
-package org.gym.service;
+package org.gym.controller.IT;
 
 import org.gym.DataStorage;
 import org.gym.config.Config;
+import org.gym.controller.TrainerController;
 import org.gym.dto.response.CreateResponse;
 import org.gym.dto.response.trainer.TrainerSelectResponse;
 import org.gym.dto.response.trainer.TrainerUpdateResponse;
@@ -12,27 +13,47 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Testcontainers
 @Transactional
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
-@TestPropertySource(locations = "classpath:application-test.properties")
-@ActiveProfiles("test")
+@ActiveProfiles("prod")
 @WebAppConfiguration
-class TrainerServiceIT {
+public class TrainerControllerTestContainerIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @Container
+    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("hibernate.dialect", () -> "org.hibernate.dialect.PostgreSQL10Dialect");
+        registry.add("hibernate.hbm2ddl.auto", () -> "create");
+        registry.add("hibernate.show_sql", () -> true);
+        registry.add("hibernate.format_sql", () -> true);
+        registry.add("hibernate.jdbc.lob.non_contextual_creation", () -> true);
+    }
+
     @Autowired
-    private TrainerService trainerService;
+    private TrainerController trainerController;
 
     @Autowired
     private TrainerRepository trainerRepository;
@@ -42,7 +63,7 @@ class TrainerServiceIT {
 
     @Test
     void createTrainerSuccessfully() {
-        CreateResponse createResponse = trainerService.create(ds.trainerDto1);
+        CreateResponse createResponse = trainerController.create(ds.trainerDto1);
         userNameForTrainer = ds.trainerDto1.getUser().getUserName();
         Trainer createdTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
 
@@ -68,10 +89,10 @@ class TrainerServiceIT {
 
     @Test
     void selectTrainerSuccessfully() {
-        CreateResponse createResponse = trainerService.create(ds.trainerDto1);
+        CreateResponse createResponse = trainerController.create(ds.trainerDto1);
         userNameForTrainer = createResponse.getUserName();
         Trainer createdTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
-        TrainerSelectResponse selectedTrainer = trainerService.select(userNameForTrainer);
+        TrainerSelectResponse selectedTrainer = trainerController.getTrainerProfile(userNameForTrainer);
 
         assertAll(
                 "Grouped assertions of selected trainer",
@@ -93,11 +114,11 @@ class TrainerServiceIT {
 
     @Test
     void updateTrainerSuccessfully() {
-        CreateResponse createResponse = trainerService.create(ds.trainerDto1);
+        CreateResponse createResponse = trainerController.create(ds.trainerDto1);
         userNameForTrainer = createResponse.getUserName();
 
         TrainerUpdateResponse updatedTrainerResponse =
-                trainerService.update(userNameForTrainer, ds.trainerUpdateRequest);
+                trainerController.update(userNameForTrainer, ds.trainerUpdateRequest);
         String userNameForUpdatedTrainer = updatedTrainerResponse.getUser().getUserName();
         Trainer updatedTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
 

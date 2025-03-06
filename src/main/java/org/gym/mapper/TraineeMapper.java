@@ -25,6 +25,7 @@ public interface TraineeMapper {
     TraineeUpdateResponse convertTraineeToTraineeUpdateResponse(Trainee trainee);
 
     default String convertToString(TrainingType trainingType) {
+        if(trainingType == null) return null;
         return trainingType.getTrainingTypeName();
     }
 }

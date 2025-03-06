@@ -1,41 +1,47 @@
-package org.gym.service;
+package org.gym.service.IT;
 
 import org.gym.config.Config;
-import org.gym.dto.*;
+import org.gym.dto.TraineeTrainingsDto;
+import org.gym.dto.TrainerTrainingsDto;
 import org.gym.dto.request.training.TrainingAddRequest;
 import org.gym.dto.response.training.TraineeTrainingsListResponse;
 import org.gym.dto.response.training.TrainerTrainingsListResponse;
 import org.gym.entity.*;
-import org.gym.mapper.TrainingMapper;
 import org.gym.mapper.TrainingTypeMapper;
 import org.gym.repository.TraineeRepository;
 import org.gym.repository.TrainerRepository;
 import org.gym.repository.TrainingTypeRepository;
+import org.gym.service.PasswordGeneratorService;
+import org.gym.service.TrainingService;
+import org.gym.service.UserNameGeneratorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Testcontainers
 @Transactional
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
-@TestPropertySource(locations = "classpath:application-test.properties")
-@ActiveProfiles("test")
+@ActiveProfiles("prod")
 @WebAppConfiguration
-class TrainingServiceIT {
+class TrainingServiceWithTestContainerIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -53,19 +59,34 @@ class TrainingServiceIT {
     private TrainingTypeRepository trainingTypeRepository;
 
     @Autowired
-    private TrainingTypeMapper trainingTypeMapper;
-
-    @Autowired
     private UserNameGeneratorService userNameGeneratorService;
 
     @Autowired
     private PasswordGeneratorService passwordGeneratorService;
+
+    @Autowired
+    private TrainingTypeMapper trainingTypeMapper;
 
     private Trainee trainee;
     private Trainer trainer;
     private TrainingType trainingType;
     private final String trainingTypeName = "Zumba";
     private TrainingAddRequest trainingAddRequest;
+
+    @Container
+    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("hibernate.dialect", () -> "org.hibernate.dialect.PostgreSQL10Dialect");
+        registry.add("hibernate.hbm2ddl.auto", () -> "create");
+        registry.add("hibernate.show_sql", () -> true);
+        registry.add("hibernate.format_sql", () -> true);
+        registry.add("hibernate.jdbc.lob.non_contextual_creation", () -> true);
+    }
 
     @BeforeEach
     void setUp()

@@ -1,4 +1,4 @@
-package org.gym.service;
+package org.gym.service.Test;
 
 import org.gym.DataStorage;
 import org.gym.exception.AccessDeniedException;
@@ -33,7 +33,14 @@ public class UserServiceTest {
 
     @Test
     void changeStatusSuccessfully() {
-        boolean statusInitial = ds.user.getIsActive();
+        boolean statusInitial = false;
+        boolean isRestoreStatusAtTheEndOfThisTest = true;
+
+        if(ds.user.getIsActive() != null) {
+            statusInitial = ds.user.getIsActive();
+            isRestoreStatusAtTheEndOfThisTest = false;
+        }
+
         when(userRepository.findByUserName(ds.user.getUserName())).thenReturn(Optional.of(ds.user));
 
         boolean status = userService.changeStatus(ds.user.getUserName());
@@ -41,7 +48,10 @@ public class UserServiceTest {
         assertEquals(ds.user.getIsActive(), status);
         verify(userRepository, times(1)).findByUserName(ds.user.getUserName());
 
-        ds.user.setIsActive(statusInitial);
+        if(isRestoreStatusAtTheEndOfThisTest) {
+            ds.user.setIsActive(statusInitial);
+        }
+
     }
 
     @Test

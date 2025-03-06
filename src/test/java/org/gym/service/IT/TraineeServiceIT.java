@@ -1,4 +1,4 @@
-package org.gym.service;
+package org.gym.service.IT;
 
 import org.gym.DataStorage;
 import org.gym.config.TestConfig;
@@ -12,6 +12,7 @@ import org.gym.entity.TrainingType;
 import org.gym.repository.TraineeRepository;
 import org.gym.repository.TrainerRepository;
 import org.gym.repository.TrainingTypeRepository;
+import org.gym.service.TraineeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

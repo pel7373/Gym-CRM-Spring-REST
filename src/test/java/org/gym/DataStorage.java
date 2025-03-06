@@ -15,6 +15,7 @@ import org.gym.entity.TrainingType;
 import org.gym.entity.User;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.gym.config.Config.*;
@@ -53,10 +54,13 @@ public class DataStorage {
     public final String exceptionMessageNotFound = String.format(ENTITY_NOT_FOUND_EXCEPTION, userNameNotFound);
     public final String exceptionMessageAccessDenied;
 
+    public final List<String> expectedTrainingTypeNamesList = new ArrayList<>();
+    public final List<TrainingType> trainingTypeList = new ArrayList<>();
+
     {
         String traineeAddress = "Vinnitsya, Soborna str. 35, ap. 26";
         String traineeAddress2 = "Kyiv, Khreschatik str. 35, ap. 26";
-        user = new User(null, "Ivan", "Ivanenko", "Ivan.Ivanenko", "12345", true);
+        user = new User(null, "Ivan", "Ivanenko", "Ivan.Ivanenko", passwordForUser, null);
 
         changeLoginRequest = ChangeLoginRequest.builder()
                 .userName(user.getUserName())
@@ -90,8 +94,8 @@ public class DataStorage {
                 .dateOfBirth(LocalDate.of(2000, 1, 1))
                 .build();
 
-        UserDto userDto = new UserDto("Ivan", "Ivanenko", "Ivan.Ivanenko", true);
-        UserDto userDto2 = new UserDto("Petro", "Petrenko", "Petro.Petrenko", true);
+        UserDto userDto = new UserDto("Ivan", "Ivanenko", "Ivan.Ivanenko", null);
+        UserDto userDto2 = new UserDto("Petro", "Petrenko", "Petro.Petrenko", null);
 
         traineeCreateResponse = CreateResponse.builder()
                 .userName(userDto.getUserName())
@@ -134,7 +138,7 @@ public class DataStorage {
                         .lastName("Petrenko")
                         .userName("Petro.Petrenko")
                         .password(passwordForUser)
-                        .isActive(true)
+                        .isActive(null)
                         .build())
                 .specialization(TrainingType.builder()
                         .trainingTypeName(trainerTrainingTypeName)
@@ -200,5 +204,19 @@ public class DataStorage {
                         .trainingTypeName("Zumba")
                         .build())
                 .build();
+
+        // TrainingType section
+
+        expectedTrainingTypeNamesList.add("fitness");
+        expectedTrainingTypeNamesList.add("yoga");
+        expectedTrainingTypeNamesList.add("Zumba");
+        expectedTrainingTypeNamesList.add("stretching");
+        expectedTrainingTypeNamesList.add("resistance");
+
+        trainingTypeList.add(new TrainingType(1L, "fitness"));
+        trainingTypeList.add(new TrainingType(2L, "yoga"));
+        trainingTypeList.add(new TrainingType(3L, "Zumba"));
+        trainingTypeList.add(new TrainingType(4L, "stretching"));
+        trainingTypeList.add(new TrainingType(5L, "resistance"));
     }
 }

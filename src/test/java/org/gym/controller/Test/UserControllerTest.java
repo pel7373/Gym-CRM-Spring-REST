@@ -1,20 +1,14 @@
 package org.gym.controller.Test;
 
-import jakarta.transaction.Transactional;
-import org.gym.DataStorage;
-import org.gym.controller.UserController;
 import org.gym.controller.impl.UserControllerImpl;
+import org.gym.dto.request.ChangeLoginRequest;
 import org.gym.service.UserService;
 import org.gym.util.TransactionIdGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -40,8 +34,6 @@ public class UserControllerTest {
     @InjectMocks
     private UserControllerImpl userController;
 
-    private final DataStorage ds = new DataStorage();
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -61,12 +53,20 @@ public class UserControllerTest {
 
     @Test
     void changePassword() throws Exception {
-
-        doNothing().when(userService).changePassword(ds.changeLoginRequest);
-        when(userService.authenticate(ds.changeLoginRequest.getUserName(), ds.changeLoginRequest.getOldPassword()))
+        doNothing().when(userService).changePassword(any(ChangeLoginRequest.class));
+        when(userService.authenticate(any(String.class), any(String.class)))
                 .thenReturn(true);
 
-        mockMvc.perform(put("/api/v1/password", ds.changeLoginRequest))
+        mockMvc.perform(put("/api/v1/password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "userName": "Ivan.Ivanenko",
+                                        "oldPassword": "12345",
+                                        "newPassword": "123456"
+                                }
+                                """))
+
                 .andExpect(status().isOk());
     }
 
@@ -77,7 +77,8 @@ public class UserControllerTest {
 
         when(userService.authenticate(userName, password)).thenReturn(true);
 
-        mockMvc.perform(get("/api/v1/{username}/{password}", userName, password))
+        mockMvc.perform(get("/api/v1/login/{username}/{password}", userName, password)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -88,7 +89,7 @@ public class UserControllerTest {
 
         when(userService.authenticate(userName, password)).thenReturn(false);
 
-        mockMvc.perform(get("/api/v1/users/authenticate", userName, password))
+        mockMvc.perform(get("/api/v1/login", userName, password))
                 .andExpect(status().isNotFound());
     }
 }

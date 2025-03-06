@@ -1,7 +1,6 @@
 package org.gym.controller.exception;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import org.gym.exception.AccessDeniedException;
 import org.gym.exception.NullEntityException;
 import org.gym.exception.EntityNotFoundException;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,7 +1,5 @@
 package org.gym.controller.Test;
 
-import jakarta.transaction.Transactional;
-import org.gym.DataStorage;
 import org.gym.controller.impl.TraineeControllerImpl;
 import org.gym.dto.TraineeDto;
 import org.gym.dto.request.trainee.TraineeUpdateRequest;
@@ -13,11 +11,9 @@ import org.gym.service.TraineeService;
 import org.gym.util.TransactionIdGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -44,8 +40,6 @@ public class TraineeControllerTest {
 
     @InjectMocks
     private TraineeControllerImpl traineeController;
-
-    private final DataStorage ds = new DataStorage();
 
     @BeforeEach
     void setUp() {
@@ -136,7 +130,6 @@ public class TraineeControllerTest {
         when(traineeService.updateTrainersList(userName, List.of("Maria.Petrenko"))).thenReturn(response);
 
         mockMvc.perform(put("/api/v1/trainees/{username}/trainers", userName)
-                        //.param("traineeUsername", "trainee456")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 [

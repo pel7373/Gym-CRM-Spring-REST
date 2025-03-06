@@ -1,10 +1,9 @@
-package org.gym.service;
+package org.gym.controller.IT;
 
 import org.gym.DataStorage;
 import org.gym.config.Config;
-import org.gym.dto.TrainerDto;
-import org.gym.dto.TrainingTypeDto;
-import org.gym.dto.UserDto;
+import org.gym.config.TestConfig;
+import org.gym.controller.TrainerController;
 import org.gym.dto.response.CreateResponse;
 import org.gym.dto.response.trainer.TrainerSelectResponse;
 import org.gym.dto.response.trainer.TrainerUpdateResponse;
@@ -15,27 +14,28 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
-@Testcontainers
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Config.class})
-@ActiveProfiles("prod")
+@ContextConfiguration(classes = {Config.class, TestConfig.class})
+@TestPropertySource(locations = "classpath:application-test.properties")
 @WebAppConfiguration
-class TrainerServiceWithTestContainerIT {
+@ActiveProfiles("test")
+public class TrainerControllerIT {
 
     @Autowired
-    private TrainerService trainerService;
+    private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private TrainerController trainerController;
 
     @Autowired
     private TrainerRepository trainerRepository;
@@ -43,24 +43,9 @@ class TrainerServiceWithTestContainerIT {
     private final DataStorage ds = new DataStorage();
     private String userNameForTrainer;
 
-    @Container
-    static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("hibernate.dialect", () -> "org.hibernate.dialect.PostgreSQL10Dialect");
-        registry.add("hibernate.hbm2ddl.auto", () -> "create");
-        registry.add("hibernate.show_sql", () -> true);
-        registry.add("hibernate.format_sql", () -> true);
-        registry.add("hibernate.jdbc.lob.non_contextual_creation", () -> true);
-    }
-
     @Test
     void createTrainerSuccessfully() {
-        CreateResponse createResponse = trainerService.create(ds.trainerDto1);
+        CreateResponse createResponse = trainerController.create(ds.trainerDto1);
         userNameForTrainer = ds.trainerDto1.getUser().getUserName();
         Trainer createdTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
 
@@ -86,10 +71,10 @@ class TrainerServiceWithTestContainerIT {
 
     @Test
     void selectTrainerSuccessfully() {
-        CreateResponse createResponse = trainerService.create(ds.trainerDto1);
+        CreateResponse createResponse = trainerController.create(ds.trainerDto1);
         userNameForTrainer = createResponse.getUserName();
         Trainer createdTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
-        TrainerSelectResponse selectedTrainer = trainerService.select(userNameForTrainer);
+        TrainerSelectResponse selectedTrainer = trainerController.getTrainerProfile(userNameForTrainer);
 
         assertAll(
                 "Grouped assertions of selected trainer",
@@ -111,16 +96,16 @@ class TrainerServiceWithTestContainerIT {
 
     @Test
     void updateTrainerSuccessfully() {
-        CreateResponse createResponse = trainerService.create(ds.trainerDto1);
+        CreateResponse createResponse = trainerController.create(ds.trainerDto1);
         userNameForTrainer = createResponse.getUserName();
 
         TrainerUpdateResponse updatedTrainerResponse =
-                trainerService.update(userNameForTrainer, ds.trainerUpdateRequest);
+                trainerController.update(userNameForTrainer, ds.trainerUpdateRequest);
         String userNameForUpdatedTrainer = updatedTrainerResponse.getUser().getUserName();
         Trainer updatedTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
 
         assertAll(
-                "Grouped assertions of selected trainerDto",
+                "Grouped assertions of updated trainer",
                 () -> assertNotNull(updatedTrainer),
                 () -> assertNotNull(updatedTrainer.getUser()),
                 () -> assertNotNull(updatedTrainerResponse),

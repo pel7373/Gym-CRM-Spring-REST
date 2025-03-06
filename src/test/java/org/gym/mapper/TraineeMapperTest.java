@@ -1,10 +1,12 @@
 package org.gym.mapper;
 
-import org.gym.config.Config;
+import org.gym.DataStorage;
 import org.gym.config.TestConfig;
-import org.gym.config.TestServiceConfig;
 import org.gym.dto.TraineeDto;
 import org.gym.dto.UserDto;
+import org.gym.dto.response.CreateResponse;
+import org.gym.dto.response.trainee.TraineeSelectResponse;
+import org.gym.dto.response.trainee.TraineeUpdateResponse;
 import org.gym.entity.Trainee;
 import org.gym.entity.User;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,8 @@ class TraineeMapperTest {
 
     @Autowired
     private TraineeMapper traineeMapper;
+
+    private final DataStorage ds = new DataStorage();
 
     @Test
     void convertToDto() {
@@ -76,9 +80,9 @@ class TraineeMapperTest {
 
         Trainee createdTrainee = traineeMapper.convertToEntity(traineeDto);
 
-        assertNotNull(createdTrainee);
         assertAll(
                 "Grouped assertions of created traineeDto",
+                () -> assertNotNull(createdTrainee),
                 () -> assertEquals(traineeDto.getUser().getFirstName(), createdTrainee.getUser().getFirstName(), "check firstName"),
                 () -> assertEquals(traineeDto.getUser().getLastName(), createdTrainee.getUser().getLastName(), "check lastName"),
                 () -> assertEquals(traineeDto.getUser().getUserName(), createdTrainee.getUser().getUserName(), "check userName"),
@@ -92,5 +96,48 @@ class TraineeMapperTest {
     void convertToEntityWithNullTraineeDto() {
         Trainee trainee = traineeMapper.convertToEntity(null);
         assertNull(trainee, "ConvertToEntity: expect null when input is null");
+    }
+
+    @Test
+    void convertToCreateResponse() {
+        CreateResponse createResponse = traineeMapper.convertToCreateResponse(ds.trainee1);
+
+        assertAll(
+                "Grouped assertions of created traineeDto",
+                () -> assertNotNull(createResponse),
+                () -> assertEquals(createResponse.getUserName(), ds.trainee1.getUser().getUserName(), "check userName"),
+                () -> assertEquals(createResponse.getPassword(), ds.trainee1.getUser().getPassword(), "check password")
+        );
+    }
+
+    @Test
+    void convertToCreateResponseNullTraineeFail() {
+        CreateResponse createResponse = traineeMapper.convertToCreateResponse(null);
+        assertNull(createResponse, "ConvertToCreateResponse: expect null when input is null");
+    }
+
+    //TraineeSelectResponse convertTraineeToTraineeSelectResponse(Trainee trainee);
+
+    //    TraineeUpdateResponse convertTraineeToTraineeUpdateResponse(Trainee trainee);
+//    convertToString
+//    TrainingType trainingType
+
+    @Test
+    void convertTraineeToTraineeSelectResponseNullTraineeFail() {
+        TraineeSelectResponse traineeSelectResponse = traineeMapper.convertTraineeToTraineeSelectResponse(null);
+        assertNull(traineeSelectResponse, "ConvertTraineeToTraineeSelectResponse: expect null when input is null");
+    }
+
+    @Test
+    void convertTraineeToTraineeUpdateResponseNullTraineeFail() {
+        TraineeUpdateResponse traineeUpdateResponse = traineeMapper.convertTraineeToTraineeUpdateResponse(null);
+        assertNull(traineeUpdateResponse, "ConvertTraineeToTraineeUpdateResponse: expect null when input is null");
+    }
+
+
+    @Test
+    void convertToStringNullTrainingTypeFail() {
+        String convertToString = traineeMapper.convertToString(null);
+        assertNull(convertToString, "ConvertToString: expect null when input is null");
     }
 }

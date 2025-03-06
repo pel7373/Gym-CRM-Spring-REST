@@ -1,4 +1,4 @@
-package org.gym.service;
+package org.gym.service.Test;
 
 import jakarta.transaction.Transactional;
 import org.gym.DataStorage;
@@ -9,7 +9,6 @@ import org.gym.dto.request.user.UserUpdateRequest;
 import org.gym.dto.response.CreateResponse;
 import org.gym.dto.response.trainee.TraineeSelectResponse;
 import org.gym.dto.response.trainee.TraineeUpdateResponse;
-import org.gym.dto.response.trainer.TrainerForListResponse;
 import org.gym.dto.response.user.UserUpdateResponse;
 import org.gym.entity.*;
 import org.gym.entity.Trainee;
@@ -18,6 +17,8 @@ import org.gym.mapper.TraineeMapper;
 import org.gym.mapper.TrainerMapper;
 import org.gym.repository.TraineeRepository;
 import org.gym.repository.TrainerRepository;
+import org.gym.service.PasswordGeneratorService;
+import org.gym.service.UserNameGeneratorService;
 import org.gym.service.impl.TraineeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,6 +58,9 @@ class TraineeServiceTest {
 
     @Mock
     private TraineeMapper traineeMapper;
+
+    @Mock
+    private TrainerMapper trainerMapper;
 
     @InjectMocks
     private TraineeServiceImpl traineeService;
@@ -142,6 +146,8 @@ class TraineeServiceTest {
         UserUpdateRequest userUpdateRequest = new UserUpdateRequest("John", "Doe", true);
         TraineeUpdateRequest traineeUpdateRequest = TraineeUpdateRequest.builder()
                 .user(userUpdateRequest)
+                .dateOfBirth(LocalDate.of(2000, 1, 1))
+                .address("Address")
                 .build();
 
         User userForUpdate = new User(2L, "Maria", "Ivanova", "Maria.Ivanova", "BBBBBBBBBB", true);
@@ -186,6 +192,77 @@ class TraineeServiceTest {
     }
 
     @Test
+    void updateExistingTraineeAgainSuccessfully() {
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest("Piter", "Penn", true);
+        TraineeUpdateRequest traineeUpdateRequest = TraineeUpdateRequest.builder()
+                .user(userUpdateRequest)
+                .dateOfBirth(LocalDate.of(2000, 1, 1))
+                .address("Address")
+                .build();
+
+        User userForUpdate = new User(2L, "Maria", "Ivanova", "Maria.Ivanova", "BBBBBBBBBB", true);
+        Trainee traineeForUpdate = Trainee.builder()
+                .id(2L)
+                .user(userForUpdate)
+                .build();
+
+        User userUpdated = new User(2L, "Piter", "Penn", "Maria.Ivanova", "BBBBBBBBBB", true);
+        Trainee traineeUpdated = Trainee.builder()
+                .id(2L)
+                .user(userUpdated)
+                .build();
+
+        UserUpdateResponse userUpdateResponse = new UserUpdateResponse("Piter", "Penn", "Maria.Ivanova", true);
+        TraineeUpdateResponse traineeUpdateResponse = TraineeUpdateResponse.builder()
+                .user(userUpdateResponse)
+                .build();
+
+        when(traineeRepository.findByUserName(userForUpdate.getUserName()))
+                .thenReturn(Optional.ofNullable(traineeForUpdate));
+        when(traineeRepository.save(traineeUpdated)).thenReturn(traineeUpdated);
+        when(traineeMapper.convertTraineeToTraineeUpdateResponse(traineeUpdated)).thenReturn(traineeUpdateResponse);
+
+        TraineeUpdateResponse traineeUpdateResponseActual = traineeService.update(userForUpdate.getUserName(), traineeUpdateRequest);
+
+        assertAll(
+                "Grouped assertions of selected traineeDto",
+                () -> assertNotNull(traineeUpdateResponseActual),
+                () -> assertEquals(traineeUpdateResponse.getUser().getFirstName(),
+                        traineeUpdateResponseActual.getUser().getFirstName(), "firstName should be Maria"),
+                () -> assertEquals(traineeUpdateResponse.getUser().getLastName(),
+                        traineeUpdateResponseActual.getUser().getLastName(), "lastName should be Petrenko")
+        );
+
+        verify(traineeRepository, times(1)).findByUserName("Maria.Ivanova");
+        verify(traineeRepository, times(1)).save(traineeUpdated);
+        verify(userNameGeneratorService, never())
+                .generate(any(String.class), any(String.class));
+        verify(traineeMapper, times(1))
+                .convertTraineeToTraineeUpdateResponse(any(Trainee.class));    }
+
+
+    @Test
+    void updateTraineeNotFound() {
+        String notValidUserName = "NotValidUserName";
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest("John", "Doe", true);
+        TraineeUpdateRequest traineeUpdateRequest = TraineeUpdateRequest.builder()
+                .user(userUpdateRequest)
+                .build();
+        when(traineeRepository.findByUserName(notValidUserName))
+                .thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> traineeService.update(notValidUserName, traineeUpdateRequest));
+
+
+        verify(traineeRepository, times(1)).findByUserName(notValidUserName);
+        verify(traineeRepository, times(0)).save(any());
+        verify(userNameGeneratorService, never())
+                .generate(any(String.class), any(String.class));
+        verify(traineeMapper, times(0))
+                .convertTraineeToTraineeUpdateResponse(any(Trainee.class));
+    }
+
+    @Test
     void deleteTraineeSuccessfully() {
         when(traineeRepository.findByUserName(userNameForTrainee)).thenReturn(Optional.ofNullable(trainee));
 
@@ -199,11 +276,13 @@ class TraineeServiceTest {
         when(traineeRepository.findByUserName(ds.trainee1.getUser().getUserName()))
                 .thenReturn(Optional.of(ds.trainee1));
         when(trainerRepository.findAll()).thenReturn(List.of(ds.trainer1, ds.trainer2));
+        when(trainerMapper.convertTrainerListToTrainerForListResponseList(any())).thenReturn(any());
 
         traineeService.getUnassignedTrainersList(ds.trainee1.getUser().getUserName());
 
         verify(traineeRepository, times(1)).findByUserName(ds.trainee1.getUser().getUserName());
         verify(trainerRepository, times(1)).findAll();
+        verify(trainerMapper, times(1)).convertTrainerListToTrainerForListResponseList(any());
     }
 
     @Test
@@ -221,6 +300,7 @@ class TraineeServiceTest {
     void updateTrainersListSuccessfully() {
         when(traineeRepository.findByUserName(ds.traineeUserName))
                 .thenReturn(Optional.of(ds.trainee1));
+        when(trainerMapper.convertTrainerListToTrainerForListResponseList(any())).thenReturn(any());
 
         when(trainerRepository.findByUserName(ds.trainer1.getUser().getUserName()))
                 .thenReturn(Optional.of(ds.trainer1));
@@ -234,6 +314,8 @@ class TraineeServiceTest {
 
         verify(traineeRepository, times(1)).findByUserName(ds.traineeUserName);
         verify(trainerRepository, times(2)).findByUserName(any());
+        verify(trainerMapper, times(1)).convertTrainerListToTrainerForListResponseList(any());
+
     }
 
     @Test

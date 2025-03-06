@@ -32,11 +32,8 @@ public class UserControllerImpl implements UserController {
         String id = transactionIdGenerator.generate();
         boolean response = userService.authenticate(userName, password);
         LOGGER.info("userName {}, response {}, id {}", userName, response, id);
-        if(response) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+
+        return response ?  new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/password")

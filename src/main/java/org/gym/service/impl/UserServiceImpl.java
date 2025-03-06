@@ -25,7 +25,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
                 );
-        user.setIsActive(!user.getIsActive());
+        if(user.getIsActive() == null) {
+            user.setIsActive(true);
+        } else  {
+            user.setIsActive(!user.getIsActive());
+        }
+
         return user.getIsActive();
     }
 
@@ -45,7 +50,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changePassword(ChangeLoginRequest changeLoginRequest) throws EntityNotFoundException {
         if(!authenticate(changeLoginRequest.getUserName(), changeLoginRequest.getOldPassword())) {
-            LOGGER.warn(ACCESS_DENIED, changeLoginRequest.getUserName());
+            LOGGER.warn(ACCESS_DENIED_MESSAGE_TEMPLATE, changeLoginRequest.getUserName());
             throw new AccessDeniedException(String.format(ACCESS_DENIED_EXCEPTION, changeLoginRequest.getUserName()));
         }
 

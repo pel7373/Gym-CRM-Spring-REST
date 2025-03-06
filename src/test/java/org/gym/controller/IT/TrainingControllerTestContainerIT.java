@@ -1,6 +1,7 @@
-package org.gym.service;
+package org.gym.controller.IT;
 
 import org.gym.config.Config;
+import org.gym.controller.TrainingController;
 import org.gym.dto.TraineeTrainingsDto;
 import org.gym.dto.TrainerTrainingsDto;
 import org.gym.dto.request.training.TrainingAddRequest;
@@ -11,6 +12,8 @@ import org.gym.mapper.TrainingTypeMapper;
 import org.gym.repository.TraineeRepository;
 import org.gym.repository.TrainerRepository;
 import org.gym.repository.TrainingTypeRepository;
+import org.gym.service.PasswordGeneratorService;
+import org.gym.service.UserNameGeneratorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,37 +41,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = {Config.class})
 @ActiveProfiles("prod")
 @WebAppConfiguration
-class TrainingServiceWithTestContainerIT {
+public class TrainingControllerTestContainerIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
-
-    @Autowired
-    private TrainingService trainingService;
-
-    @Autowired
-    private TraineeRepository traineeRepository;
-
-    @Autowired
-    private TrainerRepository trainerRepository;
-
-    @Autowired
-    private TrainingTypeRepository trainingTypeRepository;
-
-    @Autowired
-    private UserNameGeneratorService userNameGeneratorService;
-
-    @Autowired
-    private PasswordGeneratorService passwordGeneratorService;
-
-    @Autowired
-    private TrainingTypeMapper trainingTypeMapper;
-
-    private Trainee trainee;
-    private Trainer trainer;
-    private TrainingType trainingType;
-    private final String trainingTypeName = "Zumba";
-    private TrainingAddRequest trainingAddRequest;
 
     @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
@@ -84,6 +60,33 @@ class TrainingServiceWithTestContainerIT {
         registry.add("hibernate.format_sql", () -> true);
         registry.add("hibernate.jdbc.lob.non_contextual_creation", () -> true);
     }
+
+    @Autowired
+    private TrainingController trainingController;
+
+    @Autowired
+    private TraineeRepository traineeRepository;
+
+    @Autowired
+    private TrainerRepository trainerRepository;
+
+    @Autowired
+    private TrainingTypeRepository trainingTypeRepository;
+
+    @Autowired
+    private TrainingTypeMapper trainingTypeMapper;
+
+    @Autowired
+    private UserNameGeneratorService userNameGeneratorService;
+
+    @Autowired
+    private PasswordGeneratorService passwordGeneratorService;
+
+    private Trainee trainee;
+    private Trainer trainer;
+    private TrainingType trainingType;
+    private final String trainingTypeName = "Zumba";
+    private TrainingAddRequest trainingAddRequest;
 
     @BeforeEach
     void setUp()
@@ -140,12 +143,12 @@ class TrainingServiceWithTestContainerIT {
 
     @Test
     void createTrainingSuccessfully() {
-        assertDoesNotThrow(() -> trainingService.create(trainingAddRequest));
+        assertDoesNotThrow(() -> trainingController.addTraining(trainingAddRequest));
     }
 
     @Test
     void getByTraineeCriteriaEmptyResult() {
-        trainingService.create(trainingAddRequest);
+        trainingController.addTraining(trainingAddRequest);
 
         LocalDate fromDate = LocalDate.of(2030, 3, 5);
         LocalDate toDate = LocalDate.of(2050, 3, 5);
@@ -160,14 +163,14 @@ class TrainingServiceWithTestContainerIT {
                 .build();
 
         List<TraineeTrainingsListResponse> traineeTrainingsListCriteria
-                = trainingService.getTraineeTrainingsListCriteria(traineeTrainingsDto);
+                = trainingController.getTraineeTrainings(traineeTrainingsDto);
 
         assertTrue(traineeTrainingsListCriteria.isEmpty());
     }
 
     @Test
     void getByTraineeCriteriaSuccessfully() {
-        trainingService.create(trainingAddRequest);
+        trainingController.addTraining(trainingAddRequest);
 
         LocalDate fromDate = LocalDate.of(2010, 2, 9);
         LocalDate toDate = LocalDate.of(2035, 3, 9);
@@ -183,7 +186,7 @@ class TrainingServiceWithTestContainerIT {
                 .build();
 
         List<TraineeTrainingsListResponse> traineeTrainingsListCriteria
-                = trainingService.getTraineeTrainingsListCriteria(traineeTrainingsDto);
+                = trainingController.getTraineeTrainings(traineeTrainingsDto);
 
         assertAll(
                 () -> assertFalse(traineeTrainingsListCriteria.isEmpty()),
@@ -194,7 +197,7 @@ class TrainingServiceWithTestContainerIT {
 
     @Test
     void getByTraineeCriteriaNoResult() {
-        trainingService.create(trainingAddRequest);
+        trainingController.addTraining(trainingAddRequest);
 
         LocalDate fromDate = LocalDate.of(2010, 8, 1);
         LocalDate toDate = LocalDate.of(2040, 8, 1);
@@ -208,14 +211,15 @@ class TrainingServiceWithTestContainerIT {
                 .trainingType("Roga")
                 .build();
 
-        List<TraineeTrainingsListResponse> traineeTrainingsListCriteria = trainingService.getTraineeTrainingsListCriteria(traineeTrainingsDto);
+        List<TraineeTrainingsListResponse> traineeTrainingsListCriteria =
+                trainingController.getTraineeTrainings(traineeTrainingsDto);
 
         assertEquals(0, traineeTrainingsListCriteria.size());
     }
 
     @Test
     void getByTrainerCriteriaNoResultAndException() {
-        trainingService.create(trainingAddRequest);
+        trainingController.addTraining(trainingAddRequest);
 
         LocalDate fromDate = LocalDate.of(2035, 1, 1);
         LocalDate toDate = LocalDate.of(2036, 1, 1);
@@ -228,14 +232,15 @@ class TrainingServiceWithTestContainerIT {
                 .traineeUserName(traineeName)
                 .build();
 
-        List<TrainerTrainingsListResponse> trainerTrainingsListCriteria = trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto);
+        List<TrainerTrainingsListResponse> trainerTrainingsListCriteria =
+                trainingController.getTrainerTrainings(trainerTrainingsDto);
 
         assertEquals(0, trainerTrainingsListCriteria.size());
     }
 
     @Test
     void getByTrainerCriteriaSuccessfully() {
-        trainingService.create(trainingAddRequest);
+        trainingController.addTraining(trainingAddRequest);
 
         LocalDate fromDate = LocalDate.of(2020, 1, 1);
         LocalDate toDate = LocalDate.of(2040, 1, 1);
@@ -249,7 +254,7 @@ class TrainingServiceWithTestContainerIT {
                 .build();
 
         List<TrainerTrainingsListResponse> trainerTrainingsListCriteria
-                = trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto);
+                = trainingController.getTrainerTrainings(trainerTrainingsDto);
 
         assertAll(
                 () -> assertFalse(trainerTrainingsListCriteria.isEmpty()),
@@ -260,7 +265,7 @@ class TrainingServiceWithTestContainerIT {
 
     @Test
     void getByTrainerCriteriaEmpty() {
-        trainingService.create(trainingAddRequest);
+        trainingController.addTraining(trainingAddRequest);
 
         LocalDate fromDate = LocalDate.of(2050, 9, 8);
         LocalDate toDate = LocalDate.of(2060, 9, 8);
@@ -273,7 +278,8 @@ class TrainingServiceWithTestContainerIT {
                 .traineeUserName(invalidTraineeName)
                 .build();
 
-        List<TrainerTrainingsListResponse> trainerTrainingsListCriteria = trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto);
+        List<TrainerTrainingsListResponse> trainerTrainingsListCriteria =
+                trainingController.getTrainerTrainings(trainerTrainingsDto);
 
         assertTrue(trainerTrainingsListCriteria.isEmpty());
     }

@@ -1,4 +1,4 @@
-package org.gym.service;
+package org.gym.service.Test;
 
 import org.gym.service.impl.PasswordGeneratorServiceImpl;
 import org.junit.jupiter.api.extension.ExtendWith;

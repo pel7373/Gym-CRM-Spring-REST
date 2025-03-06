@@ -1,15 +1,11 @@
 package org.gym.controller.Test;
 
-import org.gym.DataStorage;
-import org.gym.controller.impl.TraineeControllerImpl;
 import org.gym.controller.impl.TrainerControllerImpl;
 import org.gym.dto.TrainerDto;
-import org.gym.dto.request.trainer.TrainerCreateRequest;
 import org.gym.dto.request.trainer.TrainerUpdateRequest;
 import org.gym.dto.response.CreateResponse;
 import org.gym.dto.response.trainer.TrainerSelectResponse;
 import org.gym.dto.response.trainer.TrainerUpdateResponse;
-import org.gym.service.TraineeService;
 import org.gym.service.TrainerService;
 import org.gym.util.TransactionIdGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,8 +36,6 @@ public class TrainerControllerTest {
 
     @InjectMocks
     private TrainerControllerImpl trainerController;
-
-    private final DataStorage ds = new DataStorage();
 
     @BeforeEach
     void setUp() {
