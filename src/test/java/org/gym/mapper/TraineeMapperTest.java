@@ -8,6 +8,8 @@ import org.gym.dto.response.CreateResponse;
 import org.gym.dto.response.trainee.TraineeSelectResponse;
 import org.gym.dto.response.trainee.TraineeUpdateResponse;
 import org.gym.entity.Trainee;
+import org.gym.entity.Trainer;
+import org.gym.entity.TrainingType;
 import org.gym.entity.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +22,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -116,11 +119,71 @@ class TraineeMapperTest {
         assertNull(createResponse, "ConvertToCreateResponse: expect null when input is null");
     }
 
-    //TraineeSelectResponse convertTraineeToTraineeSelectResponse(Trainee trainee);
+    @Test
+    void convertTraineeToTraineeSelectResponse() {
+        User user = new User(null, "Maria", "Petrenko", "Maria.Petrenko", "", true);
 
-    //    TraineeUpdateResponse convertTraineeToTraineeUpdateResponse(Trainee trainee);
-//    convertToString
-//    TrainingType trainingType
+        Trainer trainer = Trainer.builder()
+                .user(User.builder()
+                        .firstName("Maria")
+                        .lastName("Petrenko")
+                        .userName("Maria.Petrenko")
+                        .password("password")
+                        .isActive(true)
+                        .build())
+                .specialization(TrainingType.builder().id(2L).trainingTypeName("yoga").build())
+                .build();
+
+        Trainee trainee = Trainee.builder()
+                .user(user)
+                .dateOfBirth(LocalDate.of(1995, 1, 23))
+                .address("Vinnitsya, Soborna str. 35, ap. 26")
+                .trainers(List.of(trainer))
+                .build();
+
+
+        TraineeSelectResponse traineeSelectResponse = traineeMapper.convertTraineeToTraineeSelectResponse(trainee);
+
+        assertNotNull(traineeSelectResponse);
+        assertNotNull(traineeSelectResponse.getTrainers());
+        assertAll(
+                "Grouped assertions of created traineeDto",
+                () -> assertEquals(trainee.getUser().getFirstName(), traineeSelectResponse.getUser().getFirstName(), "check firstName"),
+                () -> assertEquals(trainee.getUser().getLastName(), traineeSelectResponse.getUser().getLastName(), "check lastName"),
+                () -> assertEquals(trainee.getUser().getIsActive(), traineeSelectResponse.getUser().getIsActive(), "check isActive"),
+                () -> assertEquals(trainee.getDateOfBirth(), traineeSelectResponse.getDateOfBirth(), "check date of birth"),
+                () -> assertEquals(trainee.getAddress(), traineeSelectResponse.getAddress(), "check address"),
+                //trainer
+                () -> assertEquals(1, traineeSelectResponse.getTrainers().size(), "check count of trainers"),
+                () -> assertEquals(trainer.getUser().getFirstName(), traineeSelectResponse.getTrainers().get(0).getUser().getFirstName(), "check trainer's firstName"),
+                () -> assertEquals(trainer.getUser().getLastName(), traineeSelectResponse.getTrainers().get(0).getUser().getLastName(), "check trainer's lastName"),
+                () -> assertEquals(trainer.getSpecialization().getTrainingTypeName(), traineeSelectResponse.getTrainers().get(0).getSpecialization(), "check trainer's specialization")
+        );
+    }
+
+    @Test
+    void convertTraineeToTraineeSelectResponseWithoutTrainer() {
+        User user = new User(null, "Maria", "Petrenko", "Maria.Petrenko", "", true);
+
+        Trainee trainee = Trainee.builder()
+                .user(user)
+                .dateOfBirth(LocalDate.of(1995, 1, 23))
+                .address("Vinnitsya, Soborna str. 35, ap. 26")
+                .build();
+
+        TraineeSelectResponse traineeSelectResponse = traineeMapper.convertTraineeToTraineeSelectResponse(trainee);
+
+        assertNotNull(traineeSelectResponse);
+        assertNull(traineeSelectResponse.getTrainers());
+        assertAll(
+                "Grouped assertions of created traineeDto",
+                () -> assertEquals(trainee.getUser().getFirstName(), traineeSelectResponse.getUser().getFirstName(), "check firstName"),
+                () -> assertEquals(trainee.getUser().getLastName(), traineeSelectResponse.getUser().getLastName(), "check lastName"),
+                () -> assertEquals(trainee.getUser().getIsActive(), traineeSelectResponse.getUser().getIsActive(), "check isActive"),
+                () -> assertEquals(trainee.getDateOfBirth(), traineeSelectResponse.getDateOfBirth(), "check date of birth"),
+                () -> assertEquals(trainee.getAddress(), traineeSelectResponse.getAddress(), "check address")
+        );
+    }
 
     @Test
     void convertTraineeToTraineeSelectResponseNullTraineeFail() {
@@ -129,15 +192,94 @@ class TraineeMapperTest {
     }
 
     @Test
+    void convertTraineeToTraineeUpdateResponse() {
+        User user = new User(null, "Maria", "Petrenko", "Maria.Petrenko", "", true);
+
+        Trainer trainer = Trainer.builder()
+                .user(User.builder()
+                        .firstName("Maria")
+                        .lastName("Petrenko")
+                        .userName("Maria.Petrenko")
+                        .password("password")
+                        .isActive(true)
+                        .build())
+                .specialization(TrainingType.builder().id(2L).trainingTypeName("yoga").build())
+                .build();
+
+        Trainee trainee = Trainee.builder()
+                .user(user)
+                .dateOfBirth(LocalDate.of(1995, 1, 23))
+                .address("Vinnitsya, Soborna str. 35, ap. 26")
+                .trainers(List.of(trainer))
+                .build();
+
+
+        TraineeUpdateResponse traineeUpdateResponse = traineeMapper.convertTraineeToTraineeUpdateResponse(trainee);
+
+        assertNotNull(traineeUpdateResponse);
+        assertNotNull(traineeUpdateResponse.getTrainers());
+        assertAll(
+                "Grouped assertions of created traineeDto",
+                () -> assertEquals(trainee.getUser().getFirstName(), traineeUpdateResponse.getUser().getFirstName(), "check firstName"),
+                () -> assertEquals(trainee.getUser().getLastName(), traineeUpdateResponse.getUser().getLastName(), "check lastName"),
+                () -> assertEquals(trainee.getUser().getIsActive(), traineeUpdateResponse.getUser().getIsActive(), "check isActive"),
+                () -> assertEquals(trainee.getDateOfBirth(), traineeUpdateResponse.getDateOfBirth(), "check date of birth"),
+                () -> assertEquals(trainee.getAddress(), traineeUpdateResponse.getAddress(), "check address"),
+                //trainer
+                () -> assertEquals(1, traineeUpdateResponse.getTrainers().size(), "check count of trainers"),
+                () -> assertEquals(trainer.getUser().getFirstName(), traineeUpdateResponse.getTrainers().get(0).getUser().getFirstName(), "check trainer's firstName"),
+                () -> assertEquals(trainer.getUser().getLastName(), traineeUpdateResponse.getTrainers().get(0).getUser().getLastName(), "check trainer's lastName"),
+                () -> assertEquals(trainer.getSpecialization().getTrainingTypeName(), traineeUpdateResponse.getTrainers().get(0).getSpecialization(), "check trainer's specialization")
+        );
+    }
+
+    @Test
+    void convertTraineeToTraineeUpdateResponseWithoutTrainer() {
+        User user = new User(null, "Maria", "Petrenko", "Maria.Petrenko", "", true);
+
+        Trainee trainee = Trainee.builder()
+                .user(user)
+                .dateOfBirth(LocalDate.of(1995, 1, 23))
+                .address("Vinnitsya, Soborna str. 35, ap. 26")
+                .build();
+
+        TraineeUpdateResponse traineeUpdateResponse = traineeMapper.convertTraineeToTraineeUpdateResponse(trainee);
+
+        assertNotNull(traineeUpdateResponse);
+        assertNull(traineeUpdateResponse.getTrainers());
+        assertAll(
+                "Grouped assertions of created traineeDto",
+                () -> assertEquals(trainee.getUser().getFirstName(), traineeUpdateResponse.getUser().getFirstName(), "check firstName"),
+                () -> assertEquals(trainee.getUser().getLastName(), traineeUpdateResponse.getUser().getLastName(), "check lastName"),
+                () -> assertEquals(trainee.getUser().getIsActive(), traineeUpdateResponse.getUser().getIsActive(), "check isActive"),
+                () -> assertEquals(trainee.getDateOfBirth(), traineeUpdateResponse.getDateOfBirth(), "check date of birth"),
+                () -> assertEquals(trainee.getAddress(), traineeUpdateResponse.getAddress(), "check address")
+        );
+    }
+
+    @Test
     void convertTraineeToTraineeUpdateResponseNullTraineeFail() {
         TraineeUpdateResponse traineeUpdateResponse = traineeMapper.convertTraineeToTraineeUpdateResponse(null);
         assertNull(traineeUpdateResponse, "ConvertTraineeToTraineeUpdateResponse: expect null when input is null");
     }
 
+    @Test
+    void convertToString() {
+
+        String convertToString = traineeMapper.convertToString(null);
+        assertNull(convertToString, "ConvertToString: expect null when input is null");
+    }
 
     @Test
     void convertToStringNullTrainingTypeFail() {
-        String convertToString = traineeMapper.convertToString(null);
-        assertNull(convertToString, "ConvertToString: expect null when input is null");
+        String name = "Zumba";
+        TrainingType trainingType = TrainingType.builder()
+                .trainingTypeName(name)
+                .build();
+        String convertToString = traineeMapper.convertToString(trainingType);
+
+
+        assertNotNull(convertToString);
+        assertEquals(name, convertToString);
     }
 }

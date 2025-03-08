@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration(classes = {Config.class})
 @ActiveProfiles("prod")
 @WebAppConfiguration
-public class TrainingTypeTestContainerIT {
+class TrainingTypeTestContainerIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

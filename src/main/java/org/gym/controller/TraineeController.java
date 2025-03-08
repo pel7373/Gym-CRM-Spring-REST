@@ -8,7 +8,6 @@ import org.gym.controller.annotation.responses.CreationResponse;
 import org.gym.controller.annotation.responses.DeletionResponse;
 import org.gym.controller.annotation.responses.OperationResponse;
 import org.gym.dto.TraineeDto;
-import org.gym.dto.request.ChangeLoginRequest;
 import org.gym.dto.request.trainee.TraineeUpdateRequest;
 import org.gym.dto.response.CreateResponse;
 import org.gym.dto.response.trainee.TraineeSelectResponse;
@@ -17,7 +16,6 @@ import org.gym.dto.response.trainer.TrainerForListResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -30,7 +28,6 @@ public interface TraineeController {
     )
     @CreationResponse
     CreateResponse create(@RequestBody @Valid TraineeDto traineeDto);
-
 
     @SwaggerOperationInfo(
             summary = "Get a trainee",
@@ -48,7 +45,6 @@ public interface TraineeController {
     @OperationResponse
     TraineeUpdateResponse update(@PathVariable("username") String userName,
                                  @RequestBody @Valid TraineeUpdateRequest traineeUpdateRequest);
-
 
     List<TrainerForListResponse> updateTrainersList(
             @PathVariable("username") String userName,

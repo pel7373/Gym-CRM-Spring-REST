@@ -24,7 +24,8 @@ import org.gym.service.UserNameGeneratorService;
 import java.util.List;
 import java.util.Optional;
 
-import static org.gym.config.Config.ENTITY_NOT_FOUND_EXCEPTION;
+import static org.gym.config.Config.ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE;
+import static org.gym.config.Config.ENTITY_NOT_FOUND_MESSAGE_TEMPLATE;
 
 @Slf4j
 @AllArgsConstructor
@@ -41,7 +42,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public CreateResponse create(TraineeDto traineeDto) {
         Trainee trainee = traineeMapper.convertToEntity(traineeDto);
-        traineeDto.getUser().setUserName(
+        trainee.getUser().setUserName(
                 userNameGeneratorService.generate(
                         traineeDto.getUser().getFirstName(),
                         traineeDto.getUser().getLastName()
@@ -52,25 +53,30 @@ public class TraineeServiceImpl implements TraineeService {
             trainee.getUser().setIsActive(true);
         }
         Trainee savedTrainee = traineeRepository.save(trainee);
+        LOGGER.info("Trainee created with ID {}", savedTrainee.getId());
         return traineeMapper.convertToCreateResponse(savedTrainee);
     }
 
     @Override
     public TraineeSelectResponse select(String userName) throws EntityNotFoundException {
         Trainee trainee = traineeRepository.findByUserName(userName)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
-                );
-        LOGGER.debug("trainee was selected successfully for userName {}", trainee.getUser().getUserName());
+                .orElseThrow(() -> {
+                    LOGGER.debug(ENTITY_NOT_FOUND_MESSAGE_TEMPLATE, userName);
+                    return new EntityNotFoundException(
+                                    String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName))
+                        });
+        LOGGER.debug("Trainee was selected for userName {}", trainee.getUser().getUserName());
         return traineeMapper.convertTraineeToTraineeSelectResponse(trainee);
     }
 
     @Override
     public TraineeUpdateResponse update(String userName, TraineeUpdateRequest traineeUpdateRequest) throws EntityNotFoundException {
         Trainee oldTrainee = traineeRepository.findByUserName(userName)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
-        );
+                .orElseThrow(() -> {
+                    LOGGER.debug(ENTITY_NOT_FOUND_MESSAGE_TEMPLATE, userName);
+                    return new EntityNotFoundException(
+                            String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName))
+                });
         oldTrainee.getUser().setFirstName(traineeUpdateRequest.getUser().getFirstName());
         oldTrainee.getUser().setLastName( traineeUpdateRequest.getUser().getLastName());
         oldTrainee.getUser().setIsActive( traineeUpdateRequest.getUser().getIsActive());
@@ -82,6 +88,7 @@ public class TraineeServiceImpl implements TraineeService {
         }
 
         Trainee trainee = traineeRepository.save(oldTrainee);
+
         return traineeMapper.convertTraineeToTraineeUpdateResponse(trainee);
     }
 
@@ -93,9 +100,11 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public List<TrainerForListResponse> getUnassignedTrainersList(String userName) throws EntityNotFoundException {
         Trainee trainee = traineeRepository.findByUserName(userName)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
-                );
+                .orElseThrow(() -> {
+                    LOGGER.debug(ENTITY_NOT_FOUND_MESSAGE_TEMPLATE, userName);
+                    return new EntityNotFoundException(
+                                    String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName))
+                });
 
         List<Trainer> trainerUnassignedList =
                 trainerRepository.findAll().stream()
@@ -109,9 +118,11 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public List<TrainerForListResponse> updateTrainersList(String userName, List<String> listTrainersUserNames) throws EntityNotFoundException {
         Trainee trainee = traineeRepository.findByUserName(userName)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
-                );
+                .orElseThrow(() -> {
+                    LOGGER.debug(ENTITY_NOT_FOUND_MESSAGE_TEMPLATE, userName);
+                    return new EntityNotFoundException(
+                                    String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName));
+                });
 
         List<Trainer> trainerList = listTrainersUserNames.stream()
                 .map(trainerRepository::findByUserName)

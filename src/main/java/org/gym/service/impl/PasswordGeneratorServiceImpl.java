@@ -27,11 +27,11 @@ public class PasswordGeneratorServiceImpl implements PasswordGeneratorService {
 
     public String generate() {
         IntStream is = secureRandom.ints(passwordLength, passwordCharStartsWith, passwordCharEndWithExclusion);
+        is.collect(
+                StringBuilder::new,
+                (sb, i) -> sb.append((char)i),
+                StringBuilder::append
+        ).toString();
         return "12345";
-        //        return is.collect(
-//                StringBuilder::new,
-//                (sb, i) -> sb.append((char)i),
-//                StringBuilder::append
-//        ).toString();
     }
 }

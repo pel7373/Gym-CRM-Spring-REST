@@ -22,7 +22,7 @@ import org.gym.exception.EntityNotFoundException;
 
 import java.util.List;
 
-import static org.gym.config.Config.ENTITY_NOT_FOUND_EXCEPTION;
+import static org.gym.config.Config.ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,15 +40,15 @@ public class TrainingServiceImpl implements TrainingService {
         String trainingTypeName = request.getTrainingType().getTrainingTypeName();
         TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeName)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format(ENTITY_NOT_FOUND_EXCEPTION, request.getTrainingType())));
+                        String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, request.getTrainingType())));
 
         Trainer trainer = trainerRepository.findByUserName(request.getTrainerUserName())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format(ENTITY_NOT_FOUND_EXCEPTION, request.getTrainerUserName())));
+                        String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, request.getTrainerUserName())));
 
         Trainee trainee = traineeRepository.findByUserName(request.getTraineeUserName())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format(ENTITY_NOT_FOUND_EXCEPTION, request.getTraineeUserName())));
+                        String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, request.getTraineeUserName())));
 
         Training training = Training.builder()
                 .trainee(trainee)

@@ -15,7 +15,6 @@ import java.util.List;
 @Setter
 @Builder
 public class TraineeSelectResponse {
-
     private UserSelectResponse user;
 
     @JsonFormat(pattern = "yyyy-MM-dd")

@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.gym.config.Config.ENTITY_NOT_FOUND_MESSAGE_TEMPLATE;
-import static org.gym.config.Config.ENTITY_NOT_FOUND_EXCEPTION;
+import static org.gym.config.Config.ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE;
 
 @Slf4j
 @Repository
@@ -58,7 +58,7 @@ public class TraineeRepositoryImpl implements TraineeRepository {
                 .ifPresentOrElse(entityManager::remove,
                     () -> {
                         LOGGER.debug(ENTITY_NOT_FOUND_MESSAGE_TEMPLATE, userName);
-                        throw new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_EXCEPTION, userName));
+                        throw new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName));
                     });
     }
 }

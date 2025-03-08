@@ -29,7 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import static org.gym.config.Config.ENTITY_NOT_FOUND_EXCEPTION;
+import static org.gym.config.Config.ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -109,7 +109,7 @@ class TraineeServiceTest {
 
     @Test
     void selectNotFound() {
-        String exceptionMessage = String.format(ENTITY_NOT_FOUND_EXCEPTION, userNameNotFound);
+        String exceptionMessage = String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userNameNotFound);
         when(traineeRepository.findByUserName(userNameNotFound))
                 .thenThrow(new EntityNotFoundException(exceptionMessage));
         assertThrows(EntityNotFoundException.class, () -> traineeService.select(userNameNotFound), exceptionMessage);
@@ -118,7 +118,7 @@ class TraineeServiceTest {
 
     @Test
     void selectNullThenException() {
-        String exceptionMessage = String.format(ENTITY_NOT_FOUND_EXCEPTION, (Object) null);
+        String exceptionMessage = String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, (Object) null);
         assertThrows(EntityNotFoundException.class, () -> traineeService.select(null), exceptionMessage);
         verify(traineeRepository, times(1)).findByUserName(null);
     }

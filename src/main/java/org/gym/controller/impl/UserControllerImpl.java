@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1")
 @Validated
-@Tag(name = "Users", description = "Operations related to managing trainees")
+@Tag(name = "Users", description = "Operations related to managing users")
 public class UserControllerImpl implements UserController {
 
     private final UserService userService;
@@ -30,18 +30,20 @@ public class UserControllerImpl implements UserController {
     public ResponseEntity<Void> login(@PathVariable("username") @NotBlank String userName,
                                       @PathVariable("password") @NotBlank String password) {
         String id = transactionIdGenerator.generate();
+        LOGGER.info("GET /api/v1/login/{}/<password> called  with transaction id: {}", userName, id);
         boolean response = userService.authenticate(userName, password);
-        LOGGER.info("userName {}, response {}, id {}", userName, response, id);
-
-        return response ?  new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        HttpStatus status = response ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        LOGGER.info("result of login for userName {}: {}, status {}", userName, response, status);
+        return new ResponseEntity<>(status);
     }
 
     @PutMapping("/password")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Void> changeLogin(@RequestBody @Valid ChangeLoginRequest changeLoginRequest) {
         String id = transactionIdGenerator.generate();
+        LOGGER.info("PUT /api/v1/password called changeLoginRequest for userName {} with transaction id: {}", changeLoginRequest.getUserName(), id);
         userService.changePassword(changeLoginRequest);
-        LOGGER.info("userName {}, id {}", changeLoginRequest.getUserName(), id);
+        LOGGER.info("password updated for userName {}", changeLoginRequest.getUserName());
         return ResponseEntity.ok().build();
     }
 
@@ -51,10 +53,10 @@ public class UserControllerImpl implements UserController {
             @PathVariable("username") @NotBlank String userName
     ) {
         String id = transactionIdGenerator.generate();
-        LOGGER.info("userName: {}, transaction id: {}", userName, id);
+        LOGGER.info("PATCH /api/v1/{}/status, transaction id: {}", userName, id);
 
         boolean status = userService.changeStatus(userName);
-        LOGGER.info("userName {}, status {}", userName, status);
+        LOGGER.info("status was changed for userName {}: {}", userName, status);
         return status;
     }
 }

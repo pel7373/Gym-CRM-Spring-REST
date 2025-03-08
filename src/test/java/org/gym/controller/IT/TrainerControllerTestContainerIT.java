@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(classes = {Config.class})
 @ActiveProfiles("prod")
 @WebAppConfiguration
-public class TrainerControllerTestContainerIT {
+class TrainerControllerTestContainerIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

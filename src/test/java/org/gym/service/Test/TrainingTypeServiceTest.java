@@ -2,7 +2,6 @@ package org.gym.service.Test;
 
 import org.gym.DataStorage;
 import org.gym.dto.response.trainingType.TrainingTypeResponse;
-import org.gym.entity.TrainingType;
 import org.gym.repository.TrainingTypeRepository;
 import org.gym.service.impl.TrainingTypeServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class TrainingTypeServiceTest {
+class TrainingTypeServiceTest {
 
     @Mock
     private TrainingTypeRepository trainingTypeRepository;

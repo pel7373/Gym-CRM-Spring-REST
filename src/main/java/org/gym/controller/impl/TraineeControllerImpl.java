@@ -39,8 +39,9 @@ public class TraineeControllerImpl implements TraineeController {
     @ResponseStatus(HttpStatus.CREATED)
     public CreateResponse create(@RequestBody @Valid TraineeDto traineeDto){
         String id = transactionIdGenerator.generate();
+        LOGGER.info("POST /api/v1/trainees, request {}, transactionId {}", traineeDto, id);
         CreateResponse response = traineeService.create(traineeDto);
-        LOGGER.info("request {}, response {}, id {}", traineeDto, response, id);
+        LOGGER.info("response's userName {}", response.getUserName());
         return response;
     }
 
@@ -48,8 +49,9 @@ public class TraineeControllerImpl implements TraineeController {
     @ResponseStatus(HttpStatus.OK)
     public TraineeSelectResponse getTraineeProfile(@PathVariable("username") @NotBlank String userName) {
         String id = transactionIdGenerator.generate();
+        LOGGER.info("GET /api/v1/trainees/{}, transactionId {}", userName, id);
         TraineeSelectResponse response = traineeService.select(userName);
-        LOGGER.debug("userName {}, response {}, id {}", userName, response, id);
+        LOGGER.debug("userName {}, response {}", userName, response);
         return response;
     }
 
@@ -58,8 +60,9 @@ public class TraineeControllerImpl implements TraineeController {
     public TraineeUpdateResponse update(@PathVariable("username") @NotBlank String userName,
             @RequestBody @Valid TraineeUpdateRequest traineeUpdateRequest) {
         String id = transactionIdGenerator.generate();
+        LOGGER.info("PUT /api/v1/trainees/{}, transactionId {}", userName, id);
         TraineeUpdateResponse traineeUpdateResponse = traineeService.update(userName, traineeUpdateRequest);
-        LOGGER.info("userName {}, id {}", userName, id);
+        LOGGER.info("Update was done, HTTP Status: {}", HttpStatus.OK);
         return traineeUpdateResponse;
     }
 
@@ -70,11 +73,9 @@ public class TraineeControllerImpl implements TraineeController {
             @RequestBody @NotEmpty List<String> trainersUserNamesList
     ) {
         String id = transactionIdGenerator.generate();
-        LOGGER.info("userName: {}, trainersUsernames {}:  with transaction id: {}",
-                userName, trainersUserNamesList, id);
+        LOGGER.info("PUT /api/v1/trainees/{}/trainers, trainersUsernames {}, transactionId {}", userName, trainersUserNamesList, id);
 
         List<TrainerForListResponse> response = traineeService.updateTrainersList(userName, trainersUserNamesList);
-
         LOGGER.info("Response: {}, HTTP Status: {}", response, HttpStatus.OK);
         return response;
     }
@@ -83,8 +84,9 @@ public class TraineeControllerImpl implements TraineeController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Void> delete(@PathVariable("username") @NotBlank String userName) {
         String id = transactionIdGenerator.generate();
-        LOGGER.info("delete: id {}, userName {}", id, userName);
+        LOGGER.info("DELETE /api/v1/{}, usernames {}, transactionId {}", userName, userName, id);
         traineeService.delete(userName);
+        LOGGER.info("Delete was done, HTTP Status: {}", HttpStatus.OK);
         return ResponseEntity.ok().build();
     }
 
@@ -94,10 +96,8 @@ public class TraineeControllerImpl implements TraineeController {
             @PathVariable("username") @NotBlank String userName
     ) {
         String id = transactionIdGenerator.generate();
-        LOGGER.info("userName: {};  id: {}", userName, id);
-
+        LOGGER.info("GET /api/v1/{}/unassigned, transactionId {}", userName, id);
         List<TrainerForListResponse> response = traineeService.getUnassignedTrainersList(userName);
-
         LOGGER.info("Response: {}, HTTP Status: {}", response, HttpStatus.OK);
         return response;
     }

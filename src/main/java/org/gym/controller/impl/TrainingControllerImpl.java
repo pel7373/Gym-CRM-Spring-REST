@@ -1,5 +1,6 @@
 package org.gym.controller.impl;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/trainings")
 @Validated
+@Tag(name = "Trainings", description = "Operations related to managing trainings")
 public class TrainingControllerImpl implements TrainingController {
 
     private final TrainingService trainingService;
@@ -30,9 +32,9 @@ public class TrainingControllerImpl implements TrainingController {
     @ResponseStatus(HttpStatus.CREATED)
     public void addTraining(@RequestBody @Valid TrainingAddRequest request) {
         String id = transactionIdGenerator.generate();
-        LOGGER.info("request starts to processing: transaction id: {}", id);
+        LOGGER.info("POST /api/v1/trainings, request {} with transaction id {}", request, id);
         trainingService.create(request);
-        LOGGER.info("HTTP Status: {}", HttpStatus.CREATED);
+        LOGGER.info("training created, HTTP status: {}", HttpStatus.CREATED);
     }
 
     @GetMapping("/trainee")
@@ -41,7 +43,7 @@ public class TrainingControllerImpl implements TrainingController {
             @ModelAttribute @Valid TraineeTrainingsDto traineeTrainingsDto
     ) {
         String id = transactionIdGenerator.generate();
-        LOGGER.info("traineeTrainingsDto {}, transaction id: {}", traineeTrainingsDto, id);
+        LOGGER.info("GET /api/v1/trainings/trainee called with request {},  transaction id: {}", traineeTrainingsDto, id);
 
         List<TraineeTrainingsListResponse> response = trainingService.getTraineeTrainingsListCriteria(
                 traineeTrainingsDto
@@ -57,7 +59,7 @@ public class TrainingControllerImpl implements TrainingController {
             @ModelAttribute @Valid TrainerTrainingsDto trainerTrainingsDto
     ) {
         String id = transactionIdGenerator.generate();
-        LOGGER.info("request {}, transaction id: {}", trainerTrainingsDto, id);
+        LOGGER.info("GET /api/v1/trainings/trainer called with request {},  transaction id: {}", trainerTrainingsDto, id);
 
         List<TrainerTrainingsListResponse> response =
                 trainingService.getTrainerTrainingsListCriteria(trainerTrainingsDto);

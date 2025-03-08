@@ -8,7 +8,6 @@ import lombok.*;
 @Setter
 @Builder
 public class UserUpdateResponse {
-
     private String userName;
     private String firstName;
     private String lastName;

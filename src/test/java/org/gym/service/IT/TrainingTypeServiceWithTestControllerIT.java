@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = {Config.class})
 @ActiveProfiles("prod")
 @WebAppConfiguration
-public class TrainingTypeServiceWithTestControllerIT {
+class TrainingTypeServiceWithTestControllerIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

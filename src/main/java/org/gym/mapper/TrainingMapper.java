@@ -9,12 +9,12 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {TraineeMapper.class, TrainerMapper.class, TrainingTypeMapper.class})
 public interface TrainingMapper {
-    @Mapping(source = "trainee", target = "trainee")
-    @Mapping(source = "trainer", target = "trainer")
+//    @Mapping(source = "trainee", target = "trainee")
+//    @Mapping(source = "trainer", target = "trainer")
     TrainingDto convertToDto(Training training);
 
-    @Mapping(source = "trainee", target = "trainee")
-    @Mapping(source = "trainer", target = "trainer")
+//    @Mapping(source = "trainee", target = "trainee")
+//    @Mapping(source = "trainer", target = "trainer")
     Training convertToEntity(TrainingDto trainingDto);
 
     @Mapping(target = "trainerUserName", expression = "java(training.getTrainer().getUser().getUserName())")

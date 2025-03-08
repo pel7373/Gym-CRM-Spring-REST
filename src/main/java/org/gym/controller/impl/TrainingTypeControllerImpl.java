@@ -1,5 +1,6 @@
 package org.gym.controller.impl;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gym.controller.TrainingTypeController;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/trainingtypes")
 @Validated
+@Tag(name = "Training types", description = "Operations related to managing training types")
 public class TrainingTypeControllerImpl implements TrainingTypeController {
 
     private final TrainingTypeService trainingTypeService;
@@ -26,8 +28,9 @@ public class TrainingTypeControllerImpl implements TrainingTypeController {
     @ResponseStatus(HttpStatus.OK)
     public List<TrainingTypeResponse> getAll() {
         String id = transactionIdGenerator.generate();
+        LOGGER.info("GET /api/v1/trainingtypes, transaction id: {}", id);
         List<TrainingTypeResponse> trainingTypeResponseList = trainingTypeService.findAll();
-        LOGGER.info("response {}, transactionID {}", trainingTypeResponseList, id);
+        LOGGER.info("response {}", trainingTypeResponseList);
         return trainingTypeResponseList;
     }
 }

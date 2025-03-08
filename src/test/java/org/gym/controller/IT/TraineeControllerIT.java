@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestPropertySource(locations = "classpath:application-test.properties")
 @WebAppConfiguration
 @ActiveProfiles("test")
-public class TraineeControllerIT {
+class TraineeControllerIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

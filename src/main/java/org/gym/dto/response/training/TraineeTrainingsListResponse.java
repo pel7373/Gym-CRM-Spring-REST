@@ -2,8 +2,6 @@ package org.gym.dto.response.training;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import org.gym.dto.TrainingTypeDto;
-
 
 import java.time.LocalDate;
 

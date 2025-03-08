@@ -1,7 +1,6 @@
 package org.gym.dto.response.trainer;
 
 import lombok.*;
-import org.gym.dto.TrainingTypeDto;
 import org.gym.dto.response.trainee.TraineeForListResponse;
 import org.gym.dto.response.user.UserUpdateResponse;
 

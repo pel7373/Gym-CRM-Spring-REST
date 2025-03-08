@@ -20,9 +20,9 @@ import java.text.SimpleDateFormat;
 @PropertySource("classpath:application.properties")
 public class Config {
     public static final String ENTITY_NOT_FOUND_MESSAGE_TEMPLATE = "Entity not found by {}";
-    public static final String ENTITY_NOT_FOUND_EXCEPTION = "Entity not found by %s";
+    public static final String ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE = "Entity not found by %s";
     public static final String ACCESS_DENIED_MESSAGE_TEMPLATE = "Access denied to {}";
-    public static final String ACCESS_DENIED_EXCEPTION = "Access denied to %s";
+    public static final String ACCESS_DENIED_EXCEPTION_MESSAGE_TEMPLATE = "Access denied to %s";
 
     @Bean
     public SecureRandom secureRandom() {

@@ -14,7 +14,10 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {UserMapper.class, TrainingTypeMapper.class})
 public interface TrainerMapper {
 
+    @Mapping(target = "trainees", ignore = true)
     TrainerDto convertToDto(Trainer trainer);
+
+    @Mapping(target = "trainees", ignore = true)
     Trainer convertToEntity(TrainerDto trainerDto);
 
     @Mapping(target="userName", expression="java(trainer.getUser().getUserName())")

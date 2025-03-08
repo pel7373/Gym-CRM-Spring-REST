@@ -1,7 +1,6 @@
 package org.gym.service;
 
 import org.gym.dto.TraineeDto;
-import org.gym.dto.TrainerDto;
 import org.gym.dto.request.trainee.TraineeUpdateRequest;
 import org.gym.dto.response.CreateResponse;
 import org.gym.dto.response.trainee.TraineeSelectResponse;

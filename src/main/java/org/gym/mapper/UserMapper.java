@@ -1,7 +1,6 @@
 package org.gym.mapper;
 
 import org.gym.dto.*;
-import org.gym.dto.request.user.UserUpdateRequest;
 import org.gym.dto.response.user.UserForListResponse;
 import org.gym.dto.response.user.UserUpdateResponse;
 import org.gym.entity.User;
@@ -14,11 +13,7 @@ public interface UserMapper {
     User convertToEntity(UserDto userDto);
 
     @Mapping(target="userName", expression="java(user.getUserName())")
-    UserUpdateResponse convertUserDtoToUserUpdateResponse(UserDto user);
-
-    @Mapping(target="userName", expression="java(user.getUserName())")
     UserUpdateResponse convertUserToUserUpdateResponse(User user);
 
     UserForListResponse convertDtoToForListResponse(User user);
-    //    UserForListResponse convertToUserForListResponse(UserDto user);
 }

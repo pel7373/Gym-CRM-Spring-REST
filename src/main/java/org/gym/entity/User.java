@@ -21,6 +21,8 @@ public class User {
     @Size(min = 2, message = "User's first name must be at least 2 letters long")
     @Pattern(regexp = "^[A-Z][a-z]+$", message = "User's first name must consist of letters only (the first one is capital)")
     @Column(name = "first_name", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private String firstName;
 
     @NotBlank(message = "Last name is required")

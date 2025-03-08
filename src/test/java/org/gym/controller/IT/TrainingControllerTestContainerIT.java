@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = {Config.class})
 @ActiveProfiles("prod")
 @WebAppConfiguration
-public class TrainingControllerTestContainerIT {
+class TrainingControllerTestContainerIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -196,6 +196,24 @@ public class TrainingControllerTestContainerIT {
     }
 
     @Test
+    void getByTraineeCriteriaWithoutCriteriaSuccessfully() {
+        trainingController.addTraining(trainingAddRequest);
+
+        TraineeTrainingsDto traineeTrainingsDto = TraineeTrainingsDto.builder()
+                .traineeUserName(trainee.getUser().getUserName())
+                .build();
+
+        List<TraineeTrainingsListResponse> traineeTrainingsListCriteria
+                = trainingController.getTraineeTrainings(traineeTrainingsDto);
+
+        assertAll(
+                () -> assertFalse(traineeTrainingsListCriteria.isEmpty()),
+                () -> assertEquals(1, traineeTrainingsListCriteria.size()),
+                () -> assertEquals(trainingTypeName, traineeTrainingsListCriteria.get(0).getTrainingType())
+        );
+    }
+
+    @Test
     void getByTraineeCriteriaNoResult() {
         trainingController.addTraining(trainingAddRequest);
 
@@ -251,6 +269,24 @@ public class TrainingControllerTestContainerIT {
                 .fromDate(fromDate)
                 .toDate(toDate)
                 .traineeUserName(traineeUserName)
+                .build();
+
+        List<TrainerTrainingsListResponse> trainerTrainingsListCriteria
+                = trainingController.getTrainerTrainings(trainerTrainingsDto);
+
+        assertAll(
+                () -> assertFalse(trainerTrainingsListCriteria.isEmpty()),
+                () -> assertEquals(1, trainerTrainingsListCriteria.size()),
+                () -> assertEquals("Zumba",trainerTrainingsListCriteria.get(0).getTrainingType())
+        );
+    }
+
+    @Test
+    void getByTrainerCriteriaWithoutCriteriaSuccessfully() {
+        trainingController.addTraining(trainingAddRequest);
+
+        TrainerTrainingsDto trainerTrainingsDto = TrainerTrainingsDto.builder()
+                .trainerUserName(trainer.getUser().getUserName())
                 .build();
 
         List<TrainerTrainingsListResponse> trainerTrainingsListCriteria

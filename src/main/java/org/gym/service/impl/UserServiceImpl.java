@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     public boolean changeStatus(String userName) throws EntityNotFoundException {
         User user = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
+                        String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName))
                 );
         if(user.getIsActive() == null) {
             user.setIsActive(true);
@@ -38,8 +38,7 @@ public class UserServiceImpl implements UserService {
     public boolean authenticate(String userName, String password) {
         try {
             User user = userRepository.findByUserName(userName)
-                    .orElseThrow(() -> new EntityNotFoundException(
-                            String.format(ENTITY_NOT_FOUND_EXCEPTION, userName))
+                    .orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName))
                     );
             return user.getPassword().equals(password);
         } catch (EntityNotFoundException e) {
@@ -51,12 +50,12 @@ public class UserServiceImpl implements UserService {
     public void changePassword(ChangeLoginRequest changeLoginRequest) throws EntityNotFoundException {
         if(!authenticate(changeLoginRequest.getUserName(), changeLoginRequest.getOldPassword())) {
             LOGGER.warn(ACCESS_DENIED_MESSAGE_TEMPLATE, changeLoginRequest.getUserName());
-            throw new AccessDeniedException(String.format(ACCESS_DENIED_EXCEPTION, changeLoginRequest.getUserName()));
+            throw new AccessDeniedException(String.format(ACCESS_DENIED_EXCEPTION_MESSAGE_TEMPLATE, changeLoginRequest.getUserName()));
         }
 
         User user = userRepository.findByUserName(changeLoginRequest.getUserName())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        String.format(ENTITY_NOT_FOUND_EXCEPTION, changeLoginRequest.getUserName()))
+                        String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, changeLoginRequest.getUserName()))
                 );
         user.setPassword(changeLoginRequest.getNewPassword());
     }

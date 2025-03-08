@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(locations = "classpath:application-test.properties")
 @ActiveProfiles("test")
 @WebAppConfiguration
-public class UserServiceIT {
+class UserServiceIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

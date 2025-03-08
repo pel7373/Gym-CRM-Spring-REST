@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @TestPropertySource(locations = "classpath:application-test.properties")
 @ActiveProfiles("test")
 @WebAppConfiguration
-public class UserRepositoryTest {
+class UserRepositoryTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

@@ -23,6 +23,7 @@ import static org.gym.config.Config.*;
 public class DataStorage {
 
     public final User user;
+    public final User user2;
     public final String traineeUserName;
     public final Trainee trainee1;
     public final TraineeDto traineeDto1;
@@ -51,7 +52,7 @@ public class DataStorage {
     public final CreateResponse traineeCreateResponse;
     public final CreateResponse trainerCreateResponse;
 
-    public final String exceptionMessageNotFound = String.format(ENTITY_NOT_FOUND_EXCEPTION, userNameNotFound);
+    public final String exceptionMessageNotFound = String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userNameNotFound);
     public final String exceptionMessageAccessDenied;
 
     public final List<String> expectedTrainingTypeNamesList = new ArrayList<>();
@@ -61,6 +62,7 @@ public class DataStorage {
         String traineeAddress = "Vinnitsya, Soborna str. 35, ap. 26";
         String traineeAddress2 = "Kyiv, Khreschatik str. 35, ap. 26";
         user = new User(null, "Ivan", "Ivanenko", "Ivan.Ivanenko", passwordForUser, null);
+        user2 = new User(null, "Ivan", "Ivanenko", "Ivan.Ivanenko", passwordForUser, false);
 
         changeLoginRequest = ChangeLoginRequest.builder()
                 .userName(user.getUserName())
@@ -68,7 +70,7 @@ public class DataStorage {
                 .newPassword("123456")
                 .build();
 
-        exceptionMessageAccessDenied = String.format(ACCESS_DENIED_EXCEPTION, changeLoginRequest.getUserName());
+        exceptionMessageAccessDenied = String.format(ACCESS_DENIED_EXCEPTION_MESSAGE_TEMPLATE, changeLoginRequest.getUserName());
 
         userForTraineeUpdateRequest = UserUpdateRequest.builder()
                 .firstName("Ivan")

@@ -6,7 +6,6 @@ import org.gym.controller.TraineeController;
 import org.gym.controller.UserController;
 import org.gym.entity.Trainee;
 import org.gym.repository.TraineeRepository;
-import org.gym.repository.impl.UserRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(classes = {Config.class})
 @ActiveProfiles("prod")
 @WebAppConfiguration
-public class UserControllerTestContainerIT {
+class UserControllerTestContainerIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -102,6 +101,6 @@ public class UserControllerTestContainerIT {
     void loginNotValidPasswordFail() {
         String notValidPassword = "notValidPassword";
         ResponseEntity<Void> response = userController.login(userName, notValidPassword);
-        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

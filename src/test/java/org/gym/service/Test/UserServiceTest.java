@@ -15,13 +15,14 @@ import org.mockito.quality.Strictness;
 
 import java.util.Optional;
 
-import static org.gym.config.Config.ACCESS_DENIED_EXCEPTION;
+import static org.gym.config.Config.ACCESS_DENIED_EXCEPTION_MESSAGE_TEMPLATE;
+import static org.gym.config.Config.ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -51,7 +52,50 @@ public class UserServiceTest {
         if(isRestoreStatusAtTheEndOfThisTest) {
             ds.user.setIsActive(statusInitial);
         }
+    }
 
+    @Test
+    void changeStatusSuccessfullyStatusNotNull() {
+        boolean statusInitial = false;
+        boolean isRestoreStatusAtTheEndOfThisTest = true;
+
+        if(ds.user2.getIsActive() != null) {
+            statusInitial = ds.user2.getIsActive();
+            isRestoreStatusAtTheEndOfThisTest = false;
+        }
+
+        when(userRepository.findByUserName(ds.user2.getUserName())).thenReturn(Optional.of(ds.user2));
+
+        boolean status = userService.changeStatus(ds.user2.getUserName());
+
+        assertEquals(ds.user2.getIsActive(), status);
+        verify(userRepository, times(1)).findByUserName(ds.user2.getUserName());
+
+        if(isRestoreStatusAtTheEndOfThisTest) {
+            ds.user2.setIsActive(statusInitial);
+        }
+    }
+
+    @Test
+    void changeStatusNotFoundFail() {
+        boolean statusInitial = false;
+        boolean isRestoreStatusAtTheEndOfThisTest = true;
+
+        if(ds.user.getIsActive() != null) {
+            statusInitial = ds.user.getIsActive();
+            isRestoreStatusAtTheEndOfThisTest = false;
+        }
+
+        when(userRepository.findByUserName(ds.user.getUserName())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> userService.changeStatus(ds.user.getUserName()),
+                String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, ds.user.getUserName()));
+
+        verify(userRepository, times(1)).findByUserName(ds.user.getUserName());
+
+        if(isRestoreStatusAtTheEndOfThisTest) {
+            ds.user.setIsActive(statusInitial);
+        }
     }
 
     @Test
@@ -70,7 +114,7 @@ public class UserServiceTest {
                 .thenThrow(new EntityNotFoundException(ds.exceptionMessageNotFound));
 
         assertThrows(AccessDeniedException.class, () -> userService.changePassword(ds.changeLoginRequest),
-                String.format(ACCESS_DENIED_EXCEPTION, ds.changeLoginRequest.getUserName()));
+                String.format(ACCESS_DENIED_EXCEPTION_MESSAGE_TEMPLATE, ds.changeLoginRequest.getUserName()));
         verify(userRepository, times(1)).findByUserName(ds.user.getUserName());
     }
 
@@ -91,6 +135,15 @@ public class UserServiceTest {
         boolean isAuthenticate = userService.authenticate(ds.user.getUserName(), "NotValidPassword");
 
         assertFalse(isAuthenticate);
+        verify(userRepository, times(1)).findByUserName(ds.user.getUserName());
+    }
+
+    @Test
+    void authenticateNotFoundFail() {
+        when(userRepository.findByUserName(ds.user.getUserName())).thenReturn(Optional.empty());
+
+        assertDoesNotThrow(() -> userService.authenticate(ds.user.getUserName(), "NotValidPassword"));
+
         verify(userRepository, times(1)).findByUserName(ds.user.getUserName());
     }
 }

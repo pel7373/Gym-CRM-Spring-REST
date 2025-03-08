@@ -14,7 +14,10 @@ import org.springframework.stereotype.Component;
 @Mapper(componentModel = "spring", uses = UserMapper.class)
 public interface TraineeMapper {
 
+    @Mapping(target = "trainers", ignore = true)
     TraineeDto convertToDto(Trainee trainee);
+
+    @Mapping(target = "trainers", ignore = true)
     Trainee convertToEntity(TraineeDto traineeDto);
 
     @Mapping(target="userName", expression="java(trainee.getUser().getUserName())")

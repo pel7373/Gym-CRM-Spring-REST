@@ -45,5 +45,4 @@ public interface TrainingController {
     List<TrainerTrainingsListResponse> getTrainerTrainings(
             @ModelAttribute @Valid TrainerTrainingsDto trainerTrainingsDto
     );
-
 }
