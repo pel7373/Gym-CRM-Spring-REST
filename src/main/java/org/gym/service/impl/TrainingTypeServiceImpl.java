@@ -1,0 +1,29 @@
+package org.gym.service.impl;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.gym.annotation.GymService;
+import org.gym.dto.response.trainingtype.TrainingTypeResponse;
+import org.gym.repository.TrainingTypeRepository;
+import org.gym.service.TrainingTypeService;
+
+import java.util.List;
+
+@Slf4j
+@RequiredArgsConstructor
+@GymService
+public class TrainingTypeServiceImpl implements TrainingTypeService {
+
+    private final TrainingTypeRepository trainingTypeRepository;
+
+    @Override
+    public List<TrainingTypeResponse> findAll() {
+        return trainingTypeRepository.findAll().stream()
+                .map(t -> TrainingTypeResponse.builder()
+                        .id(t.getId())
+                        .trainingTypeName(t.getTrainingTypeName())
+                        .build()
+                )
+                .toList();
+    }
+}
