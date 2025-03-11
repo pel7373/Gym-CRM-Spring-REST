@@ -6,6 +6,7 @@ import org.gym.entity.TrainingType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
+@Rollback
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -33,19 +35,17 @@ class TrainingTypeRepositoryTest {
     @Autowired
     private TrainingTypeRepository trainingTypeRepository;
 
-    private final DataStorage ds = new DataStorage();
-
     @Test
     void getAll() {
         List<TrainingType> trainingTypeList = trainingTypeRepository.findAll();
 
         assertAll (
-                () -> assertEquals(5, ds.expectedTrainingTypeNamesList.size())
+                () -> assertEquals(5, DataStorage.expectedTrainingTypeNamesList.size())
         );
 
         trainingTypeList
                 .forEach(t ->
-                        assertTrue(ds.expectedTrainingTypeNamesList.contains(t.getTrainingTypeName()), String.format("trainingTypeList contains %s name", t.getTrainingTypeName())));
+                        assertTrue(DataStorage.expectedTrainingTypeNamesList.contains(t.getTrainingTypeName()), String.format("trainingTypeList contains %s name", t.getTrainingTypeName())));
     }
 
     @Test

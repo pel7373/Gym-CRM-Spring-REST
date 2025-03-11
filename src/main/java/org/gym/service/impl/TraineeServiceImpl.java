@@ -63,7 +63,7 @@ public class TraineeServiceImpl implements TraineeService {
                 .orElseThrow(() -> {
                     LOGGER.debug(ENTITY_NOT_FOUND_MESSAGE_TEMPLATE, userName);
                     return new EntityNotFoundException(
-                                    String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName))
+                                    String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName));
                         });
         LOGGER.debug("Trainee was selected for userName {}", trainee.getUser().getUserName());
         return traineeMapper.convertTraineeToTraineeSelectResponse(trainee);
@@ -75,20 +75,21 @@ public class TraineeServiceImpl implements TraineeService {
                 .orElseThrow(() -> {
                     LOGGER.debug(ENTITY_NOT_FOUND_MESSAGE_TEMPLATE, userName);
                     return new EntityNotFoundException(
-                            String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName))
+                            String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName));
                 });
         oldTrainee.getUser().setFirstName(traineeUpdateRequest.getUser().getFirstName());
         oldTrainee.getUser().setLastName( traineeUpdateRequest.getUser().getLastName());
         oldTrainee.getUser().setIsActive( traineeUpdateRequest.getUser().getIsActive());
+
         if(traineeUpdateRequest.getDateOfBirth() != null) {
             oldTrainee.setDateOfBirth(traineeUpdateRequest.getDateOfBirth());
         }
+
         if(traineeUpdateRequest.getAddress() != null) {
             oldTrainee.setAddress(traineeUpdateRequest.getAddress());
         }
 
         Trainee trainee = traineeRepository.save(oldTrainee);
-
         return traineeMapper.convertTraineeToTraineeUpdateResponse(trainee);
     }
 
@@ -103,7 +104,7 @@ public class TraineeServiceImpl implements TraineeService {
                 .orElseThrow(() -> {
                     LOGGER.debug(ENTITY_NOT_FOUND_MESSAGE_TEMPLATE, userName);
                     return new EntityNotFoundException(
-                                    String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName))
+                                    String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName));
                 });
 
         List<Trainer> trainerUnassignedList =

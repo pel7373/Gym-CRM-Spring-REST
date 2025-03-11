@@ -11,6 +11,7 @@ import org.gym.service.TrainerService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -22,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
+@Rollback
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -38,13 +40,12 @@ class TrainerServiceIT {
     @Autowired
     private TrainerRepository trainerRepository;
 
-    private final DataStorage ds = new DataStorage();
     private String userNameForTrainer;
 
     @Test
     void createTrainerSuccessfully() {
-        CreateResponse createResponse = trainerService.create(ds.trainerDto1);
-        userNameForTrainer = ds.trainerDto1.getUser().getUserName();
+        CreateResponse createResponse = trainerService.create(DataStorage.trainerDto1);
+        userNameForTrainer = DataStorage.trainerDto1.getUser().getUserName();
         Trainer createdTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
 
         assertAll(
@@ -56,20 +57,20 @@ class TrainerServiceIT {
                         "userName should be equal"),
                 () -> assertEquals(createResponse.getPassword(), createdTrainer.getUser().getPassword(),
                         "password should be equal"),
-                () -> assertEquals(ds.trainerDto1.getUser().getFirstName(), createdTrainer.getUser().getFirstName(),
+                () -> assertEquals(DataStorage.trainerDto1.getUser().getFirstName(), createdTrainer.getUser().getFirstName(),
                         "firstName should be equal"),
-                () -> assertEquals(ds.trainerDto1.getUser().getLastName(), createdTrainer.getUser().getLastName(),
+                () -> assertEquals(DataStorage.trainerDto1.getUser().getLastName(), createdTrainer.getUser().getLastName(),
                         "lastName should be equal"),
-                () -> assertEquals(ds.trainerDto1.getUser().getIsActive(), createdTrainer.getUser().getIsActive(),
+                () -> assertEquals(DataStorage.trainerDto1.getUser().getIsActive(), createdTrainer.getUser().getIsActive(),
                         "isActive should be equal"),
-                () -> assertEquals(ds.trainerDto1.getSpecialization().getTrainingTypeName(), createdTrainer.getSpecialization().getTrainingTypeName(),
+                () -> assertEquals(DataStorage.trainerDto1.getSpecialization().getTrainingTypeName(), createdTrainer.getSpecialization().getTrainingTypeName(),
                         "specialization should be equal")
         );
     }
 
     @Test
     void selectTrainerSuccessfully() {
-        CreateResponse createResponse = trainerService.create(ds.trainerDto1);
+        CreateResponse createResponse = trainerService.create(DataStorage.trainerDto1);
         userNameForTrainer = createResponse.getUserName();
         Trainer createdTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
         TrainerSelectResponse selectedTrainer = trainerService.select(userNameForTrainer);
@@ -94,11 +95,11 @@ class TrainerServiceIT {
 
     @Test
     void updateTrainerSuccessfully() {
-        CreateResponse createResponse = trainerService.create(ds.trainerDto1);
+        CreateResponse createResponse = trainerService.create(DataStorage.trainerDto1);
         userNameForTrainer = createResponse.getUserName();
 
         TrainerUpdateResponse updatedTrainerResponse =
-                trainerService.update(userNameForTrainer, ds.trainerUpdateRequest);
+                trainerService.update(userNameForTrainer, DataStorage.trainerUpdateRequest);
         String userNameForUpdatedTrainer = updatedTrainerResponse.getUser().getUserName();
         Trainer updatedTrainer = trainerRepository.findByUserName(userNameForTrainer).get();
 
@@ -110,16 +111,16 @@ class TrainerServiceIT {
                 () -> assertNotNull(updatedTrainerResponse.getUser()),
                 () -> assertEquals(userNameForTrainer, userNameForUpdatedTrainer,
                         "userName for created and then updated trainer must be equal"),
-                () -> assertEquals(ds.trainerUpdateRequest.getUser().getFirstName(),
+                () -> assertEquals(DataStorage.trainerUpdateRequest.getUser().getFirstName(),
                         updatedTrainer.getUser().getFirstName(),
                         "firstName should be Maria"),
-                () -> assertEquals(ds.trainerUpdateRequest.getUser().getLastName(),
+                () -> assertEquals(DataStorage.trainerUpdateRequest.getUser().getLastName(),
                         updatedTrainer.getUser().getLastName(),
                         "lastName should be Petrenko"),
-                () -> assertEquals(ds.trainerUpdateRequest.getUser().getIsActive(),
+                () -> assertEquals(DataStorage.trainerUpdateRequest.getUser().getIsActive(),
                         updatedTrainer.getUser().getIsActive(),
                         "isActive should be equal"),
-                () -> assertEquals(ds.trainerUpdateRequest.getSpecialization().getTrainingTypeName(),
+                () -> assertEquals(DataStorage.trainerUpdateRequest.getSpecialization().getTrainingTypeName(),
                         updatedTrainer.getSpecialization().getTrainingTypeName(),
                         "specialization should be equal")
         );

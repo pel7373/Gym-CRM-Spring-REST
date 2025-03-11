@@ -1,4 +1,4 @@
-package org.gym.dto.response.trainingType;
+package org.gym.dto.response.trainingtype;
 
 import lombok.*;
 

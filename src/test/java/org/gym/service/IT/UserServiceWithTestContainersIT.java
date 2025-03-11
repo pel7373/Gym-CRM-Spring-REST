@@ -10,6 +10,7 @@ import org.gym.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -22,12 +23,13 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
+@Rollback
 @Testcontainers
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @ActiveProfiles("prod")
 @WebAppConfiguration
-public class UserServiceWithTestContainersIT {
+class UserServiceWithTestContainersIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -41,7 +43,6 @@ public class UserServiceWithTestContainersIT {
     @Autowired
     private TraineeRepository traineeRepository;
 
-    private final DataStorage ds = new DataStorage();
     private String userNameForTrainee;
 
     @Container
@@ -61,7 +62,7 @@ public class UserServiceWithTestContainersIT {
 
     @Test
     void changeStatusSuccessfully() {
-        CreateResponse createResponse = traineeService.create(ds.traineeDto);
+        CreateResponse createResponse = traineeService.create(DataStorage.traineeDto);
         userNameForTrainee = createResponse.getUserName();
 
         assertAll(
@@ -79,7 +80,7 @@ public class UserServiceWithTestContainersIT {
 
     @Test
     void changePasswordSuccessfully() {
-        CreateResponse createResponse = traineeService.create(ds.traineeDto);
+        CreateResponse createResponse = traineeService.create(DataStorage.traineeDto);
         userNameForTrainee = createResponse.getUserName();
 
         assertAll(
@@ -87,7 +88,7 @@ public class UserServiceWithTestContainersIT {
                 () -> assertNotNull(userNameForTrainee)
         );
 
-        userService.changePassword(ds.changeLoginRequest);
+        userService.changePassword(DataStorage.changeLoginRequest);
         Trainee changedTrainee = traineeRepository.findByUserName(userNameForTrainee).get();
 
         String changedPassword = changedTrainee.getUser().getPassword();
@@ -95,13 +96,13 @@ public class UserServiceWithTestContainersIT {
         assertAll(
                 () -> assertNotNull(changedTrainee),
                 () -> assertNotNull(changedTrainee.getUser()),
-                () -> assertEquals(ds.changeLoginRequest.getNewPassword(), changedPassword)
+                () -> assertEquals(DataStorage.changeLoginRequest.getNewPassword(), changedPassword)
         );
     }
 
     @Test
     void authenticateSuccessfully() {
-        CreateResponse createResponse = traineeService.create(ds.traineeDto);
+        CreateResponse createResponse = traineeService.create(DataStorage.traineeDto);
         userNameForTrainee = createResponse.getUserName();
 
         boolean result = userService.authenticate(createResponse.getUserName(), createResponse.getPassword());
@@ -121,7 +122,7 @@ public class UserServiceWithTestContainersIT {
 
     @Test
     void authenticateNotValidPasswordFail() {
-        CreateResponse createResponse = traineeService.create(ds.traineeDto);
+        CreateResponse createResponse = traineeService.create(DataStorage.traineeDto);
         userNameForTrainee = createResponse.getUserName();
 
         boolean result = userService.authenticate(createResponse.getUserName(), "NotValidPassword");

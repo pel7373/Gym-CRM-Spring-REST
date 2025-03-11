@@ -1,6 +1,7 @@
 package org.gym.service.Test;
 
 import org.gym.DataStorage;
+import org.gym.entity.User;
 import org.gym.exception.AccessDeniedException;
 import org.gym.exception.EntityNotFoundException;
 import org.gym.repository.UserRepository;
@@ -30,120 +31,95 @@ class UserServiceTest {
     @InjectMocks
     private UserServiceImpl userService;
 
-    private final DataStorage ds = new DataStorage();
-
     @Test
-    void changeStatusSuccessfully() {
-        boolean statusInitial = false;
-        boolean isRestoreStatusAtTheEndOfThisTest = true;
+    void changeStatusSuccessfullyWasNull() {
+        User user = new User(null, "Ivan", "Ivanenko", "Ivan.Ivanenko", DataStorage.passwordForUser, null);
 
-        if(ds.user.getIsActive() != null) {
-            statusInitial = ds.user.getIsActive();
-            isRestoreStatusAtTheEndOfThisTest = false;
-        }
+        when(userRepository.findByUserName(user.getUserName())).thenReturn(Optional.of(user));
+        when(userRepository.save(any(User.class))).thenReturn(any(User.class));
 
-        when(userRepository.findByUserName(ds.user.getUserName())).thenReturn(Optional.of(ds.user));
+        boolean status = userService.changeStatus(user.getUserName());
 
-        boolean status = userService.changeStatus(ds.user.getUserName());
-
-        assertEquals(ds.user.getIsActive(), status);
-        verify(userRepository, times(1)).findByUserName(ds.user.getUserName());
-
-        if(isRestoreStatusAtTheEndOfThisTest) {
-            ds.user.setIsActive(statusInitial);
-        }
+        assertTrue(status);
+        verify(userRepository, times(1)).findByUserName(user.getUserName());
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
     void changeStatusSuccessfullyStatusNotNull() {
-        boolean statusInitial = false;
-        boolean isRestoreStatusAtTheEndOfThisTest = true;
+        User user = new User(null, "Ivan", "Ivanenko", "Ivan.Ivanenko", DataStorage.passwordForUser, true);
 
-        if(ds.user2.getIsActive() != null) {
-            statusInitial = ds.user2.getIsActive();
-            isRestoreStatusAtTheEndOfThisTest = false;
-        }
+        when(userRepository.findByUserName( user.getUserName())).thenReturn(Optional.of( user));
+        when(userRepository.save(any(User.class))).thenReturn(any(User.class));
 
-        when(userRepository.findByUserName(ds.user2.getUserName())).thenReturn(Optional.of(ds.user2));
+        boolean status = userService.changeStatus( user.getUserName());
 
-        boolean status = userService.changeStatus(ds.user2.getUserName());
-
-        assertEquals(ds.user2.getIsActive(), status);
-        verify(userRepository, times(1)).findByUserName(ds.user2.getUserName());
-
-        if(isRestoreStatusAtTheEndOfThisTest) {
-            ds.user2.setIsActive(statusInitial);
-        }
+        assertEquals( user.getIsActive(), status);
+        verify(userRepository, times(1)).findByUserName(user.getUserName());
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
     void changeStatusNotFoundFail() {
-        boolean statusInitial = false;
-        boolean isRestoreStatusAtTheEndOfThisTest = true;
+        User user = new User(null, "Ivan", "Ivanenko", "Ivan.Ivanenko", DataStorage.passwordForUser, true);
 
-        if(ds.user.getIsActive() != null) {
-            statusInitial = ds.user.getIsActive();
-            isRestoreStatusAtTheEndOfThisTest = false;
-        }
+        when(userRepository.findByUserName(user.getUserName())).thenReturn(Optional.empty());
 
-        when(userRepository.findByUserName(ds.user.getUserName())).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> userService.changeStatus(user.getUserName()),
+                String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, user.getUserName()));
 
-        assertThrows(EntityNotFoundException.class, () -> userService.changeStatus(ds.user.getUserName()),
-                String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, ds.user.getUserName()));
-
-        verify(userRepository, times(1)).findByUserName(ds.user.getUserName());
-
-        if(isRestoreStatusAtTheEndOfThisTest) {
-            ds.user.setIsActive(statusInitial);
-        }
+        verify(userRepository, times(1)).findByUserName(user.getUserName());
     }
 
     @Test
     void changePasswordSuccessfully() {
-        String oldPassword = ds.user.getPassword();
-        when(userRepository.findByUserName(ds.changeLoginRequest.getUserName())).thenReturn(Optional.of(ds.user));
+        User user = new User(null, "Ivan", "Ivanenko", "Ivan.Ivanenko", DataStorage.passwordForUser, null);
 
-        assertDoesNotThrow(() -> userService.changePassword(ds.changeLoginRequest));
-        verify(userRepository, times(2)).findByUserName(ds.user.getUserName());
-        ds.user.setPassword(oldPassword);
+        when(userRepository.findByUserName(DataStorage.changeLoginRequest.getUserName())).thenReturn(Optional.of(user));
+        when(userRepository.save(user)).thenReturn(user);
+
+        assertDoesNotThrow(() -> userService.changePassword(DataStorage.changeLoginRequest));
+
+        verify(userRepository, times(2)).findByUserName(DataStorage.changeLoginRequest.getUserName());
+        verify(userRepository, times(1)).save(user);
     }
 
     @Test
     void changePasswordFail() {
-        when(userRepository.findByUserName(ds.user.getUserName()))
-                .thenThrow(new EntityNotFoundException(ds.exceptionMessageNotFound));
+        when(userRepository.findByUserName(DataStorage.changeLoginRequest.getUserName()))
+                .thenReturn(Optional.empty());
 
-        assertThrows(AccessDeniedException.class, () -> userService.changePassword(ds.changeLoginRequest),
-                String.format(ACCESS_DENIED_EXCEPTION_MESSAGE_TEMPLATE, ds.changeLoginRequest.getUserName()));
-        verify(userRepository, times(1)).findByUserName(ds.user.getUserName());
+        assertThrows(AccessDeniedException.class, () -> userService.changePassword(DataStorage.changeLoginRequest),
+                String.format(ACCESS_DENIED_EXCEPTION_MESSAGE_TEMPLATE, DataStorage.changeLoginRequest.getUserName()));
+        verify(userRepository, times(1)).findByUserName(DataStorage.changeLoginRequest.getUserName());
     }
 
     @Test
     void authenticateSuccessfully() {
-        when(userRepository.findByUserName(ds.user.getUserName())).thenReturn(Optional.of(ds.user));
+        when(userRepository.findByUserName(DataStorage.user.getUserName())).thenReturn(Optional.of(DataStorage.user));
 
-        boolean result = userService.authenticate(ds.changeLoginRequest.getUserName(), ds.changeLoginRequest.getOldPassword());
+        boolean result = userService.authenticate(DataStorage.user.getUserName(), DataStorage.user.getPassword());
 
         assertTrue(result);
-        verify(userRepository, times(1)).findByUserName(ds.user.getUserName());
+        verify(userRepository, times(1)).findByUserName(DataStorage.user.getUserName());
     }
 
     @Test
     void authenticateNotValidPasswordNotSuccessful() {
-        when(userRepository.findByUserName(ds.user.getUserName())).thenReturn(Optional.of(ds.user));
+        when(userRepository.findByUserName(DataStorage.user.getUserName())).thenReturn(Optional.of(DataStorage.user));
 
-        boolean isAuthenticate = userService.authenticate(ds.user.getUserName(), "NotValidPassword");
+        boolean isAuthenticate = userService.authenticate(DataStorage.user.getUserName(), "NotValidPassword");
 
         assertFalse(isAuthenticate);
-        verify(userRepository, times(1)).findByUserName(ds.user.getUserName());
+        verify(userRepository, times(1)).findByUserName(DataStorage.user.getUserName());
     }
 
     @Test
     void authenticateNotFoundFail() {
-        when(userRepository.findByUserName(ds.user.getUserName())).thenReturn(Optional.empty());
+        when(userRepository.findByUserName(DataStorage.user.getUserName())).thenReturn(Optional.empty());
 
-        assertDoesNotThrow(() -> userService.authenticate(ds.user.getUserName(), "NotValidPassword"));
+        assertDoesNotThrow(() -> userService.authenticate(DataStorage.user.getUserName(), "NotValidPassword"));
 
-        verify(userRepository, times(1)).findByUserName(ds.user.getUserName());
+        verify(userRepository, times(1)).findByUserName(DataStorage.user.getUserName());
     }
 }

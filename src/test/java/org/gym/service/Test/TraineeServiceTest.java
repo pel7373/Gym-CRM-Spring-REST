@@ -65,7 +65,6 @@ class TraineeServiceTest {
     @InjectMocks
     private TraineeServiceImpl traineeService;
 
-    private final DataStorage ds = new DataStorage();
     private Trainee trainee;
     private TraineeDto traineeDto;
     private String userNameForTrainee;
@@ -125,21 +124,60 @@ class TraineeServiceTest {
 
     @Test
     void createTraineeSuccessfully() {
-        when(userNameGeneratorService.generate(ds.traineeDto.getUser().getFirstName(), ds.traineeDto.getUser().getLastName()))
-                .thenReturn(ds.traineeDto.getUser().getUserName());
+        when(userNameGeneratorService.generate(DataStorage.traineeDto.getUser().getFirstName(), DataStorage.traineeDto.getUser().getLastName()))
+                .thenReturn(DataStorage.traineeDto.getUser().getUserName());
         when(passwordGeneratorService.generate()).thenReturn("AAAAAAAAAA");
-        when(traineeRepository.save(ds.trainee1)).thenReturn(ds.trainee1);
-        when(traineeMapper.convertToEntity(traineeDto)).thenReturn(ds.trainee1);
-        when(traineeMapper.convertToCreateResponse(ds.trainee1)).thenReturn(ds.traineeCreateResponse);
+        when(traineeRepository.save(DataStorage.trainee1)).thenReturn(DataStorage.trainee1);
+        when(traineeMapper.convertToEntity(traineeDto)).thenReturn(DataStorage.trainee1);
+        when(traineeMapper.convertToCreateResponse(DataStorage.trainee1)).thenReturn(DataStorage.traineeCreateResponse);
 
         CreateResponse createResponse = traineeService.create(traineeDto);
 
         assertNotNull(createResponse);
-        assertEquals(ds.traineeDto.getUser().getUserName(), createResponse.getUserName());
+        assertEquals(DataStorage.traineeDto.getUser().getUserName(), createResponse.getUserName());
         verify(userNameGeneratorService, times(1)).generate(any(String.class), any(String.class));
         verify(passwordGeneratorService, times(1)).generate();
         verify(traineeRepository, times(1)).save(any(Trainee.class));
     }
+
+    @Test
+    void createTraineeAgainSuccessfully() {
+        when(userNameGeneratorService.generate(DataStorage.traineeDto.getUser().getFirstName(), DataStorage.traineeDto.getUser().getLastName()))
+                .thenReturn(DataStorage.traineeDto.getUser().getUserName());
+        when(passwordGeneratorService.generate()).thenReturn("AAAAAAAAAA");
+        when(traineeRepository.save(DataStorage.trainee1)).thenReturn(DataStorage.trainee1);
+        when(traineeMapper.convertToEntity(traineeDto)).thenReturn(DataStorage.trainee1);
+        when(traineeMapper.convertToCreateResponse(DataStorage.trainee1)).thenReturn(DataStorage.traineeCreateResponse);
+
+        CreateResponse createResponse = traineeService.create(traineeDto);
+
+        assertNotNull(createResponse);
+        assertEquals(DataStorage.traineeDto.getUser().getUserName(), createResponse.getUserName());
+        verify(userNameGeneratorService, times(1)).generate(any(String.class), any(String.class));
+        verify(passwordGeneratorService, times(1)).generate();
+        verify(traineeRepository, times(1)).save(any(Trainee.class));
+    }
+
+    @Test
+    void createTraineeStatusNullSuccessfully() {
+        when(userNameGeneratorService.generate(
+                DataStorage.traineeDto2.getUser().getFirstName(),
+                DataStorage.traineeDto2.getUser().getLastName()))
+                .thenReturn(DataStorage.traineeDto2.getUser().getUserName());
+        when(passwordGeneratorService.generate()).thenReturn("AAAAAAAAAA");
+        when(traineeRepository.save(DataStorage.trainee1)).thenReturn(DataStorage.trainee1);
+        when(traineeMapper.convertToEntity(traineeDto)).thenReturn(DataStorage.trainee1);
+        when(traineeMapper.convertToCreateResponse(DataStorage.trainee1)).thenReturn(DataStorage.traineeCreateResponse);
+
+        CreateResponse createResponse = traineeService.create(traineeDto);
+
+        assertNotNull(createResponse);
+        assertEquals(DataStorage.traineeDto.getUser().getUserName(), createResponse.getUserName());
+        verify(userNameGeneratorService, times(1)).generate(any(String.class), any(String.class));
+        verify(passwordGeneratorService, times(1)).generate();
+        verify(traineeRepository, times(1)).save(any(Trainee.class));
+    }
+
 
     @Test
     void updateExistingTraineeSuccessfully() {
@@ -238,8 +276,56 @@ class TraineeServiceTest {
         verify(userNameGeneratorService, never())
                 .generate(any(String.class), any(String.class));
         verify(traineeMapper, times(1))
-                .convertTraineeToTraineeUpdateResponse(any(Trainee.class));    }
+                .convertTraineeToTraineeUpdateResponse(any(Trainee.class));
+    }
 
+    @Test
+    void updateExistingTraineeAddressDateNullSuccessfully() {
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest("Piter", "Penn", true);
+        TraineeUpdateRequest traineeUpdateRequest = TraineeUpdateRequest.builder()
+                .user(userUpdateRequest)
+                .build();
+
+        User userForUpdate = new User(2L, "Maria", "Ivanova", "Maria.Ivanova", "BBBBBBBBBB", true);
+        Trainee traineeForUpdate = Trainee.builder()
+                .id(2L)
+                .user(userForUpdate)
+                .build();
+
+        User userUpdated = new User(2L, "Piter", "Penn", "Maria.Ivanova", "BBBBBBBBBB", true);
+        Trainee traineeUpdated = Trainee.builder()
+                .id(2L)
+                .user(userUpdated)
+                .build();
+
+        UserUpdateResponse userUpdateResponse = new UserUpdateResponse("Piter", "Penn", "Maria.Ivanova", true);
+        TraineeUpdateResponse traineeUpdateResponse = TraineeUpdateResponse.builder()
+                .user(userUpdateResponse)
+                .build();
+
+        when(traineeRepository.findByUserName(userForUpdate.getUserName()))
+                .thenReturn(Optional.ofNullable(traineeForUpdate));
+        when(traineeRepository.save(traineeUpdated)).thenReturn(traineeUpdated);
+        when(traineeMapper.convertTraineeToTraineeUpdateResponse(traineeUpdated)).thenReturn(traineeUpdateResponse);
+
+        TraineeUpdateResponse traineeUpdateResponseActual = traineeService.update(userForUpdate.getUserName(), traineeUpdateRequest);
+
+        assertAll(
+                "Grouped assertions of selected traineeDto",
+                () -> assertNotNull(traineeUpdateResponseActual),
+                () -> assertEquals(traineeUpdateResponse.getUser().getFirstName(),
+                        traineeUpdateResponseActual.getUser().getFirstName(), "firstName should be Maria"),
+                () -> assertEquals(traineeUpdateResponse.getUser().getLastName(),
+                        traineeUpdateResponseActual.getUser().getLastName(), "lastName should be Petrenko")
+        );
+
+        verify(traineeRepository, times(1)).findByUserName("Maria.Ivanova");
+        verify(traineeRepository, times(1)).save(traineeUpdated);
+        verify(userNameGeneratorService, never())
+                .generate(any(String.class), any(String.class));
+        verify(traineeMapper, times(1))
+                .convertTraineeToTraineeUpdateResponse(any(Trainee.class));
+    }
 
     @Test
     void updateTraineeNotFound() {
@@ -273,14 +359,14 @@ class TraineeServiceTest {
 
     @Test
     void getUnassignedTrainersListSuccessfully() {
-        when(traineeRepository.findByUserName(ds.trainee1.getUser().getUserName()))
-                .thenReturn(Optional.of(ds.trainee1));
-        when(trainerRepository.findAll()).thenReturn(List.of(ds.trainer1, ds.trainer2));
+        when(traineeRepository.findByUserName(DataStorage.trainee1.getUser().getUserName()))
+                .thenReturn(Optional.of(DataStorage.trainee1));
+        when(trainerRepository.findAll()).thenReturn(List.of(DataStorage.trainer1, DataStorage.trainer2));
         when(trainerMapper.convertTrainerListToTrainerForListResponseList(any())).thenReturn(any());
 
-        traineeService.getUnassignedTrainersList(ds.trainee1.getUser().getUserName());
+        traineeService.getUnassignedTrainersList(DataStorage.trainee1.getUser().getUserName());
 
-        verify(traineeRepository, times(1)).findByUserName(ds.trainee1.getUser().getUserName());
+        verify(traineeRepository, times(1)).findByUserName(DataStorage.trainee1.getUser().getUserName());
         verify(trainerRepository, times(1)).findAll();
         verify(trainerMapper, times(1)).convertTrainerListToTrainerForListResponseList(any());
     }
@@ -298,21 +384,21 @@ class TraineeServiceTest {
 
     @Test
     void updateTrainersListSuccessfully() {
-        when(traineeRepository.findByUserName(ds.traineeUserName))
-                .thenReturn(Optional.of(ds.trainee1));
+        when(traineeRepository.findByUserName(DataStorage.traineeUserName))
+                .thenReturn(Optional.of(DataStorage.trainee1));
         when(trainerMapper.convertTrainerListToTrainerForListResponseList(any())).thenReturn(any());
 
-        when(trainerRepository.findByUserName(ds.trainer1.getUser().getUserName()))
-                .thenReturn(Optional.of(ds.trainer1));
-        when(trainerRepository.findByUserName(ds.trainer2.getUser().getUserName()))
-                .thenReturn(Optional.of(ds.trainer2));
+        when(trainerRepository.findByUserName(DataStorage.trainer1.getUser().getUserName()))
+                .thenReturn(Optional.of(DataStorage.trainer1));
+        when(trainerRepository.findByUserName(DataStorage.trainer2.getUser().getUserName()))
+                .thenReturn(Optional.of(DataStorage.trainer2));
         List<String> listTrainersUserNames = List.of(
-                ds.trainer1.getUser().getUserName(),
-                ds.trainer2.getUser().getUserName());
+                DataStorage.trainer1.getUser().getUserName(),
+                DataStorage.trainer2.getUser().getUserName());
 
-        traineeService.updateTrainersList(ds.traineeUserName, listTrainersUserNames);
+        traineeService.updateTrainersList(DataStorage.traineeUserName, listTrainersUserNames);
 
-        verify(traineeRepository, times(1)).findByUserName(ds.traineeUserName);
+        verify(traineeRepository, times(1)).findByUserName(DataStorage.traineeUserName);
         verify(trainerRepository, times(2)).findByUserName(any());
         verify(trainerMapper, times(1)).convertTrainerListToTrainerForListResponseList(any());
 

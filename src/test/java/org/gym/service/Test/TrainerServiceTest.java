@@ -55,8 +55,6 @@ class TrainerServiceTest {
     @InjectMocks
     private TrainerServiceImpl trainerService;
 
-    private final DataStorage ds = new DataStorage();
-
     private TrainerDto trainerDto;
     private Trainer trainer;
     private String userNameForTrainerDto;
@@ -93,43 +91,43 @@ class TrainerServiceTest {
 
     @Test
     void createTrainerSuccessfully() {
-        when(trainerRepository.save(ds.trainer1)).thenReturn(ds.trainer1);
-        when(trainingTypeRepository.findByName(ds.trainerTrainingTypeName))
-                .thenReturn(Optional.ofNullable(ds.trainerTrainingType));
+        when(trainerRepository.save(DataStorage.trainer1)).thenReturn(DataStorage.trainer1);
+        when(trainingTypeRepository.findByName(DataStorage.trainerTrainingTypeName))
+                .thenReturn(Optional.ofNullable(DataStorage.trainerTrainingType));
         when(userNameGeneratorService.generate(anyString(), anyString()))
-                .thenReturn(ds.trainerDto1.getUser().getUserName());
-        when(passwordGeneratorService.generate()).thenReturn(ds.trainer1.getUser().getPassword());
-        when(trainerMapper.convertToEntity(ds.trainerDto1)).thenReturn(ds.trainer1);
-        when(trainerMapper.convertToCreateResponse(ds.trainer1)).thenReturn(ds.trainerCreateResponse);
+                .thenReturn(DataStorage.trainerDto1.getUser().getUserName());
+        when(passwordGeneratorService.generate()).thenReturn(DataStorage.trainer1.getUser().getPassword());
+        when(trainerMapper.convertToEntity(DataStorage.trainerDto1)).thenReturn(DataStorage.trainer1);
+        when(trainerMapper.convertToCreateResponse(DataStorage.trainer1)).thenReturn(DataStorage.trainerCreateResponse);
 
-        trainerService.create(ds.trainerDto1);
+        trainerService.create(DataStorage.trainerDto1);
 
         verify(trainerRepository, times(1)).save(any(Trainer.class));
         verify(trainingTypeRepository, times(1)).findByName(any(String.class));
-        verify(trainerMapper, times(1)).convertToEntity(ds.trainerDto1);
-        verify(trainerMapper, times(1)).convertToCreateResponse(ds.trainer1);
+        verify(trainerMapper, times(1)).convertToEntity(DataStorage.trainerDto1);
+        verify(trainerMapper, times(1)).convertToCreateResponse(DataStorage.trainer1);
         verify(userNameGeneratorService, times(1)).generate(any(String.class), any(String.class));
         verify(passwordGeneratorService, times(1)).generate();
     }
 
     @Test
     void createTrainerNotValidTrainingTypeFail() {
-        when(trainerRepository.save(ds.trainer1)).thenReturn(ds.trainer1);
-        when(trainingTypeRepository.findByName(ds.trainerTrainingTypeName))
+        when(trainerRepository.save(DataStorage.trainer1)).thenReturn(DataStorage.trainer1);
+        when(trainingTypeRepository.findByName(DataStorage.trainerTrainingTypeName))
                 .thenReturn(Optional.empty());
         when(userNameGeneratorService.generate(anyString(), anyString()))
-                .thenReturn(ds.trainerDto1.getUser().getUserName());
-        when(passwordGeneratorService.generate()).thenReturn(ds.trainer1.getUser().getPassword());
-        when(trainerMapper.convertToEntity(ds.trainerDto1)).thenReturn(ds.trainer1);
-        when(trainerMapper.convertToCreateResponse(ds.trainer1)).thenReturn(ds.trainerCreateResponse);
+                .thenReturn(DataStorage.trainerDto1.getUser().getUserName());
+        when(passwordGeneratorService.generate()).thenReturn(DataStorage.trainer1.getUser().getPassword());
+        when(trainerMapper.convertToEntity(DataStorage.trainerDto1)).thenReturn(DataStorage.trainer1);
+        when(trainerMapper.convertToCreateResponse(DataStorage.trainer1)).thenReturn(DataStorage.trainerCreateResponse);
 
-        assertThrows(EntityNotFoundException.class, () -> trainerService.create(ds.trainerDto1));
+        assertThrows(EntityNotFoundException.class, () -> trainerService.create(DataStorage.trainerDto1));
 
         verify(trainerRepository, times(0)).save(any(Trainer.class));
         verify(trainingTypeRepository, times(1)).findByName(any(String.class));
-        verify(trainerMapper, times(0)).convertToEntity(ds.trainerDto1);
-        verify(trainerMapper, times(0)).convertToCreateResponse(ds.trainer1);
-        verify(userNameGeneratorService, times(1)).generate(any(String.class), any(String.class));
+        verify(trainerMapper, times(0)).convertToEntity(DataStorage.trainerDto1);
+        verify(trainerMapper, times(0)).convertToCreateResponse(DataStorage.trainer1);
+        verify(userNameGeneratorService, times(0)).generate(any(String.class), any(String.class));
         verify(passwordGeneratorService, times(0)).generate();
     }
 

@@ -1,7 +1,7 @@
 package org.gym.controller.Test;
 
 import org.gym.controller.impl.TrainingTypeControllerImpl;
-import org.gym.dto.response.trainingType.TrainingTypeResponse;
+import org.gym.dto.response.trainingtype.TrainingTypeResponse;
 import org.gym.service.TrainingTypeService;
 import org.gym.util.TransactionIdGenerator;
 import org.junit.jupiter.api.BeforeEach;

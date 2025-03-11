@@ -3,7 +3,7 @@ package org.gym.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gym.annotation.GymService;
-import org.gym.dto.response.trainingType.TrainingTypeResponse;
+import org.gym.dto.response.trainingtype.TrainingTypeResponse;
 import org.gym.repository.TrainingTypeRepository;
 import org.gym.service.TrainingTypeService;
 

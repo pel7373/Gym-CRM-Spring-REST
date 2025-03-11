@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gym.controller.TrainingTypeController;
-import org.gym.dto.response.trainingType.TrainingTypeResponse;
+import org.gym.dto.response.trainingtype.TrainingTypeResponse;
 import org.gym.service.TrainingTypeService;
 import org.gym.util.TransactionIdGenerator;
 import org.springframework.http.HttpStatus;

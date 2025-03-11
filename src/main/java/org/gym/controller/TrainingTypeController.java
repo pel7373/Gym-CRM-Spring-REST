@@ -2,7 +2,7 @@ package org.gym.controller;
 
 import org.gym.controller.annotation.SwaggerOperationInfo;
 import org.gym.controller.annotation.responses.GetAllResponse;
-import org.gym.dto.response.trainingType.TrainingTypeResponse;
+import org.gym.dto.response.trainingtype.TrainingTypeResponse;
 
 import java.util.List;
 

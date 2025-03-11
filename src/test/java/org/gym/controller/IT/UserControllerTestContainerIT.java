@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Testcontainers
 @Transactional
+@Rollback
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @ActiveProfiles("prod")
@@ -47,9 +49,8 @@ class UserControllerTestContainerIT {
     @Autowired
     private TraineeRepository traineeRepository;
 
-    private final DataStorage ds = new DataStorage();
-    String userName = ds.changeLoginRequest.getUserName();
-    String password = ds.changeLoginRequest.getOldPassword();
+    String userName = DataStorage.changeLoginRequest.getUserName();
+    String password = DataStorage.changeLoginRequest.getOldPassword();
 
     @Container
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
@@ -68,22 +69,22 @@ class UserControllerTestContainerIT {
 
     @BeforeEach
     void setUp() {
-        traineeController.create(ds.traineeDto);
+        traineeController.create(DataStorage.traineeDto);
     }
 
     @Test
     void changePasswordSuccessfully() {
-        userController.changeLogin(ds.changeLoginRequest);
-        Trainee trainee = traineeRepository.findByUserName(ds.changeLoginRequest.getUserName()).get();
+        userController.changeLogin(DataStorage.changeLoginRequest);
+        Trainee trainee = traineeRepository.findByUserName(DataStorage.changeLoginRequest.getUserName()).get();
         assertNotNull(trainee);
-        assertEquals(ds.changeLoginRequest.getNewPassword(), trainee.getUser().getPassword());
+        assertEquals(DataStorage.changeLoginRequest.getNewPassword(), trainee.getUser().getPassword());
     }
 
     @Test
     void changeStatusSuccessfully() {
-        boolean oldStatus = traineeRepository.findByUserName(ds.traineeDto.getUser().getUserName()).get().getUser().getIsActive();
-        boolean result = userController.changeStatus(ds.traineeDto.getUser().getUserName());
-        boolean newStatus = traineeRepository.findByUserName(ds.traineeDto.getUser().getUserName()).get().getUser().getIsActive();
+        boolean oldStatus = traineeRepository.findByUserName(DataStorage.traineeDto.getUser().getUserName()).get().getUser().getIsActive();
+        boolean result = userController.changeStatus(DataStorage.traineeDto.getUser().getUserName());
+        boolean newStatus = traineeRepository.findByUserName(DataStorage.traineeDto.getUser().getUserName()).get().getUser().getIsActive();
         assertAll(
                 () -> assertEquals(newStatus, result),
                 () -> assertEquals(!oldStatus, newStatus),

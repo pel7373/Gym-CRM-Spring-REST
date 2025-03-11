@@ -41,8 +41,6 @@ class TrainerMapperTest {
     @Autowired
     private TrainerMapper trainerMapper;
 
-    private final DataStorage ds = new DataStorage();
-
     @Test
     void convertToDto() {
         Trainer trainer = Trainer.builder()
@@ -110,13 +108,13 @@ class TrainerMapperTest {
 
     @Test
     void convertToCreateResponse() {
-        CreateResponse createResponse = trainerMapper.convertToCreateResponse(ds.trainer1);
+        CreateResponse createResponse = trainerMapper.convertToCreateResponse(DataStorage.trainer1);
 
         assertAll(
                 "Grouped assertions of created traineeDto",
                 () -> assertNotNull(createResponse),
-                () -> assertEquals(createResponse.getUserName(), ds.trainer1.getUser().getUserName(), "check userName"),
-                () -> assertEquals(createResponse.getPassword(), ds.trainer1.getUser().getPassword(), "check password")
+                () -> assertEquals(createResponse.getUserName(), DataStorage.trainer1.getUser().getUserName(), "check userName"),
+                () -> assertEquals(createResponse.getPassword(), DataStorage.trainer1.getUser().getPassword(), "check password")
         );
     }
 

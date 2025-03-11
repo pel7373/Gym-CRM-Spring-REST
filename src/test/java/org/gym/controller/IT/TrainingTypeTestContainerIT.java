@@ -3,10 +3,11 @@ package org.gym.controller.IT;
 import org.gym.DataStorage;
 import org.gym.config.Config;
 import org.gym.controller.TrainingTypeController;
-import org.gym.dto.response.trainingType.TrainingTypeResponse;
+import org.gym.dto.response.trainingtype.TrainingTypeResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
 @Transactional
+@Rollback
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @ActiveProfiles("prod")
@@ -54,16 +56,14 @@ class TrainingTypeTestContainerIT {
     @Autowired
     private TrainingTypeController trainingTypeController;
 
-    private final DataStorage ds = new DataStorage();
-
     @Test
     void getAll() {
         List<TrainingTypeResponse> trainingTypeResponseList = trainingTypeController.getAll();
 
-        assertEquals(ds.expectedTrainingTypeNamesList.size(), trainingTypeResponseList.size());
+        assertEquals(DataStorage.expectedTrainingTypeNamesList.size(), trainingTypeResponseList.size());
 
         trainingTypeResponseList
                 .forEach(t ->
-                        assertTrue(ds.expectedTrainingTypeNamesList.contains(t.getTrainingTypeName()), String.format("trainingTypeList contains %s name", t.getTrainingTypeName())));
+                        assertTrue(DataStorage.expectedTrainingTypeNamesList.contains(t.getTrainingTypeName()), String.format("trainingTypeList contains %s name", t.getTrainingTypeName())));
     }
 }

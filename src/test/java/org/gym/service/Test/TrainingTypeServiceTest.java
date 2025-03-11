@@ -1,7 +1,7 @@
 package org.gym.service.Test;
 
 import org.gym.DataStorage;
-import org.gym.dto.response.trainingType.TrainingTypeResponse;
+import org.gym.dto.response.trainingtype.TrainingTypeResponse;
 import org.gym.repository.TrainingTypeRepository;
 import org.gym.service.impl.TrainingTypeServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -27,18 +27,16 @@ class TrainingTypeServiceTest {
     @InjectMocks
     private TrainingTypeServiceImpl trainingTypeService;
 
-    private final DataStorage ds = new DataStorage();
-
     @Test
     void getAll() {
-        when(trainingTypeRepository.findAll()).thenReturn(ds.trainingTypeList);
+        when(trainingTypeRepository.findAll()).thenReturn(DataStorage.trainingTypeList);
 
         List<TrainingTypeResponse> trainingTypeResponseList = trainingTypeService.findAll();
 
-        assertEquals(ds.expectedTrainingTypeNamesList.size(), trainingTypeResponseList.size());
+        assertEquals(DataStorage.expectedTrainingTypeNamesList.size(), trainingTypeResponseList.size());
 
         trainingTypeResponseList
                 .forEach(t ->
-                        assertTrue(ds.expectedTrainingTypeNamesList.contains(t.getTrainingTypeName()), String.format("trainingTypeList contains %s name", t.getTrainingTypeName())));
+                        assertTrue(DataStorage.expectedTrainingTypeNamesList.contains(t.getTrainingTypeName()), String.format("trainingTypeList contains %s name", t.getTrainingTypeName())));
     }
 }

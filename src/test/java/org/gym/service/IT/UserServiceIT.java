@@ -10,6 +10,7 @@ import org.gym.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -21,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
+@Rollback
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -40,12 +42,11 @@ class UserServiceIT {
     @Autowired
     private TraineeRepository traineeRepository;
 
-    private final DataStorage ds = new DataStorage();
     private String userNameForTrainee;
 
     @Test
     void changeStatusSuccessfully() {
-        CreateResponse createResponse = traineeService.create(ds.traineeDto);
+        CreateResponse createResponse = traineeService.create(DataStorage.traineeDto);
         userNameForTrainee = createResponse.getUserName();
 
         assertAll(
@@ -63,7 +64,7 @@ class UserServiceIT {
 
     @Test
     void changePasswordSuccessfully() {
-        CreateResponse createResponse = traineeService.create(ds.traineeDto);
+        CreateResponse createResponse = traineeService.create(DataStorage.traineeDto);
         userNameForTrainee = createResponse.getUserName();
 
         assertAll(
@@ -71,7 +72,7 @@ class UserServiceIT {
                 () -> assertNotNull(userNameForTrainee)
         );
 
-        userService.changePassword(ds.changeLoginRequest);
+        userService.changePassword(DataStorage.changeLoginRequest);
         Trainee changedTrainee = traineeRepository.findByUserName(userNameForTrainee).get();
 
         String changedPassword = changedTrainee.getUser().getPassword();
@@ -79,13 +80,13 @@ class UserServiceIT {
         assertAll(
                 () -> assertNotNull(changedTrainee),
                 () -> assertNotNull(changedTrainee.getUser()),
-                () -> assertEquals(ds.changeLoginRequest.getNewPassword(), changedPassword)
+                () -> assertEquals(DataStorage.changeLoginRequest.getNewPassword(), changedPassword)
         );
     }
 
     @Test
     void authenticateSuccessfully() {
-        CreateResponse createResponse = traineeService.create(ds.traineeDto);
+        CreateResponse createResponse = traineeService.create(DataStorage.traineeDto);
         userNameForTrainee = createResponse.getUserName();
 
         boolean result = userService.authenticate(createResponse.getUserName(), createResponse.getPassword());
@@ -105,7 +106,7 @@ class UserServiceIT {
 
     @Test
     void authenticateNotValidPasswordFail() {
-        CreateResponse createResponse = traineeService.create(ds.traineeDto);
+        CreateResponse createResponse = traineeService.create(DataStorage.traineeDto);
         userNameForTrainee = createResponse.getUserName();
 
         boolean result = userService.authenticate(createResponse.getUserName(), "NotValidPassword");

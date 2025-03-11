@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -22,12 +23,13 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
+@Rollback
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class, TestConfig.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
 @WebAppConfiguration
 @ActiveProfiles("test")
-public class UserControllerIT {
+class UserControllerIT {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -41,28 +43,27 @@ public class UserControllerIT {
     @Autowired
     private TraineeRepository traineeRepository;
 
-    private final DataStorage ds = new DataStorage();
-    String userName = ds.changeLoginRequest.getUserName();
-    String password = ds.changeLoginRequest.getOldPassword();
+    String userName = DataStorage.changeLoginRequest.getUserName();
+    String password = DataStorage.changeLoginRequest.getOldPassword();
 
     @BeforeEach
     void setUp() {
-        traineeController.create(ds.traineeDto);
+        traineeController.create(DataStorage.traineeDto);
     }
 
     @Test
     void changePasswordSuccessfully() {
-        userController.changeLogin(ds.changeLoginRequest);
-        Trainee trainee = traineeRepository.findByUserName(ds.changeLoginRequest.getUserName()).get();
+        userController.changeLogin(DataStorage.changeLoginRequest);
+        Trainee trainee = traineeRepository.findByUserName(DataStorage.changeLoginRequest.getUserName()).get();
         assertNotNull(trainee);
-        assertEquals(ds.changeLoginRequest.getNewPassword(), trainee.getUser().getPassword());
+        assertEquals(DataStorage.changeLoginRequest.getNewPassword(), trainee.getUser().getPassword());
     }
 
     @Test
     void changeStatusSuccessfully() {
-        boolean oldStatus = traineeRepository.findByUserName(ds.traineeDto.getUser().getUserName()).get().getUser().getIsActive();
-        boolean result = userController.changeStatus(ds.traineeDto.getUser().getUserName());
-        boolean newStatus = traineeRepository.findByUserName(ds.traineeDto.getUser().getUserName()).get().getUser().getIsActive();
+        boolean oldStatus = traineeRepository.findByUserName(DataStorage.traineeDto.getUser().getUserName()).get().getUser().getIsActive();
+        boolean result = userController.changeStatus(DataStorage.traineeDto.getUser().getUserName());
+        boolean newStatus = traineeRepository.findByUserName(DataStorage.traineeDto.getUser().getUserName()).get().getUser().getIsActive();
         assertAll(
                 () -> assertEquals(newStatus, result),
                 () -> assertEquals(!oldStatus, newStatus),
@@ -80,6 +81,6 @@ public class UserControllerIT {
     void loginNotValidPasswordFail() {
         String notValidPassword = "notValidPassword";
         ResponseEntity<Void> response = userController.login(userName, notValidPassword);
-        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }

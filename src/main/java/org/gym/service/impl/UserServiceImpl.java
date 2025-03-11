@@ -30,20 +30,16 @@ public class UserServiceImpl implements UserService {
         } else  {
             user.setIsActive(!user.getIsActive());
         }
-
+        userRepository.save(user);
         return user.getIsActive();
     }
 
     @Override
     public boolean authenticate(String userName, String password) {
-        try {
-            User user = userRepository.findByUserName(userName)
-                    .orElseThrow(() -> new EntityNotFoundException(String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userName))
-                    );
-            return user.getPassword().equals(password);
-        } catch (EntityNotFoundException e) {
-            return false;
-        }
+        return userRepository.findByUserName(userName)
+                .map(User::getPassword)
+                .filter(pas -> pas.equals(password))
+                .isPresent();
     }
 
     @Override
@@ -58,5 +54,6 @@ public class UserServiceImpl implements UserService {
                         String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, changeLoginRequest.getUserName()))
                 );
         user.setPassword(changeLoginRequest.getNewPassword());
+        userRepository.save(user);
     }
 }

@@ -62,4 +62,14 @@ class UserMapperTest {
         User user = userMapper.convertToEntity(null);
         assertNull(user, "ConvertToEntity: null when input is null");
     }
+
+    @Test
+    void convertUserToUserUpdateResponseUserNull() {
+        assertNull(userMapper.convertUserToUserUpdateResponse(null));
+    }
+
+    @Test
+    void convertDtoToForListResponseUserNull() {
+    assertNull(userMapper.convertDtoToForListResponse(null));
+    }
 }

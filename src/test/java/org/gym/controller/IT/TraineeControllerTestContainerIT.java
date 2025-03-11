@@ -1,6 +1,7 @@
 package org.gym.controller.IT;
 
 import org.gym.DataStorage;
+import org.gym.DataStorage2;
 import org.gym.config.Config;
 import org.gym.controller.TraineeController;
 import org.gym.dto.response.CreateResponse;
@@ -16,6 +17,7 @@ import org.gym.repository.TrainingTypeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -35,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Testcontainers
 @Transactional
+@Rollback
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Config.class})
 @ActiveProfiles("prod")
@@ -71,13 +74,13 @@ class TraineeControllerTestContainerIT {
     @Autowired
     private TrainingTypeRepository trainingTypeRepository;
 
-    private final DataStorage ds = new DataStorage();
     private String userNameForTrainee;
+    private final DataStorage2 ds2 = new DataStorage2();
 
     @Test
     void createTraineeSuccessfully() {
-        CreateResponse createResponse = traineeController.create(ds.traineeDto);
-        userNameForTrainee = ds.traineeDto.getUser().getUserName();
+        CreateResponse createResponse = traineeController.create(DataStorage.traineeDto);
+        userNameForTrainee = DataStorage.traineeDto.getUser().getUserName();
         Trainee createdTrainee = traineeRepository.findByUserName(userNameForTrainee).get();
 
         assertAll(
@@ -85,19 +88,19 @@ class TraineeControllerTestContainerIT {
                 () -> assertNotNull(createResponse),
                 () -> assertNotNull(createdTrainee),
                 () -> assertNotNull(createdTrainee.getUser()),
-                () -> assertEquals(ds.traineeDto.getUser().getFirstName(), createdTrainee.getUser().getFirstName(),
+                () -> assertEquals(DataStorage.traineeDto.getUser().getFirstName(), createdTrainee.getUser().getFirstName(),
                         "firstName should be Maria"),
-                () -> assertEquals(ds.traineeDto.getUser().getLastName(), createdTrainee.getUser().getLastName(),
+                () -> assertEquals(DataStorage.traineeDto.getUser().getLastName(), createdTrainee.getUser().getLastName(),
                         "lastName should be Petrenko"),
                 () -> assertTrue(createdTrainee.getUser().getIsActive(), "isActive should be true"),
-                () -> assertEquals(ds.traineeDto.getAddress(), createdTrainee.getAddress(),
+                () -> assertEquals(DataStorage.traineeDto.getAddress(), createdTrainee.getAddress(),
                         "address should be Vinnitsya, Soborna str. 35, ap. 26")
         );
     }
 
     @Test
     void selectTraineeSuccessfully() {
-        CreateResponse createResponse = traineeController.create(ds.traineeDto);
+        CreateResponse createResponse = traineeController.create(DataStorage.traineeDto);
         userNameForTrainee = createResponse.getUserName();
         String passwordForCreatedTrainee = traineeRepository.findByUserName(userNameForTrainee).get().getUser().getPassword();
         TraineeSelectResponse select = traineeController.getTraineeProfile(userNameForTrainee);
@@ -108,14 +111,14 @@ class TraineeControllerTestContainerIT {
                 () -> assertNotNull(createResponse),
                 () -> assertNotNull(select),
                 () -> assertNotNull(select.getUser()),
-                () -> assertEquals(ds.traineeDto.getUser().getFirstName(), select.getUser().getFirstName(),
+                () -> assertEquals(DataStorage.traineeDto.getUser().getFirstName(), select.getUser().getFirstName(),
                         "firstName should be Maria"),
-                () -> assertEquals(ds.traineeDto.getUser().getLastName(), select.getUser().getLastName(),
+                () -> assertEquals(DataStorage.traineeDto.getUser().getLastName(), select.getUser().getLastName(),
                         "lastName should be Petrenko"),
                 () -> assertEquals(passwordForCreatedTrainee, passwordForSelectedTrainee,
                         "password should be equal"),
                 () -> assertTrue(select.getUser().getIsActive(), "isActive should be true"),
-                () -> assertEquals(ds.traineeDto.getAddress(), select.getAddress(),
+                () -> assertEquals(DataStorage.traineeDto.getAddress(), select.getAddress(),
                         "address should be Vinnitsya, Soborna str. 35, ap. 26")
         );
 
@@ -124,56 +127,56 @@ class TraineeControllerTestContainerIT {
         assertNotNull(selectedTrainee.getUser());
         assertAll(
                 "Grouped assertions of created trainee",
-                () -> assertEquals(ds.traineeDto.getUser().getFirstName(), selectedTrainee.getUser().getFirstName(),
+                () -> assertEquals(DataStorage.traineeDto.getUser().getFirstName(), selectedTrainee.getUser().getFirstName(),
                         "firstName should be Maria"),
-                () -> assertEquals(ds.traineeDto.getUser().getLastName(), selectedTrainee.getUser().getLastName(),
+                () -> assertEquals(DataStorage.traineeDto.getUser().getLastName(), selectedTrainee.getUser().getLastName(),
                         "lastName should be Petrenko"),
                 () -> assertEquals(passwordForCreatedTrainee, passwordForSelectedTrainee,
                         "password should be equal"),
                 () -> assertTrue(selectedTrainee.getUser().getIsActive(), "isActive should be true"),
-                () -> assertEquals(ds.traineeDto.getAddress(), selectedTrainee.getAddress(),
+                () -> assertEquals(DataStorage.traineeDto.getAddress(), selectedTrainee.getAddress(),
                         "address should be equal")
         );
     }
 
     @Test
     void updateTraineeSuccessfully() {
-        CreateResponse createResponse = traineeController.create(ds.traineeDto);
+        CreateResponse createResponse = traineeController.create(DataStorage.traineeDto);
         userNameForTrainee = createResponse.getUserName();
-        TraineeUpdateResponse traineeUpdateResponse = traineeController.update(userNameForTrainee, ds.traineeUpdateRequest);
+        TraineeUpdateResponse traineeUpdateResponse = traineeController.update(userNameForTrainee, DataStorage.traineeUpdateRequest);
         userNameForTrainee = traineeUpdateResponse.getUser().getUserName();
 
         assertAll(
                 "Grouped assertions of selected traineeDto",
                 () -> assertNotNull(traineeUpdateResponse),
                 () -> assertNotNull(traineeUpdateResponse.getUser()),
-                () -> assertEquals(ds.traineeUpdateRequest.getUser().getFirstName(), traineeUpdateResponse.getUser().getFirstName(),
+                () -> assertEquals(DataStorage.traineeUpdateRequest.getUser().getFirstName(), traineeUpdateResponse.getUser().getFirstName(),
                         "firstName should be Maria"),
-                () -> assertEquals(ds.traineeUpdateRequest.getUser().getLastName(), traineeUpdateResponse.getUser().getLastName(),
+                () -> assertEquals(DataStorage.traineeUpdateRequest.getUser().getLastName(), traineeUpdateResponse.getUser().getLastName(),
                         "lastName should be Petrenko"),
                 () -> assertTrue(traineeUpdateResponse.getUser().getIsActive(), "isActive should be true"),
-                () -> assertEquals(ds.traineeUpdateRequest.getAddress(), traineeUpdateResponse.getAddress(),
+                () -> assertEquals(DataStorage.traineeUpdateRequest.getAddress(), traineeUpdateResponse.getAddress(),
                         "address should be equal")
         );
 
-        Trainee updatedTrainee = traineeRepository.findByUserName(ds.traineeDto.getUser().getUserName()).get();
+        Trainee updatedTrainee = traineeRepository.findByUserName(DataStorage.traineeDto.getUser().getUserName()).get();
         assertNotNull(updatedTrainee);
         assertNotNull(updatedTrainee.getUser());
         assertAll(
                 "Grouped assertions of created trainee",
-                () -> assertEquals(ds.traineeUpdateRequest.getUser().getFirstName(), updatedTrainee.getUser().getFirstName(),
+                () -> assertEquals(DataStorage.traineeUpdateRequest.getUser().getFirstName(), updatedTrainee.getUser().getFirstName(),
                         "firstName should be Maria"),
-                () -> assertEquals(ds.traineeUpdateRequest.getUser().getLastName(), updatedTrainee.getUser().getLastName(),
+                () -> assertEquals(DataStorage.traineeUpdateRequest.getUser().getLastName(), updatedTrainee.getUser().getLastName(),
                         "lastName should be Petrenko"),
                 () -> assertTrue(updatedTrainee.getUser().getIsActive(), "isActive should be true"),
-                () -> assertEquals(ds.traineeUpdateRequest.getAddress(), updatedTrainee.getAddress(),
+                () -> assertEquals(DataStorage.traineeUpdateRequest.getAddress(), updatedTrainee.getAddress(),
                         "address should be Vinnitsya, Soborna str. 35, ap. 26")
         );
     }
 
     @Test
     void deleteTraineeSuccessfully() {
-        CreateResponse createResponse = traineeController.create(ds.traineeDto);
+        CreateResponse createResponse = traineeController.create(DataStorage.traineeDto);
         userNameForTrainee = createResponse.getUserName();
 
         assertNotNull(createResponse);
@@ -186,14 +189,15 @@ class TraineeControllerTestContainerIT {
     void getUnassignedTrainersListSuccessfully() {
         String trainingTypeNameTrainer = "Zumba";
         TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeNameTrainer).get();
-        ds.trainer1.setSpecialization(trainingType);
-        ds.trainer2.setSpecialization(trainingType);
-        Trainee createdTrainee1 = traineeRepository.save(ds.trainee1);
-        Trainer createdTrainer1 = trainerRepository.save(ds.trainer1);
-        Trainer createdTrainer2 = trainerRepository.save(ds.trainer2);
+        ds2.trainer1.setSpecialization(trainingType);
+        ds2.trainer2.setSpecialization(trainingType);
+        Trainee createdTrainee1 = traineeRepository.save(ds2.trainee1);
+        Trainer createdTrainer1 = trainerRepository.save(ds2.trainer1);
+        Trainer createdTrainer2 = trainerRepository.save(ds2.trainer2);
         createdTrainee1.setTrainers(List.of(createdTrainer1));
 
-        List<TrainerForListResponse> unassignedTrainersList = traineeController.getUnassignedTrainers(ds.traineeUserName);
+        List<TrainerForListResponse> unassignedTrainersList =
+                traineeController.getUnassignedTrainers(DataStorage.traineeUserName);
 
         assertAll(
                 "Grouped assertions of getUnassigned trainers' list",
@@ -206,13 +210,14 @@ class TraineeControllerTestContainerIT {
     @Test
     void getUnassignedTrainersListEmpty() {
         String trainingTypeNameTrainer = "Zumba";
+
         TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeNameTrainer).get();
-        ds.trainer1.setSpecialization(trainingType);
-        Trainee createdTrainee1 = traineeRepository.save(ds.trainee1);
-        Trainer createdTrainer1 = trainerRepository.save(ds.trainer1);
+        ds2.trainer1.setSpecialization(trainingType);
+        Trainee createdTrainee1 = traineeRepository.save(ds2.trainee1);
+        Trainer createdTrainer1 = trainerRepository.save(ds2.trainer1);
         createdTrainee1.setTrainers(List.of(createdTrainer1));
 
-        List<TrainerForListResponse> unassignedTrainersList = traineeController.getUnassignedTrainers(ds.traineeUserName);
+        List<TrainerForListResponse> unassignedTrainersList = traineeController.getUnassignedTrainers(DataStorage.traineeUserName);
 
         assertAll(
                 "Grouped assertions of getUnassigned trainersDto's list",
@@ -225,12 +230,12 @@ class TraineeControllerTestContainerIT {
     void updateTrainersListSuccessfully() {
         String trainingTypeNameTrainer = "Zumba";
         TrainingType trainingType = trainingTypeRepository.findByName(trainingTypeNameTrainer).get();
-        ds.trainer1.setSpecialization(trainingType);
-        ds.trainer2.setSpecialization(trainingType);
+        ds2.trainer1.setSpecialization(trainingType);
+        ds2.trainer2.setSpecialization(trainingType);
 
-        Trainee createdTrainee1 = traineeRepository.save(ds.trainee1);
-        Trainer createdTrainer1 = trainerRepository.save(ds.trainer1);
-        Trainer createdTrainer2 = trainerRepository.save(ds.trainer2);
+        Trainee createdTrainee1 = traineeRepository.save(ds2.trainee1);
+        Trainer createdTrainer1 = trainerRepository.save(ds2.trainer1);
+        Trainer createdTrainer2 = trainerRepository.save(ds2.trainer2);
 
         assertAll(
                 "Grouped assertions of updateTrainersList successfully",
@@ -242,9 +247,9 @@ class TraineeControllerTestContainerIT {
                 createdTrainer2.getUser().getUserName());
 
         List<TrainerForListResponse> trainerForListResponses
-                = traineeController.updateTrainersList(ds.traineeUserName, trainersList);
+                = traineeController.updateTrainersList(DataStorage.traineeUserName, trainersList);
 
-        Trainee checkTrainee = traineeRepository.findByUserName(ds.traineeUserName).get();
+        Trainee checkTrainee = traineeRepository.findByUserName(DataStorage.traineeUserName).get();
 
         assertAll(
                 "Grouped assertions of updateTrainersList successfully",

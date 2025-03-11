@@ -22,45 +22,45 @@ import static org.gym.config.Config.*;
 
 public class DataStorage {
 
-    public final User user;
-    public final User user2;
-    public final String traineeUserName;
-    public final Trainee trainee1;
-    public final TraineeDto traineeDto1;
-    public final TraineeDto traineeDtoNotValid;
-    public final TraineeDto traineeDto;
-    public final TraineeDto traineeDto2;
+    public static final User user;
+    public static final User user2;
+    public static final String traineeUserName;
+    public static final Trainee trainee1;
+    public static final TraineeDto traineeDto1;
+    public static final TraineeDto traineeDtoNotValid;
+    public static final TraineeDto traineeDto;
+    public static final TraineeDto traineeDto2;
+    public static final String traineeAddress = "Vinnitsya, Soborna str. 35, ap. 26";
+    public static final String traineeAddress2 = "Kyiv, Khreschatik str. 35, ap. 26";
 
-    public final Trainer trainer1;
-    public final TrainerDto trainerDto1;
-    public final Trainer trainer2;
-    public final TrainerDto trainerDto2;
-    public final String userNameForTrainerDto1;
-    public final TrainingType trainerTrainingType;
-    public final String trainerTrainingTypeName = "Zumba";
+    public static final Trainer trainer1;
+    public static final TrainerDto trainerDto1;
+    public static final Trainer trainer2;
+    public static final TrainerDto trainerDto2;
+    public static final String userNameForTrainerDto1;
+    public static final TrainingType trainerTrainingType;
+    public static final String trainerTrainingTypeName = "Zumba";
 
-    public final String passwordForUser = "12345";
-    public final String userNameNotFound = "bbbbbbb";
+    public static final String passwordForUser = "12345";
+    public static final String userNameNotFound = "bbbbbbb";
 
-    public final ChangeLoginRequest changeLoginRequest;
-    public final TrainerUpdateRequest trainerUpdateRequest;
-    public final UserUpdateRequest userForTrainerUpdateRequest;
+    public static final ChangeLoginRequest changeLoginRequest;
+    public static final TrainerUpdateRequest trainerUpdateRequest;
+    public static final UserUpdateRequest userForTrainerUpdateRequest;
 
-    public final TraineeUpdateRequest traineeUpdateRequest;
-    public final UserUpdateRequest userForTraineeUpdateRequest;
+    public static final TraineeUpdateRequest traineeUpdateRequest;
+    public static final UserUpdateRequest userForTraineeUpdateRequest;
 
-    public final CreateResponse traineeCreateResponse;
-    public final CreateResponse trainerCreateResponse;
+    public static final CreateResponse traineeCreateResponse;
+    public static final CreateResponse trainerCreateResponse;
 
-    public final String exceptionMessageNotFound = String.format(ENTITY_NOT_FOUND_EXCEPTION_MESSAGE_TEMPLATE, userNameNotFound);
-    public final String exceptionMessageAccessDenied;
+    public static final String exceptionMessageAccessDenied;
 
-    public final List<String> expectedTrainingTypeNamesList = new ArrayList<>();
-    public final List<TrainingType> trainingTypeList = new ArrayList<>();
+    public static final List<String> expectedTrainingTypeNamesList = new ArrayList<>();
+    public static final List<TrainingType> trainingTypeList = new ArrayList<>();
 
-    {
-        String traineeAddress = "Vinnitsya, Soborna str. 35, ap. 26";
-        String traineeAddress2 = "Kyiv, Khreschatik str. 35, ap. 26";
+    static {
+
         user = new User(null, "Ivan", "Ivanenko", "Ivan.Ivanenko", passwordForUser, null);
         user2 = new User(null, "Ivan", "Ivanenko", "Ivan.Ivanenko", passwordForUser, false);
 
@@ -97,7 +97,7 @@ public class DataStorage {
                 .build();
 
         UserDto userDto = new UserDto("Ivan", "Ivanenko", "Ivan.Ivanenko", null);
-        UserDto userDto2 = new UserDto("Petro", "Petrenko", "Petro.Petrenko", null);
+        UserDto userDto2 = new UserDto("Petro", "Petrenko", "Petro.Petrenko", true);
 
         traineeCreateResponse = CreateResponse.builder()
                 .userName(userDto.getUserName())
